@@ -36,15 +36,22 @@ class Page extends StatefulWidget {
 class _PageState extends State<Page> {
   late Timer _timerUI;
 
-  List<Event> _events = [];
+  final List<Event> _events = [];
 
   final Stopwatch _swCode = Stopwatch();
-  String _btnCode = "";
+  String _btnCode = "Start Code";
   String _txtCode = "";
 
+  final Stopwatch _swCPR = Stopwatch();
+  String _btnCPR = "Start CPR";
+  String _txtCPR = "";
+
   final Stopwatch _swShock = Stopwatch();
-  String _btnShock = "";
   String _txtShock = "";
+
+
+  final Stopwatch _swEpi = Stopwatch();
+  String _txtEpi = "";
 
 
   void _pressedCode() {
@@ -56,24 +63,65 @@ class _PageState extends State<Page> {
     _updateUI();
   }
 
-  void _pressedShock() {
-    if (!_swShock.isRunning) {
-      _swShock.start();
-      _events.add(Event(type: EventType.Shock, description: "Shock delivered"));
+  void _pressedCPR() {
+    if (!_swCode.isRunning) {
+      _pressedCode();
+    }
+
+    if (!_swCPR.isRunning) {
+      _swCPR.start();
+
+      _events.add(Event(type: EventType.CPR, description: "CPR started"));
+    } else {
+      _swCPR.stop();
+      _swCPR.reset();
+
+      _events.add(Event(type: EventType.CPR, description: "CPR paused"));
     }
 
     _updateUI();
   }
-  
+
+  void _pressedShock() {
+    if (!_swCode.isRunning) {
+      _pressedCode();
+    }
+
+    if (!_swShock.isRunning) {
+      _swShock.start();
+    } else {
+      _swShock.reset();
+    }
+
+    _events.add(Event(type: EventType.Shock, description: "Shock delivered"));
+
+    _updateUI();
+  }
+
+  void _pressedEpi() {
+    if (!_swCode.isRunning) {
+      _pressedCode();
+    }
+
+    if (!_swEpi.isRunning) {
+      _swEpi.start();
+    } else {
+      _swEpi.reset();
+    }
+
+    _events.add(Event(type: EventType.Drug, description: "Epinephrine administered"));
+
+    _updateUI();
+  }
   void _updateUI() {
     setState(() {
-      _txtCode = formatTime(_swCode.elapsedMilliseconds ~/ 1000);
+      _txtCode = formatTimer(_swCode.isRunning, _swCode.elapsedMilliseconds ~/ 1000);
+      _txtCPR = formatTimer(_swCPR.isRunning, _swCPR.elapsedMilliseconds ~/ 1000);
+      _txtShock = formatTimer(_swShock.isRunning, _swShock.elapsedMilliseconds ~/ 1000);
+      _txtEpi = formatTimer(_swEpi.isRunning, _swEpi.elapsedMilliseconds ~/ 1000);
 
-      if (!_swCode.isRunning) {
-        _btnCode = "Start";
-      } else if (_swCode.isRunning){
-        _btnCode = "Stop";
-      }
+      _btnCode = !_swCode.isRunning ? "Start Code" : "Stop Code";
+      _btnCPR = !_swCPR.isRunning ? "Start CPR" : "Pause CPR";
     });
   }
 
@@ -104,35 +152,76 @@ class _PageState extends State<Page> {
         child: Column(
           mainAxisAlignment: .start,
           children: [
+            Padding (
+              padding: EdgeInsetsGeometry.symmetric(vertical: 0, horizontal: 10),
+              child: Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                columnWidths: const <int, TableColumnWidth>{
+                  0: FlexColumnWidth(1),
+                  1: FlexColumnWidth(1),
+                },
+                children: [
+                  TableRow(   // Overall code time
+                    children: [
+                      Center(
+                        child: Text(_txtCode,
+                            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                      ),
+                      FilledButton(
+                        style: FilledButton.styleFrom(backgroundColor: Colors.blue),
+                        onPressed: _pressedCode,
+                        child: Text(_btnCode,
+                            style: TextStyle(fontSize: 28)),
+                      )
+                    ],
+                  ),
 
-            Row(
-              mainAxisAlignment: .center,
-              spacing: 15,
-              children: [
-                Text(_txtCode,
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                FilledButton(
-                  style: FilledButton.styleFrom(backgroundColor: Colors.blue),
-                  onPressed: _pressedCode,
-                  child: Text(_btnCode,
-                    style: TextStyle(fontSize: 28)),
-                )
-              ],
-            ),
+                  TableRow(   // CPR
+                    children: [
+                      Center(
+                        child: Text(_txtCPR,
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      ),
+                      FilledButton(
+                          style: FilledButton.styleFrom(backgroundColor: Colors.blueGrey),
+                          onPressed: _pressedCPR,
+                          child: Text(_btnCPR,
+                              style: TextStyle(fontSize: 24))
+                      )
+                    ],
+                  ),
 
-            Row(
-              mainAxisAlignment: .center,
-              spacing: 15,
-              children: [
-                Text(_txtShock,
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                FilledButton(
-                    style: FilledButton.styleFrom(backgroundColor: Colors.red),
-                    onPressed: _pressedShock,
-                    child: Text(_btnShock,
-                        style: TextStyle(fontSize: 28))
-                )
-              ],
+                  TableRow(   // Defibrillation
+                    children: [
+                      Center(
+                        child: Text(_txtShock,
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      ),
+                      FilledButton(
+                          style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                          onPressed: _pressedShock,
+                          child: Text("Shock",
+                              style: TextStyle(fontSize: 24))
+                      )
+                    ],
+                  ),
+
+                  TableRow(   // Epinephrine
+                    children: [
+                      Center(
+                        child: Text(_txtEpi,
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      ),
+                      FilledButton(
+                          style: FilledButton.styleFrom(backgroundColor: Colors.brown),
+                          onPressed: _pressedEpi,
+                          child: Text("Epinephrine",
+                              style: TextStyle(fontSize: 24))
+                      )
+                    ],
+                  ),
+                ]
+              ),
             ),
 
             Padding(
@@ -140,29 +229,36 @@ class _PageState extends State<Page> {
               child: Divider(height: 1.0)
             ),
 
-            Text("Event Log:",
-              style: TextStyle(fontSize: 18)),
+            Text("Event Log",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
 
-            Table(
-              columnWidths: const <int, TableColumnWidth>{
-                0: FlexColumnWidth(1),
-                1: FlexColumnWidth(3),
-              },
-              children: _events.map((item) =>
-                TableRow(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(item['occurred'])
-                    ),
-                    Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Text(item['description']),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child:
+                Table(
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  columnWidths: const <int, TableColumnWidth>{
+                    0: FlexColumnWidth(1),
+                    1: FlexColumnWidth(3),
+                  },
+                  children: _events.map((item) =>
+                    TableRow(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Text(item['occurred'])
+                        ),
+                        Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Text(item['description']),
+                        )
+                      ]
                     )
-                  ]
-                )
-              ).toList(),
-            ),
+                  ).toList(),
+                ),
+              ),
+            )
           ],
         ),
       )

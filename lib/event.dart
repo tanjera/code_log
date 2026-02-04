@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 enum EventType {
+  CPR,
   Drug,
   Shock,
   Procedure,
@@ -16,16 +17,16 @@ class Event {
     occurred = DateTime.now();
   }
 
-  operator [](String key) {
+  String operator [](String key) {
     switch (key) {
       case 'occurred':
         return DateFormat.Hms().format(occurred);
       case 'type':
-        return type;
+        return type.toString();
       case 'description':
         return description;
       default:
-        return null;
+        return "";
     }
   }
 }
