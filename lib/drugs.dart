@@ -1,38 +1,98 @@
 import 'package:flutter/material.dart';
 
+import 'event.dart';
+import 'main.dart';
+
 class Drug {
   late String name;
-  late Color color;
+  late String? route;
+  late Color? color;
 
-  Drug(this.name, this.color);
+  Drug(this.name, this.route, this.color);
 }
 
 class Drugs {
-  final List<Drug> list = [
-    Drug("Adenosine", Colors.grey),
-    Drug("Amiodarone", Colors.grey),
-    Drug("Aspirin", Colors.grey),
-    Drug("Atropine", Colors.purple),
-    Drug("Calcium Chloride", Colors.grey),
-    Drug("Calcium Gluconate", Colors.grey),
-    Drug("Dexamethasone", Colors.grey),
-    Drug("Dextrose 50%", Colors.grey),
-    Drug("Diltiazem", Colors.grey),
-    Drug("Direct Oral Anticoagulant (DOAC)", Colors.grey),
-    Drug("Epinephrine", Colors.brown.shade400),
-    Drug("Esmolol", Colors.grey),
-    Drug("Labetalol", Colors.grey),
-    Drug("Lidocaine", Colors.grey),
-    Drug("Magnesium Sulfate", Colors.grey),
-    Drug("Methylprednisolone", Colors.grey),
-    Drug("Metoprolol", Colors.grey),
-    Drug("Naloxone", Colors.grey),
-    Drug("Nicardipine", Colors.grey),
-    Drug("Nifedipine", Colors.grey),
-    Drug("Nitroglycerin", Colors.grey),
-    Drug("Nitroprusside", Colors.grey),
-    Drug("Norepinephrine", Colors.grey),
-    Drug("Phenylephrine", Colors.grey),
-    Drug("Sodium Bicarbonate", Colors.grey),
+  List<Drug> list = [
+    Drug("Adenosine", null, null),
+    Drug("Amiodarone", "IV Push", null),
+    Drug("Amiodarone", "IV Bolus via Minibag", null),
+    Drug("Amiodarone", "IV Infusion", null),
+    Drug("Aspirin", null, null),
+    Drug("Atropine", null, Colors.purple),
+    Drug("Calcium Chloride", null, Colors.yellow),
+    Drug("Calcium Gluconate", null, null),
+    Drug("Dexamethasone", null, null),
+    Drug("Dextrose 50%", null, Colors.blue),
+    Drug("Diazepam", "IV", null),
+    Drug("Diazepam", "PR", null),
+    Drug("Diltiazem", null, null),
+    Drug("Direct Oral Anticoagulant (DOAC)", null, null),
+    Drug("Epinephrine", "IV", Colors.brown.shade400),
+    Drug("Epinephrine", "Inhaled", null),
+    Drug("Esmolol", null, null),
+    Drug("Labetalol", null, null),
+    Drug("Lidocaine", null, Colors.red.shade200),
+    Drug("Lorazepam", "IV", null),
+    Drug("Lorazepam", "Intramuscular", null),
+    Drug("Mannitol", null, null),
+    Drug("Magnesium Sulfate", null, null),
+    Drug("Methylprednisolone", null, null),
+    Drug("Metoprolol", null, null),
+    Drug("Midazolam", "IV", null),
+    Drug("Midazolam", "Intramuscular", null),
+    Drug("Naloxone", "IV", null),
+    Drug("Naloxone", "Intranasal", null),
+    Drug("Nicardipine", null, null),
+    Drug("Nifedipine", null, null),
+    Drug("Nitroglycerin", null, null),
+    Drug("Nitroprusside", null, null),
+    Drug("Norepinephrine", null, null),
+    Drug("Phenylephrine", null, null),
+    Drug("Sodium Bicarbonate", null, Colors.yellow.shade800),
   ];
+
+  Drugs() {
+    // In case they are out of alphabetical order in the declaring list...
+    list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  }
+}
+
+class PageDrugs extends StatelessWidget {
+  final PageState _pageState;
+  final Drugs _drugs = Drugs();
+
+  PageDrugs(this._pageState, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text("Drugs"),
+      ),
+      body: Expanded(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            mainAxisAlignment: .start,
+              children: _drugs.list.map((d) =>
+                  ListTile(
+                    title: Text(d.name),
+                    subtitle: d.route != null ? Text(d.route!) : null,
+                    trailing: d.color != null ? CircleAvatar(backgroundColor: d.color) : null,
+                    onTap: () {
+                      if (d.name == "Epinephrine") {
+                        _pageState.pressedEpi();
+                      } else {
+                        _pageState.events.add(Event( type: EventType.Drug, description: "${d.name} administered"));
+                      }
+                      Navigator.pop(context);
+                    },
+                  )
+              ).toList()
+          )
+        )
+      )
+    );
+  }
 }

@@ -17,11 +17,11 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Code Log',
+      title: 'Code Blue Log',
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.blue),
       ),
-      home: const Page(title: 'Code Log'),
+      home: const Page(title: 'Code Blue Log'),
     );
   }
 }
@@ -38,7 +38,7 @@ class Page extends StatefulWidget {
 class PageState extends State<Page> {
   late Timer _timerUI;
 
-  List<Event> _events = [];
+  List<Event> events = [];
 
   final Stopwatch _swCode = Stopwatch();
   String _btnCode = "Start Code";
@@ -71,13 +71,13 @@ class PageState extends State<Page> {
     _txtShock = "--:--";
     _txtEpi = "--:--";
 
-    _events = [];
+    events = [];
   }
 
   void _pressedCode() {
     if (!_swCode.isRunning) {
       _swCode.start();
-      _events.add(Event(type: EventType.Event, description: "Code started"));
+      events.add(Event(type: EventType.Event, description: "Code started"));
     } else {
       showModalBottomSheet(
         context: context,
@@ -87,7 +87,7 @@ class PageState extends State<Page> {
       );
     }
 
-    _updateUI();
+    updateUI();
   }
 
   void _pressedCPR() {
@@ -98,15 +98,15 @@ class PageState extends State<Page> {
     if (!_swCPR.isRunning) {
       _swCPR.start();
 
-      _events.add(Event(type: EventType.CPR, description: "CPR started"));
+      events.add(Event(type: EventType.CPR, description: "CPR started"));
     } else {
       _swCPR.stop();
       _swCPR.reset();
 
-      _events.add(Event(type: EventType.CPR, description: "CPR paused"));
+      events.add(Event(type: EventType.CPR, description: "CPR paused"));
     }
 
-    _updateUI();
+    updateUI();
   }
 
   void _pressedShock() {
@@ -120,12 +120,12 @@ class PageState extends State<Page> {
       _swShock.reset();
     }
 
-    _events.add(Event(type: EventType.Shock, description: "Shock delivered"));
+    events.add(Event(type: EventType.Shock, description: "Shock delivered"));
 
-    _updateUI();
+    updateUI();
   }
 
-  void _pressedEpi() {
+  void pressedEpi() {
     if (!_swCode.isRunning) {
       _pressedCode();
     }
@@ -136,30 +136,12 @@ class PageState extends State<Page> {
       _swEpi.reset();
     }
 
-    _events.add(Event(type: EventType.Drug, description: "Epinephrine administered"));
+    events.add(Event(type: EventType.Drug, description: "Epinephrine administered"));
 
-    _updateUI();
+    updateUI();
   }
 
-  void _pressedDrugs() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SheetDrugs(this);
-      },
-    );
-  }
-
-  void _pressedProcedures() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SheetProcedures(this);
-      },
-    );
-  }
-
-  void _updateUI() {
+  void updateUI() {
     setState(() {
       _txtCode = formatTimer(_swCode.isRunning, _swCode.elapsedMilliseconds ~/ 1000);
       _txtCPR = formatTimer(_swCPR.isRunning, _swCPR.elapsedMilliseconds ~/ 1000);
@@ -176,7 +158,7 @@ class PageState extends State<Page> {
     super.initState();
 
     _timerUI = Timer.periodic(const Duration(seconds: 1), (_) {
-      _updateUI();
+      updateUI();
     });
   }
 
@@ -213,7 +195,9 @@ class PageState extends State<Page> {
                             style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                       ),
                       FilledButton(
-                        style: FilledButton.styleFrom(backgroundColor: Colors.blue),
+                        style: FilledButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
                         onPressed: _pressedCode,
                         child: Text(_btnCode,
                             style: TextStyle(fontSize: 28)),
@@ -228,7 +212,9 @@ class PageState extends State<Page> {
                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                       ),
                       FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: Colors.blueGrey),
+                          style: FilledButton.styleFrom(
+                              backgroundColor: Colors.blueGrey,
+                              shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
                           onPressed: _pressedCPR,
                           child: Text(_btnCPR,
                               style: TextStyle(fontSize: 24))
@@ -243,7 +229,8 @@ class PageState extends State<Page> {
                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                       ),
                       FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                          style: FilledButton.styleFrom(backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
                           onPressed: _pressedShock,
                           child: Text("Shock",
                               style: TextStyle(fontSize: 24))
@@ -258,8 +245,9 @@ class PageState extends State<Page> {
                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                       ),
                       FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: Colors.brown.shade400),
-                          onPressed: _pressedEpi,
+                          style: FilledButton.styleFrom(backgroundColor: Colors.brown.shade400,
+                              shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
+                          onPressed: pressedEpi,
                           child: Text("Epinephrine",
                               style: TextStyle(fontSize: 24))
                       )
@@ -276,8 +264,16 @@ class PageState extends State<Page> {
                 children: [
                   Expanded(
                     child: FilledButton(
-                      style: FilledButton.styleFrom(backgroundColor: Colors.blueGrey),
-                      onPressed: _pressedDrugs,
+                      style: FilledButton.styleFrom(backgroundColor: Colors.blueGrey,
+                          shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute<void>(
+                                  builder: (context) => PageDrugs(this)
+                              )
+                          );
+                        },
                       child: Text("Drugs",
                           style: TextStyle(fontSize: 24))
                     ),
@@ -292,9 +288,41 @@ class PageState extends State<Page> {
                   children: [
                     Expanded(
                       child: FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: Colors.blueGrey),
-                          onPressed: _pressedProcedures,
+                          style: FilledButton.styleFrom(backgroundColor: Colors.blueGrey,
+                              shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                    builder: (context) => PageProcedures(this)
+                                )
+                            );
+                          },
                           child: Text("Procedures",
+                              style: TextStyle(fontSize: 24))
+                      ),
+                    ),
+                  ]
+              ),
+            ),
+
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              child: Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton(
+                          style: FilledButton.styleFrom(backgroundColor: Colors.blueGrey,
+                              shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                    builder: (context) => PageEvents(this)
+                                )
+                            );
+                          },
+                          child: Text("Events",
                               style: TextStyle(fontSize: 24))
                       ),
                     ),
@@ -320,7 +348,7 @@ class PageState extends State<Page> {
                     0: FlexColumnWidth(1),
                     1: FlexColumnWidth(3),
                   },
-                  children: _events.map((item) =>
+                  children: events.map((item) =>
                     TableRow(
                       children: [
                         Padding(
@@ -339,119 +367,6 @@ class PageState extends State<Page> {
             )
           ],
         ),
-      )
-    );
-  }
-}
-
-class SheetDrugs extends StatelessWidget {
-  final PageState _pageState;
-  final Drugs _drugs = Drugs();
-
-  SheetDrugs(this._pageState, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child:
-      Padding(
-        padding: EdgeInsetsGeometry.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("Drugs",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-
-            Padding(
-                padding: EdgeInsets.all(10),
-                child: Divider(height: 1.0)
-            ),
-
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _drugs.list.map((drug) =>
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: drug.color),
-                          onPressed: () {
-                            if (drug.name == "Epinephrine") {
-                              _pageState._pressedEpi();
-                            } else {
-                              _pageState._events.add(Event( type: EventType.Drug, description: "${drug.name} administered"));
-                            }
-                            Navigator.pop(context);
-                          },
-                          child: Text(drug.name,
-                              style: TextStyle(fontSize: 24))
-                        ),
-                      ),
-                    ]
-                  ),
-                ),
-              ).toList(),
-            )
-          ]
-        )
-      )
-    );
-  }
-}
-
-
-class SheetProcedures extends StatelessWidget {
-  final PageState _pageState;
-  final Procedures _procedures = Procedures();
-
-  SheetProcedures(this._pageState, {super.key});
-  
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child:
-      Padding(
-        padding: EdgeInsetsGeometry.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-          Text("Procedures",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Divider(height: 1.0)
-          ),
-
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: _procedures.list.map((procedure) =>
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: procedure.color),
-                          onPressed: () {
-                            _pageState._events.add(Event(type: EventType.Procedure, description: procedure.log));
-                            Navigator.pop(context);
-                          },
-                          child: Text(procedure.button,
-                              style: TextStyle(fontSize: 24))
-                        ),
-                      ),
-                    ]
-                  ),
-                ),
-              ).toList(),
-            )
-          ]
-        )
       )
     );
   }

@@ -1,4 +1,4 @@
-name: code_log
+name: code_blue_log
 description: "Code Log: For medical and nursing professionals, to assist with timekeeping and informally recording events during resuscitation (code blue) events."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
