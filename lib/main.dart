@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:core';
 import 'package:flutter/material.dart';
 
-import 'drug.dart';
+import 'drugs.dart';
 import 'event.dart';
-import 'procedure.dart';
+import 'procedures.dart';
 import 'utility.dart';
 
 void main() {
@@ -346,11 +346,7 @@ class PageState extends State<Page> {
 
 class SheetDrugs extends StatelessWidget {
   final PageState _pageState;
-
-  final List<Drug> _drugs = [
-    Drug("Atropine", "Atropine administered", Colors.purple),
-    Drug("Epinephrine", "Epinephrine administered", Colors.brown.shade400),
-  ];
+  final Drugs _drugs = Drugs();
 
   SheetDrugs(this._pageState, {super.key});
 
@@ -374,7 +370,7 @@ class SheetDrugs extends StatelessWidget {
 
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: _drugs.map((drug) =>
+              children: _drugs.list.map((drug) =>
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                   child: Row(
@@ -383,14 +379,14 @@ class SheetDrugs extends StatelessWidget {
                         child: FilledButton(
                           style: FilledButton.styleFrom(backgroundColor: drug.color),
                           onPressed: () {
-                            if (drug.button == "Epinephrine") {
+                            if (drug.name == "Epinephrine") {
                               _pageState._pressedEpi();
                             } else {
-                              _pageState._events.add(Event( type: EventType.Drug, description: drug.log));
+                              _pageState._events.add(Event( type: EventType.Drug, description: "${drug.name} administered"));
                             }
                             Navigator.pop(context);
                           },
-                          child: Text(drug.button,
+                          child: Text(drug.name,
                               style: TextStyle(fontSize: 24))
                         ),
                       ),
@@ -409,12 +405,8 @@ class SheetDrugs extends StatelessWidget {
 
 class SheetProcedures extends StatelessWidget {
   final PageState _pageState;
-  
-  final List<Procedure> _procedures = [
-    Procedure("Intubation", "Intubated", Colors.blueGrey),
-    Procedure("Intraosseous Line", "Intraosseous line placed", Colors.yellow.shade800),
-  ];
-  
+  final Procedures _procedures = Procedures();
+
   SheetProcedures(this._pageState, {super.key});
   
   @override
@@ -437,7 +429,7 @@ class SheetProcedures extends StatelessWidget {
 
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: _procedures.map((procedure) =>
+            children: _procedures.list.map((procedure) =>
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                 child: Row(
