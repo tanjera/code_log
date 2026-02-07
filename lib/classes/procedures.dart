@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'log.dart';
-import 'main.dart';
+import '../models/procedure.dart';
 
 class Procedure {
   late String title;
@@ -35,44 +34,5 @@ class Procedures {
   Procedures() {
     // In case they are out of alphabetical order in the declaring list...
     list.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
-  }
-}
-
-class PageProcedures extends StatelessWidget {
-  final PageState _pageState;
-  final Procedures _procedures = Procedures();
-
-  PageProcedures(this._pageState, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Procedures"),
-      ),
-      body: Expanded(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            mainAxisAlignment: .start,
-              children: _procedures.list.map((p) =>
-                ListTile(
-                  title: Text(p.title),
-                  subtitle: p.subtitle != null ? Text(p.subtitle!) : null,
-                  trailing: p.color != null ? CircleAvatar(backgroundColor: p.color) : null,
-                  onTap: () {
-                    _pageState.log.add(Entry(
-                      type: EntryType.procedure,
-                              description: p.log));
-                    _pageState.updateUI();
-                    Navigator.pop(context);
-                  },
-                )
-            ).toList(),
-          )
-        )
-      )
-    );
   }
 }

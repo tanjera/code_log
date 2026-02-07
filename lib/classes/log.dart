@@ -1,58 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:code_blue_log/event.dart';
-import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
-enum EntryType {
-  cpr,
-  drug,
-  shock,
-  procedure,
-  event
-}
-
-class Entry {
-  late DateTime occurred;
-  EntryType type;
-  String description;
-
-  Entry ({required this.type, required this.description}) {
-    occurred = DateTime.now();
-  }
-
-  Entry.m ({required this.occurred, required this.type, required this.description});
-
-  String operator [] (String key) {
-    switch (key) {
-      case 'occurred':
-        return DateFormat.Hms().format(occurred);
-      case 'type':
-        return type.toString();
-      case 'description':
-        return description;
-      default:
-        return "";
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'occurred': occurred.toIso8601String(),
-      'type': type.toString(),
-      'description': description
-    };
-  }
-
-  factory Entry.fromJson(Map<String, dynamic> json) {
-    return Entry.m(
-      occurred: DateTime.parse(json['occurred']),
-      type: EntryType.values.firstWhere((e) => e.toString() == json['type']),
-      description: json['description'] as String
-    );
-  }
-}
+import 'log.entry.dart';
 
 class Log {
   String? filename;
