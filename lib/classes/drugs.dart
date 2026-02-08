@@ -12,6 +12,7 @@ class Drugs {
     Drug("Atropine", null, Colors.purple),
     Drug("Calcium Chloride", null, Colors.yellow),
     Drug("Calcium Gluconate", null, null),
+    Drug("Cryoprecipitate", null, Colors.yellow),
     Drug("Dexamethasone", null, null),
     Drug("Dextrose 50%", null, Colors.blue),
     Drug("Diazepam", "IV", null),
@@ -22,6 +23,7 @@ class Drugs {
     Drug("Epinephrine", "Inhaled", null),
     Drug("Esmolol", null, null),
     Drug("Labetalol", null, null),
+    Drug("Lactated Ringers", null, Colors.blue.shade100),
     Drug("Lidocaine", null, Colors.red.shade200),
     Drug("Lorazepam", "IV", null),
     Drug("Lorazepam", "Intramuscular", null),
@@ -38,7 +40,11 @@ class Drugs {
     Drug("Nitroglycerin", null, null),
     Drug("Nitroprusside", null, null),
     Drug("Norepinephrine", null, null),
+    Drug("Normal Saline", null, Colors.blue.shade100),
+    Drug("Packed Red Blood Cells (PRBC)", null, Colors.red),
     Drug("Phenylephrine", null, null),
+    Drug("Plasma, Fresh Frozen (FFP)", null, Colors.yellow),
+    Drug("Platelets", null, Colors.yellow),
     Drug("Sodium Bicarbonate", null, Colors.yellow.shade800),
   ];
 

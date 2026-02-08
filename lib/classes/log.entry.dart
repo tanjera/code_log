@@ -14,12 +14,14 @@ class Entry {
   late DateTime occurred;
   EntryType type;
   String description;
+  bool redacted = false;
+  String notation = "";
 
   Entry ({required this.type, required this.description}) {
     occurred = DateTime.now();
   }
 
-  Entry.m ({required this.occurred, required this.type, required this.description});
+  Entry.m ({required this.occurred, required this.type, required this.description, required this.redacted, required this.notation});
 
   String operator [] (String key) {
     switch (key) {
@@ -29,6 +31,10 @@ class Entry {
         return type.toString();
       case 'description':
         return description;
+      case 'redacted':
+        return redacted.toString();
+        case 'notation':
+      return notation.toString();
       default:
         return "";
     }
@@ -38,7 +44,9 @@ class Entry {
     return {
       'occurred': occurred.toIso8601String(),
       'type': type.toString(),
-      'description': description
+      'description': description,
+      'redacted': redacted,
+      'notation': notation
     };
   }
 
@@ -46,7 +54,9 @@ class Entry {
     return Entry.m(
       occurred: DateTime.parse(json['occurred']),
       type: EntryType.values.firstWhere((e) => e.toString() == json['type']),
-      description: json['description'] as String
+      description: json['description'] as String,
+      redacted: json['redacted'],
+      notation: json['notation'] as String
     );
   }
 }

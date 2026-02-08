@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../classes/log.dart';
 import '../classes/utility.dart';
 
+import 'page_log.dart';
 
 class PageLogs extends StatefulWidget {
   const PageLogs({super.key});
@@ -22,6 +24,7 @@ class PageLogsState extends State<PageLogs> {
     _logs = [];
 
     final files = await localLogs();
+    files.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
     for (int i = 0; i < files.length; i++) {
       Log? l = Log();
@@ -40,6 +43,15 @@ class PageLogsState extends State<PageLogs> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text("Logs"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_outlined),
+              tooltip: 'Refresh',
+              onPressed: () {
+                _refreshPage();
+              },
+            ),
+          ],
         ),
         body: RefreshIndicator(
           onRefresh: _refreshPage,
@@ -47,9 +59,18 @@ class PageLogsState extends State<PageLogs> {
             scrollDirection: Axis.vertical,
             child: Column(
               mainAxisAlignment: .start,
-              children: _logs.map((e) =>
+              children: _logs.map((l) =>
                   ListTile(
-                    title: Text(e.created!.toIso8601String()),
+                    title: Text("${DateFormat.yMMMMd().format(l.created ?? DateTime.now())}, ${DateFormat.Hm().format(l.created ?? DateTime.now())}" ),
+                    subtitle: l.identifier != null ? Text(l.identifier ?? "") : null,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute<void>(
+                              builder: (context) => PageLog(log: l)
+                          )
+                      );
+                    },
                   )
               ).toList(),
               )

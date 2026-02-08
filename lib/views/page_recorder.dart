@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 
 import 'page_drugs.dart';
@@ -23,7 +22,6 @@ class PageRecorder extends StatefulWidget {
 }
 
 class PageRecorderState extends State<PageRecorder> {
-  String _version = "";
   Log log = Log();
 
   late Timer _timerUI;
@@ -41,18 +39,6 @@ class PageRecorderState extends State<PageRecorder> {
   
   final Stopwatch _swEpi = Stopwatch();
   String _txtEpi = "";
-
-  PageRecorderState() {
-    getVersion();
-  }
-
-  void getVersion () async {
-    PackageInfo _pi = await PackageInfo.fromPlatform();
-
-    setState(() {
-      _version = "${_pi.version}";
-    });
-  }
 
   void endCode () {
     // Close out and reset the log
@@ -183,14 +169,6 @@ class PageRecorderState extends State<PageRecorder> {
             Align(
               alignment: .centerLeft,
               child:Text(widget.title)
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 5),
-              child: Align(
-                alignment: .topRight,
-                child: Text(_version,
-                  style: TextStyle(fontSize: 12)),
-              )
             )
           ]
         ),
@@ -399,33 +377,33 @@ class PageRecorderState extends State<PageRecorder> {
             Text("Event Log",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
 
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child:
-                Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FlexColumnWidth(1),
-                    1: FlexColumnWidth(3),
-                  },
-                  children: log.entries.map((item) =>
-                    TableRow(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(item['occurred'])
-                        ),
-                        Padding(
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child:
+                  Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FlexColumnWidth(1),
+                      1: FlexColumnWidth(3),
+                    },
+                    children: log.entries.map((item) =>
+                      TableRow(
+                        children: [
+                          Padding(
                             padding: EdgeInsets.all(10),
-                            child: Text(item['description']),
-                        )
-                      ]
-                    )
-                  ).toList(),
+                            child: Text(item['occurred'])
+                          ),
+                          Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text(item['description']),
+                          )
+                        ]
+                      )
+                    ).toList(),
+                  ),
                 ),
-              ),
-            )
+              )
           ],
         ),
       )

@@ -18,6 +18,7 @@ class Procedures {
     Procedure("Central Line", null, "Central line placed", null),
     Procedure("Chest Tube", null, "Chest tube placed", null),
     Procedure("Cricothyrotomy", null, "Cricothyrotomy placed", null),
+    Procedure("Defibrillator Pads", null, "Defibrillator pads applied", null),
     Procedure("Delivered Baby", null, "Delivered the baby", null),
     Procedure("Fetal Heart Rate", null, "Fetal heart rate assessed", null),
     Procedure("Intraosseous Line", null, "Intraosseous line placed", Colors.yellow.shade800),
