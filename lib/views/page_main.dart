@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'page_logs.dart';
 import 'page_recorder.dart';
 import 'page_not_implemented.dart';
 
@@ -33,9 +34,9 @@ class PageMainState extends State<PageMain> {
   }
 
 
-  static const List<Widget> _widgetOptions = <Widget>[
+  static final List<Widget> _widgetOptions = <Widget>[
     PageRecorder(title: appTitle),
-    PageNotImplemented(),
+    PageLogs(),
     PageNotImplemented(),
   ];
 

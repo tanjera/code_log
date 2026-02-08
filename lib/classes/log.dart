@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
-
-import 'package:path_provider/path_provider.dart';
 
 import 'log.entry.dart';
+import 'utility.dart';
 
 class Log {
   String? filename;
@@ -21,7 +19,7 @@ class Log {
     created ??= DateTime.now();
     filename ??= "${created!.toIso8601String()}.json";
 
-    final file = await _localFile(filename ?? "");
+    final file = await localFile(filename ?? "");
 
     file.writeAsString(
         JsonEncoder.withIndent("  ").convert({
@@ -37,7 +35,7 @@ class Log {
 
   Future<Log?> read (String filename) async {
     try {
-      final file = await _localFile(filename);
+      final file = await localFile(filename);
       String? input = await file.readAsString();
 
       if (input.isEmpty) {
@@ -61,15 +59,5 @@ class Log {
     } catch (e) {
       return null;
     }
-  }
-
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
-  Future<File> _localFile (String filename) async {
-    final path = await _localPath;
-    return File('$path/$filename');
   }
 }
