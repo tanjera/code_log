@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:core';
 import 'package:flutter/material.dart';
 
+import 'dialog_code_end.dart';
 
 import 'page_drugs.dart';
 import 'page_events.dart';
@@ -68,10 +69,10 @@ class PageRecorderState extends State<PageRecorder> {
       _swCode.start();
       log.add(Entry(type: EntryType.event, description: "Code started"));
     } else {
-      showModalBottomSheet(
+      showDialog(
         context: context,
         builder: (BuildContext context) {
-          return SheetCodeEnd(this);
+          return DialogEndCode(this);
         },
       );
     }
@@ -194,21 +195,22 @@ class PageRecorderState extends State<PageRecorder> {
                 textAlign: TextAlign.center,)));
                 },
               ),
-              IconButton(
-                icon: const Icon(Icons.info_outline),
-                tooltip: 'Identifiers',
-                onPressed: () {
-                  ScaffoldMessenger.of( context,
-                  ).showSnackBar(const SnackBar(content: Text('This feature has not been implemented yet, but will be implemented in a version in the near future!',
-                    textAlign: TextAlign.center,)));
-                },
-              ),
           ]
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: .start,
           children: [
+            TextField(
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                border: InputBorder.none,
+                hintText: 'Code Identifier (e.g. Location)',
+              ),
+              onChanged: (t) {
+                log.identifier = t;
+              },
+            ),
             Padding (
               padding: EdgeInsetsGeometry.symmetric(vertical: 0, horizontal: 10),
               child: Table(
@@ -406,52 +408,6 @@ class PageRecorderState extends State<PageRecorder> {
               )
           ],
         ),
-      )
-    );
-  }
-}
-
-class SheetCodeEnd extends StatelessWidget {
-  final PageRecorderState _prs;
-
-  const SheetCodeEnd(this._prs, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Are you sure you want to end the code?'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                  padding: EdgeInsetsGeometry.all(10),
-                  child: FilledButton(
-                      style: FilledButton.styleFrom(
-                          shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
-                    onPressed: () { Navigator.pop(context); },
-                    child: Text("No",
-                        style: TextStyle(fontSize: 24))
-                )
-              ),
-              Padding(
-                  padding: EdgeInsetsGeometry.all(10),
-                  child: FilledButton(
-                    style: FilledButton.styleFrom(backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
-                      onPressed: () {
-                        _prs.endCode();
-                        Navigator.pop(context);
-                      },
-                    child: Text("Yes",
-                        style: TextStyle(fontSize: 24))
-                )
-              ),
-            ]
-          )
-        ]
       )
     );
   }

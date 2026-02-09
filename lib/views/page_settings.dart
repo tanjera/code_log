@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+
+import 'page_about.dart';
 
 class PageSettings extends StatefulWidget {
   const PageSettings({super.key});
@@ -9,20 +10,6 @@ class PageSettings extends StatefulWidget {
 }
 
 class PageSettingsState extends State<PageSettings> {
-  String _version = "";
-
-  PageSettingsState() {
-    getVersion();
-  }
-
-  void getVersion () async {
-    PackageInfo pi = await PackageInfo.fromPlatform();
-
-    setState(() {
-      _version = "${pi.version}+${pi.buildNumber}";
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,37 +17,21 @@ class PageSettingsState extends State<PageSettings> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Settings"),
       ),
-      body: Column(
-        mainAxisAlignment: .start,
-          crossAxisAlignment: .center,
-          children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child:
-              Table(
-                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                columnWidths: const <int, TableColumnWidth>{
-                  0: FlexColumnWidth(1),
-                  1: FlexColumnWidth(3),
-                },
-                children: [
-                  TableRow(
-                      children: [
-                        Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Text("Version:")
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text(_version),
-                        )
-                      ]
+      body: ListView(
+        physics: AlwaysScrollableScrollPhysics(),
+        children: [
+          ListTile(
+            title: Text("About Code Blue Log"),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                      builder: (context) => PageAbout()
                   )
-
-                ]
-              ),
-            ),
-        ]
+              );
+            }
+          )
+        ],
       )
     );
   }
