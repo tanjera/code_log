@@ -18,6 +18,9 @@ if (-e "$rel_dir/$bundle_name") {
     `rm "$rel_dir/$bundle_name"`;
 }
 
+# Short delay while the compiled file is moved into place by flutter
+sleep(1);
+
 system("mv $bundle_path/$bundle_name $rel_dir/$bundle_name");
 
 
