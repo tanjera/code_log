@@ -17,10 +17,10 @@ class PageLogsState extends State<PageLogs> {
   List<Log> _logs = [];
 
   PageLogsState() {
-    _refreshPage();
+    refreshPage();
   }
 
-  Future<void> _refreshPage() async {
+  Future<void> refreshPage() async {
     _logs = [];
 
     final files = await localLogs();
@@ -43,23 +43,15 @@ class PageLogsState extends State<PageLogs> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text("Logs"),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh_outlined),
-              tooltip: 'Refresh',
-              onPressed: () {
-                _refreshPage();
-              },
-            ),
-          ],
         ),
         body: RefreshIndicator(
-          onRefresh: _refreshPage,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              mainAxisAlignment: .start,
-              children: _logs.map((l) =>
+          onRefresh: refreshPage,
+          child: ListView(
+          children:
+          _logs.isEmpty
+              ? [ListTile(title: Text("There are no logs yet")),
+                ListTile(title: Text("Swipe down to refresh this screen as needed"))]
+              : _logs.map((l) =>
                   ListTile(
                     title: Text("${DateFormat.yMMMMd().format(l.created ?? DateTime.now())}, ${DateFormat.Hm().format(l.created ?? DateTime.now())}" ),
                     subtitle: l.identifier != null ? Text(l.identifier ?? "") : null,
@@ -73,9 +65,8 @@ class PageLogsState extends State<PageLogs> {
                     },
                   )
               ).toList(),
-              )
-          )
         )
+      )
     );
   }
 }
