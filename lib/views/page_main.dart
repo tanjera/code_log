@@ -1,10 +1,9 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import 'page_logs.dart';
 import 'page_recorder.dart';
-import 'page_not_implemented.dart';
+import 'page_settings.dart';
 
 import '../main.dart';
 
@@ -18,26 +17,12 @@ class PageMain extends StatefulWidget {
 }
 
 class PageMainState extends State<PageMain> {
-  String _version = "";
   int _selectedIndex = 0;
-
-  PageMainState() {
-    getVersion();
-  }
-
-  void getVersion () async {
-    PackageInfo _pi = await PackageInfo.fromPlatform();
-
-    setState(() {
-      _version = "v ${_pi.version}";
-    });
-  }
-
 
   static final List<Widget> _widgetOptions = <Widget>[
     PageRecorder(title: appTitle),
     PageLogs(),
-    PageNotImplemented(),
+    PageSettings(),
   ];
 
   void _onItemTapped(int index) {

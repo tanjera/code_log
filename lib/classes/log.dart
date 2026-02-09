@@ -28,9 +28,6 @@ class Log {
           "entries": entries.map((e) => e.toJson()).toList()
         }),
         flush: true);
-
-
-    final l = read(filename ?? "");
   }
 
   Future<Log?> read (String filename) async {
@@ -44,7 +41,7 @@ class Log {
 
       Log log = Log();
       
-      var dAll = json.decode(input ?? "");
+      var dAll = json.decode(input);
 
       // Decode the header
       log.identifier = dAll["identifier"];

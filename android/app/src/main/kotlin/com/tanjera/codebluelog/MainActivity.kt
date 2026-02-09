@@ -1,4 +1,4 @@
-package com.example.code_log
+package com.tanjera.codebluelog
 
 import io.flutter.embedding.android.FlutterActivity
 

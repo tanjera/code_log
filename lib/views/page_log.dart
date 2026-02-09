@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../classes/log.dart';
-import '../classes/utility.dart';
 
 
 class PageLog extends StatefulWidget {

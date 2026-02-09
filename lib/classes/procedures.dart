@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../models/procedure.dart';
-
 class Procedure {
   late String title;
   late String? subtitle;

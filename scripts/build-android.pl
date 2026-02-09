@@ -15,7 +15,7 @@ system("flutter build appbundle");
 
 if (-e "$rel_dir/$bundle_name") {
     print "Removing existing file at $rel_dir/$bundle_name\n";
-    `rm $rel_dir/$bundle_name`;
+    `rm "$rel_dir/$bundle_name"`;
 }
 
 system("mv $bundle_path/$bundle_name $rel_dir/$bundle_name");

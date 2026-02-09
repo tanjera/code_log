@@ -1,4 +1,4 @@
-import 'package:code_blue_log/views/page_recorder.dart';
+import 'package:codebluelog/views/page_recorder.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/log.entry.dart';
