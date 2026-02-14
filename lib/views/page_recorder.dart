@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'dialog_code_end.dart';
 
@@ -27,6 +29,11 @@ class PageRecorderState extends State<PageRecorder> {
 
   late Timer _timerUI;
 
+  final _playerMetronome = AudioPlayer();
+  late Timer _timerMetronome;
+  late AudioSource? _audioMetronome;
+  bool _runMetronome = false;
+
   final Stopwatch _swCode = Stopwatch();
   String _btnCode = "Start Code";
   String _txtCode = "--:--";
@@ -45,6 +52,21 @@ class PageRecorderState extends State<PageRecorder> {
 
   final TextEditingController _tecIdentifier = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+
+    _timerUI = Timer.periodic(const Duration(seconds: 1), (_) {
+      updateUI();
+    });
+
+    double dblRate = (60000 / 110);
+    int intRate = dblRate.toInt();
+    _timerMetronome = Timer.periodic(Duration(milliseconds: intRate), (_) {
+      _playMetronome();
+    });
+  }
+  
   void endCode () {
     // Close out and reset the log
     log.add(Entry(type: EntryType.event, description: "Code ended"));
@@ -73,6 +95,23 @@ class PageRecorderState extends State<PageRecorder> {
     _cntEpi = 0;
 
     updateUI();
+  }
+
+  void _pressedMetronome() {
+    _runMetronome = !_runMetronome;
+
+    updateUI();
+  }
+
+  void _playMetronome() async {
+    if (_runMetronome) {
+      if (_playerMetronome.audioSource == null) {
+        _playerMetronome.setAudioSource(AudioSource.asset("assets/audio/click_1.wav"));
+      }
+
+      _playerMetronome.seek(Duration(seconds: 0));
+      _playerMetronome.play();
+      }
   }
 
   void _pressedCode() {
@@ -157,17 +196,9 @@ class PageRecorderState extends State<PageRecorder> {
   }
 
   @override
-  void initState() {
-    super.initState();
-
-    _timerUI = Timer.periodic(const Duration(seconds: 1), (_) {
-      updateUI();
-    });
-  }
-
-  @override
   void dispose() {
     _timerUI.cancel();
+    _timerMetronome.cancel();
     super.dispose();
   }
 
@@ -189,11 +220,13 @@ class PageRecorderState extends State<PageRecorder> {
           actions:
             <Widget> [
               IconButton(
-                icon: const Icon(Icons.volume_off_outlined),
+                icon: _runMetronome ? Icon(Icons.volume_up_outlined) : Icon(Icons.volume_off_outlined),
                 tooltip: 'Metronome',
                 onPressed: () {
+                  _pressedMetronome();
+
                   ScaffoldMessenger.of( context,
-                  ).showSnackBar(const SnackBar(content: Text('This feature has not been implemented yet, but will be implemented in a version in the near future!',
+                  ).showSnackBar(SnackBar(content: Text("Metronome turned ${_runMetronome ? "on" : "off"}",
                     textAlign: TextAlign.center,)));
                 },
               ),
