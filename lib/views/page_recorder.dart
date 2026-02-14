@@ -17,10 +17,11 @@ import '../classes/log.entry.dart';
 import '../classes/utility.dart';
 
 class PageRecorder extends StatefulWidget {
+  final VoidCallback updateLogs;
   final Settings settings;
   final String title;
 
-  const PageRecorder({super.key, required this.title, required this.settings});
+  const PageRecorder({super.key, required this.title, required this.settings, required this.updateLogs});
 
   @override
   State<PageRecorder> createState() => PageRecorderState();
@@ -81,6 +82,9 @@ class PageRecorderState extends State<PageRecorder> {
     // Close out and reset the log
     log.add(Entry(type: EntryType.event, description: "Code ended"));
     log = Log();
+
+    // Tell PageMain to update PageLogs
+    widget.updateLogs();
 
     // Reset the identifier field
     _tecIdentifier.text = "";
@@ -268,7 +272,7 @@ class PageRecorderState extends State<PageRecorder> {
               icon: const Icon(Icons.save_outlined),
               tooltip: 'Save Log',
               onPressed: () {
-                log.write();
+                log.save();
 
                 ScaffoldMessenger.of( context,
                   ).showSnackBar(const SnackBar(content: Text('Event log written to local storage.',

@@ -17,14 +17,14 @@ class PageSettingsState extends State<PageSettings> {
   void _setMetronomeRate (int? rate) {
     setState(() {
       widget.settings.metronomeRate = rate ?? 100;
-      widget.settings.write();
+      widget.settings.save();
     });
   }
 
   void _setMetronomeAutoRun (bool? auto) {
     setState(() {
       widget.settings.metronomeAutoRun = auto ?? false;
-      widget.settings.write();
+      widget.settings.save();
     });
   }
 

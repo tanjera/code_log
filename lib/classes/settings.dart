@@ -13,14 +13,14 @@ class Settings {
 
   Settings() {
     try {
-      read();
+      load();
     } catch (e) {
       // ...
     }
 
   }
 
-  void write() async {
+  void save() async {
     String filename = "settings.json";
     final file = await localFile(filename);
 
@@ -32,7 +32,7 @@ class Settings {
         flush: true);
   }
 
-  Future<void> read () async {
+  Future<void> load () async {
     try {
       String filename = "settings.json";
       final file = await localFile(filename);

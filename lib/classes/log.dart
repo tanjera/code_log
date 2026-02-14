@@ -12,10 +12,10 @@ class Log {
 
   void add (Entry e) async {
     entries.add(e);
-    write();
+    save();
   }
 
-  void write() async {
+  void save() async {
     created ??= DateTime.now();
     filename ??= "log_${created!.toIso8601String()}.json";
 
@@ -30,7 +30,7 @@ class Log {
         flush: true);
   }
 
-  Future<Log?> read (String filename) async {
+  Future<Log?> load (String filename) async {
     try {
       final file = await localFile(filename);
       String? input = await file.readAsString();
