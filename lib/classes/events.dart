@@ -14,6 +14,7 @@ class Events {
     Event("Time of Death Pronounced", "Time of death pronounced"),
     Event("Transferred Care", "Transferred care of patient"),
     Event("Transporting", "Transporting patient"),
+    Event("Vital Signs", "Vital signs taken"),
   ];
 
   Events () {
