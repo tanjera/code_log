@@ -16,6 +16,14 @@ class PageSettingsState extends State<PageSettings> {
   void _setMetronomeRate (int? rate) {
     setState(() {
       widget.settings.metronomeRate = rate ?? 100;
+      widget.settings.write();
+    });
+  }
+
+  void _setMetronomeAutoRun (bool? auto) {
+    setState(() {
+      widget.settings.metronomeAutoRun = auto ?? false;
+      widget.settings.write();
     });
   }
 
@@ -30,7 +38,7 @@ class PageSettingsState extends State<PageSettings> {
         physics: AlwaysScrollableScrollPhysics(),
         children: [
           ListTile(
-              title: Text("Metronome Rate"),
+              title: Text("Metronome rate"),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [DropdownButton(
@@ -47,7 +55,17 @@ class PageSettingsState extends State<PageSettings> {
                 ]
               )
           ),
+
+          ListTile(
+              title: Text("Automatically run metronome in codes?"),
+              trailing: Checkbox(
+                  value: widget.settings.metronomeAutoRun,
+                  onChanged: _setMetronomeAutoRun
+              )
+          ),
+
           Divider(),
+
           ListTile(
             title: Text("About Code Blue Log"),
             onTap: () {

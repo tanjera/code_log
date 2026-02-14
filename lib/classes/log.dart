@@ -17,7 +17,7 @@ class Log {
 
   void write() async {
     created ??= DateTime.now();
-    filename ??= "${created!.toIso8601String()}.json";
+    filename ??= "log_${created!.toIso8601String()}.json";
 
     final file = await localFile(filename ?? "");
 

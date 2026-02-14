@@ -32,6 +32,7 @@ class PageMainState extends State<PageMain> {
   void initState() {
     super.initState();
 
+    widget.settings.read();
     _settings = widget.settings;
   }
 

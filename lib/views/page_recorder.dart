@@ -73,6 +73,11 @@ class PageRecorderState extends State<PageRecorder> {
   }
   
   void endCode () {
+    // Follow metronomeAutoRun
+    if (widget.settings.metronomeAutoRun) {
+      _runMetronome = false;
+    }
+
     // Close out and reset the log
     log.add(Entry(type: EntryType.event, description: "Code ended"));
     log = Log();
@@ -130,16 +135,22 @@ class PageRecorderState extends State<PageRecorder> {
     if (_runMetronome) {
       if (_playerMetronome.audioSource == null) {
         _playerMetronome.setAudioSource(AudioSource.asset("assets/audio/click_1.wav"));
+        // Don't play the audio on the same iteration as setting the audio or there will be an init delay...
+      } else {
+        _playerMetronome.seek(Duration(seconds: 0));
+        _playerMetronome.play();
       }
-
-      _playerMetronome.seek(Duration(seconds: 0));
-      _playerMetronome.play();
       }
   }
 
   void _pressedCode() {
     if (!_swCode.isRunning) {
       _swCode.start();
+
+      if (widget.settings.metronomeAutoRun) {
+        _runMetronome = true;
+      }
+
       log.add(Entry(type: EntryType.event, description: "Code started"));
     } else {
       showDialog(

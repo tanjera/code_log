@@ -22,7 +22,7 @@ Future<List<String>> localLogs () async {
     await for (final f in dir.list(recursive: false, followLinks: false)) {
       if (f is File) {
         var name = f.path.split('/').last;
-        if (name.indexOf('.json') > 0) {
+        if (name.startsWith("log_") && name.indexOf('.json') > 0) {
           files.add(name);
         }
       }
