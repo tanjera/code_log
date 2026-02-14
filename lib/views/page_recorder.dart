@@ -37,9 +37,11 @@ class PageRecorderState extends State<PageRecorder> {
 
   final Stopwatch _swShock = Stopwatch();
   String _txtShock = "--:--";
+  int _cntShock = 0;
   
   final Stopwatch _swEpi = Stopwatch();
   String _txtEpi = "--:--";
+  int _cntEpi = 0;
 
   final TextEditingController _tecIdentifier = TextEditingController();
 
@@ -65,6 +67,10 @@ class PageRecorderState extends State<PageRecorder> {
     _txtCPR = "--:--";
     _txtShock = "--:--";
     _txtEpi = "--:--";
+
+    // Reset the counters
+    _cntShock = 0;
+    _cntEpi = 0;
 
     updateUI();
   }
@@ -115,6 +121,7 @@ class PageRecorderState extends State<PageRecorder> {
       _swShock.reset();
     }
 
+    _cntShock += 1;
     log.add(Entry(type: EntryType.shock, description: "Shock delivered"));
 
     updateUI();
@@ -131,6 +138,7 @@ class PageRecorderState extends State<PageRecorder> {
       _swEpi.reset();
     }
 
+    _cntEpi += 1;
     log.add(Entry(type: EntryType.drug, description: "Epinephrine administered"));
 
     updateUI();
@@ -143,7 +151,7 @@ class PageRecorderState extends State<PageRecorder> {
       _txtShock = formatTimer(_swShock.isRunning, _swShock.elapsedMilliseconds ~/ 1000);
       _txtEpi = formatTimer(_swEpi.isRunning, _swEpi.elapsedMilliseconds ~/ 1000);
 
-      _btnCode = !_swCode.isRunning ? "Start Code" : "Stop Code";
+      _btnCode = !_swCode.isRunning ? "Start Code" : "End Code";
       _btnCPR = !_swCPR.isRunning ? "Start CPR" : "Pause CPR";
     });
   }
@@ -266,36 +274,60 @@ class PageRecorderState extends State<PageRecorder> {
 
                   TableRow(   // Defibrillation
                     children: [
-                      Center(
-                        child: Text(_txtShock,
+                      Stack(
+                        alignment: AlignmentGeometry.center,
+                        children: [
+                          Text(_txtShock,
                             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                          Container(
+                            alignment: Alignment.centerRight,
+                              child: CircleAvatar(
+                              radius: 15,
+                              backgroundColor: Colors.red.shade100,
+                              child: Text("$_cntShock", style: TextStyle(fontSize: 14)
+                              ),
+                            )
+                          )
+                        ]
                       ),
                       Padding(padding: EdgeInsets.only(left: 5),
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: Colors.red,
-                              shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
-                          onPressed: _pressedShock,
-                          child: Text("Shock",
-                              style: TextStyle(fontSize: 24))
-                        )
+                          child: FilledButton(
+                              style: FilledButton.styleFrom(backgroundColor: Colors.red,
+                                  shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
+                              onPressed: _pressedShock,
+                              child: Text("Defibrillation",
+                                  style: TextStyle(fontSize: 24))
+                          )
                       )
                     ],
                   ),
 
                   TableRow(   // Epinephrine
                     children: [
-                      Center(
-                        child: Text(_txtEpi,
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      Stack(
+                          alignment: AlignmentGeometry.center,
+                          children: [
+                            Text(_txtEpi,
+                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                            Container(
+                                alignment: Alignment.centerRight,
+                                child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: Colors.brown.shade100,
+                                  child: Text("$_cntEpi", style: TextStyle(fontSize: 14)
+                                  ),
+                                )
+                            )
+                          ]
                       ),
                       Padding(padding: EdgeInsets.only(left: 5),
-                        child: FilledButton(
-                          style: FilledButton.styleFrom(backgroundColor: Colors.brown.shade400,
-                              shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
-                          onPressed: pressedEpi,
-                          child: Text("Epinephrine",
-                              style: TextStyle(fontSize: 24))
-                        )
+                          child: FilledButton(
+                              style: FilledButton.styleFrom(backgroundColor: Colors.brown.shade400,
+                                  shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
+                              onPressed: pressedEpi,
+                              child: Text("Epinephrine",
+                                  style: TextStyle(fontSize: 24))
+                          )
                       )
                     ],
                   ),
