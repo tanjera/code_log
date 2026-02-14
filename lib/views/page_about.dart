@@ -13,7 +13,8 @@ class PageAboutState extends State<PageAbout> {
 
   final String _aboutText = "Designed for paramedical, medical, and nursing professionals, "
       "to assist with timekeeping and informally recording events during resuscitation "
-      "(code blue) events. \n\nDisclaimer: This app is not intended to function as an electronic "
+      "(code blue) events. \n\nDisclaimer: To comply with the Google Play policies, "
+      "this app is not intended to function as an electronic "
       "health record, as an educational resource, as a clinical reference or guideline, or as a "
       "replacement for clinically validated and tested tooling. It is primarily designed to be a "
       "timekeeping aid and informal note-taking application.\n\nPlease follow your regional and "

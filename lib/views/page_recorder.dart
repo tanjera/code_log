@@ -29,22 +29,27 @@ class PageRecorderState extends State<PageRecorder> {
 
   final Stopwatch _swCode = Stopwatch();
   String _btnCode = "Start Code";
-  String _txtCode = "";
+  String _txtCode = "--:--";
 
   final Stopwatch _swCPR = Stopwatch();
   String _btnCPR = "Start CPR";
-  String _txtCPR = "";
+  String _txtCPR = "--:--";
 
   final Stopwatch _swShock = Stopwatch();
-  String _txtShock = "";
+  String _txtShock = "--:--";
   
   final Stopwatch _swEpi = Stopwatch();
-  String _txtEpi = "";
+  String _txtEpi = "--:--";
+
+  final TextEditingController _tecIdentifier = TextEditingController();
 
   void endCode () {
     // Close out and reset the log
     log.add(Entry(type: EntryType.event, description: "Code ended"));
     log = Log();
+
+    // Reset the identifier field
+    _tecIdentifier.text = "";
 
     // Reset the stopwatches
     _swCode.stop();
@@ -202,6 +207,7 @@ class PageRecorderState extends State<PageRecorder> {
           mainAxisAlignment: .start,
           children: [
             TextField(
+              controller: _tecIdentifier,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                 border: InputBorder.none,
