@@ -4,8 +4,6 @@ import 'page_recorder.dart';
 import '../classes/log.entry.dart';
 import '../classes/rhythms.dart';
 
-
-
 class PageRhythms extends StatelessWidget {
   final PageRecorderState _prs;
   final Rhythms _rhythms = Rhythms();

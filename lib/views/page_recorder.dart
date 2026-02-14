@@ -11,14 +11,16 @@ import 'page_events.dart';
 import 'page_procedures.dart';
 import 'page_rhythms.dart';
 
+import '../classes/settings.dart';
 import '../classes/log.dart';
 import '../classes/log.entry.dart';
 import '../classes/utility.dart';
 
 class PageRecorder extends StatefulWidget {
-  const PageRecorder({super.key, required this.title});
-
+  final Settings settings;
   final String title;
+
+  const PageRecorder({super.key, required this.title, required this.settings});
 
   @override
   State<PageRecorder> createState() => PageRecorderState();
@@ -33,6 +35,7 @@ class PageRecorderState extends State<PageRecorder> {
   late Timer _timerMetronome;
   late AudioSource? _audioMetronome;
   bool _runMetronome = false;
+  late int _runMetronomeRate;
 
   final Stopwatch _swCode = Stopwatch();
   String _btnCode = "Start Code";
@@ -60,8 +63,10 @@ class PageRecorderState extends State<PageRecorder> {
       updateUI();
     });
 
-    double dblRate = (60000 / 110);
+    _runMetronomeRate = widget.settings.metronomeRate;
+    double dblRate = (60000 / _runMetronomeRate);
     int intRate = dblRate.toInt();
+
     _timerMetronome = Timer.periodic(Duration(milliseconds: intRate), (_) {
       _playMetronome();
     });
@@ -103,7 +108,25 @@ class PageRecorderState extends State<PageRecorder> {
     updateUI();
   }
 
+  Future<void> _setMetronome(int rate) async {
+    _runMetronomeRate = rate;
+    double dblRate = (60000 / _runMetronomeRate);
+    int intRate = dblRate.toInt();
+
+    if (_timerMetronome.isActive) {
+      _timerMetronome.cancel();
+    }
+
+    _timerMetronome = Timer.periodic(Duration(milliseconds: intRate), (_) {
+      _playMetronome();
+    });
+  }
+
   void _playMetronome() async {
+    if (_runMetronomeRate != widget.settings.metronomeRate) {
+      _setMetronome(widget.settings.metronomeRate);
+    }
+
     if (_runMetronome) {
       if (_playerMetronome.audioSource == null) {
         _playerMetronome.setAudioSource(AudioSource.asset("assets/audio/click_1.wav"));

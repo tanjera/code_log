@@ -19,7 +19,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.blue),
       ),
-      home: const PageMain(title: appTitle),
+      home: PageMain(title: appTitle),
     );
   }
 }

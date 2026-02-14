@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:codebluelog/classes/settings.dart';
 import 'package:flutter/material.dart';
 
 import 'page_logs.dart';
@@ -8,22 +9,31 @@ import 'page_settings.dart';
 import '../main.dart';
 
 class PageMain extends StatefulWidget {
-  const PageMain({super.key, required this.title});
+  PageMain({super.key, required this.title});
 
   final String title;
+  final Settings settings = Settings();
 
   @override
   State<PageMain> createState() => PageMainState();
 }
 
 class PageMainState extends State<PageMain> {
+  late Settings _settings;
   int _selectedIndex = 0;
 
-  static final List<Widget> _widgetOptions = <Widget>[
-    PageRecorder(title: appTitle),
+  late final List<Widget> _widgetOptions = <Widget>[
+    PageRecorder(title: appTitle, settings: _settings),
     PageLogs(),
-    PageSettings(),
+    PageSettings(settings: _settings),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _settings = widget.settings;
+  }
 
   void _onItemTapped(int index) {
     setState(() {
