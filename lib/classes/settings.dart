@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'utility.dart';
 
@@ -43,7 +42,7 @@ class Settings {
       String? input = await file.readAsString();
 
       if (input.isEmpty) {
-        return null;
+        return;
       }
 
       var dAll = json.decode(input);

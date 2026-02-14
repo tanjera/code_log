@@ -36,8 +36,6 @@ Future<void> deleteAllLogs () async {
   final path = await localPath;
   final dir = Directory(path);
 
-  List<String> files = [];
-
   if (await dir.exists()) {
     await for (final f in dir.list(recursive: false, followLinks: false)) {
       if (f is File) {
