@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../classes/log.dart';
 import '../classes/utility.dart';
 
+import 'dialog_delete_logs.dart';
 import 'page_log.dart';
 
 class PageLogs extends StatefulWidget {
@@ -17,6 +18,25 @@ class PageLogsState extends State<PageLogs> {
   List<Log> _logs = [];
 
   PageLogsState() {
+    refreshPage();
+  }
+
+  void _confirmDeleteLogs() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogDeleteLogs(this);
+      },
+    );
+  }
+
+  void pressedDeleteLogs() async {
+    deleteAllLogs();
+
+    ScaffoldMessenger.of( context,
+    ).showSnackBar(SnackBar(content: Text("Logs deleted",
+      textAlign: TextAlign.center,)));
+
     refreshPage();
   }
 
@@ -43,6 +63,14 @@ class PageLogsState extends State<PageLogs> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text("Logs"),
+            actions:
+            <Widget> [
+              IconButton(
+                icon: Icon(Icons.delete_forever_outlined),
+                tooltip: 'Delete Logs',
+                onPressed: _confirmDeleteLogs
+                )
+            ]
         ),
         body: RefreshIndicator(
           onRefresh: refreshPage,

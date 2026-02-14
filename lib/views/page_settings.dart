@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../classes/settings.dart';
@@ -25,6 +26,10 @@ class PageSettingsState extends State<PageSettings> {
       widget.settings.metronomeAutoRun = auto ?? false;
       widget.settings.write();
     });
+  }
+
+  Future<void> refreshPage() async {
+    setState(() {});
   }
 
   @override

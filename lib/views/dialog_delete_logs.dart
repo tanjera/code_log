@@ -1,18 +1,18 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 
-import 'page_recorder.dart';
+import 'page_logs.dart';
 
-class DialogEndCode extends StatelessWidget {
-  final PageRecorderState _prs;
+class DialogDeleteLogs extends StatelessWidget {
+  final PageLogsState _pls;
 
-  const DialogEndCode(this._prs, {super.key});
+  const DialogDeleteLogs(this._pls, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('End Code?'),
-      content: const Text("Are you sure you want to end the code and reset the recorder?"
+      title: const Text('Delete Logs?'),
+      content: const Text("Are you sure you want to delete all stored logs?"
       ),
       actions: <Widget>[
         TextButton(
@@ -31,10 +31,10 @@ class DialogEndCode extends StatelessWidget {
               .of(context)
               .textTheme
               .labelLarge),
-          child: const Text('End Code',
+          child: const Text('Delete Logs',
               style: TextStyle(fontSize: 24, color: Colors.red)),
-          onPressed: () {
-            _prs.endCode();
+          onPressed: () async {
+            _pls.pressedDeleteLogs();
             Navigator.of(context).pop();
           },
         ),
