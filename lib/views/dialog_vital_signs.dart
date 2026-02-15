@@ -43,9 +43,9 @@ class DialogVitalSigns extends StatelessWidget {
               ),
               onChanged: (v) {
                 if (v.isNotEmpty) {
-                  _vs.dbp = int.parse(v);
+                  _vs.sbp = int.parse(v);
                 }
-                },
+              },
           ),
 
           TextField(

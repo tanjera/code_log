@@ -306,8 +306,12 @@ class PageRecorderState extends State<PageRecorder> {
                   TableRow(   // Overall code time
                     children: [
                       Center(
-                        child: Text(_txtCode,
-                            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(_txtCode,
+                            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)
+                          )
+                        )
                       ),
                     Padding(padding: EdgeInsets.only(left: 5),
                       child: FilledButton(
@@ -315,8 +319,11 @@ class PageRecorderState extends State<PageRecorder> {
                             backgroundColor: Colors.blue,
                             shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
                         onPressed: _pressedCode,
-                        child: Text(_btnCode,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(_btnCode,
                             style: TextStyle(fontSize: 24)),
+                        )
                         )
                       )
                     ],
@@ -325,8 +332,12 @@ class PageRecorderState extends State<PageRecorder> {
                   TableRow(   // CPR
                     children: [
                       Center(
-                        child: Text(_txtCPR,
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(_txtCPR,
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)
+                          )
+                        )
                       ),
                       Padding(padding: EdgeInsets.only(left: 5),
                         child: FilledButton(
@@ -334,8 +345,11 @@ class PageRecorderState extends State<PageRecorder> {
                               backgroundColor: Colors.green,
                               shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
                           onPressed: _pressedCPR,
-                          child: Text(_btnCPR,
-                              style: TextStyle(fontSize: 24))
+                          child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(_btnCPR,
+                                style: TextStyle(fontSize: 24))
+                          )
                         )
                       )
                     ],
@@ -346,8 +360,12 @@ class PageRecorderState extends State<PageRecorder> {
                       Stack(
                         alignment: AlignmentGeometry.center,
                         children: [
-                          Text(_txtShock,
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                          FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(_txtShock,
+                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)
+                              )
+                          ),
                           Container(
                             alignment: Alignment.centerRight,
                               child: CircleAvatar(
@@ -364,8 +382,11 @@ class PageRecorderState extends State<PageRecorder> {
                               style: FilledButton.styleFrom(backgroundColor: Colors.red,
                                   shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
                               onPressed: _pressedShock,
-                              child: Text("Defibrillation",
-                                  style: TextStyle(fontSize: 24))
+                              child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text("Defibrillation",
+                                    style: TextStyle(fontSize: 24))
+                              )
                           )
                       )
                     ],
@@ -376,8 +397,12 @@ class PageRecorderState extends State<PageRecorder> {
                       Stack(
                           alignment: AlignmentGeometry.center,
                           children: [
-                            Text(_txtEpi,
-                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                            FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(_txtEpi,
+                                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)
+                                )
+                            ),
                             Container(
                                 alignment: Alignment.centerRight,
                                 child: CircleAvatar(
@@ -394,8 +419,11 @@ class PageRecorderState extends State<PageRecorder> {
                               style: FilledButton.styleFrom(backgroundColor: Colors.brown.shade400,
                                   shape: RoundedRectangleBorder( borderRadius: BorderRadiusGeometry.circular(5))),
                               onPressed: pressedEpi,
-                              child: Text("Epinephrine",
-                                  style: TextStyle(fontSize: 24))
+                              child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text("Epinephrine",
+                                    style: TextStyle(fontSize: 24))
+                              )
                           )
                       )
                     ],
@@ -415,8 +443,11 @@ class PageRecorderState extends State<PageRecorder> {
                                 )
                             );
                           },
-                          child: Text("Drugs",
-                              style: TextStyle(fontSize: 24))
+                          child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text("Drugs",
+                                style: TextStyle(fontSize: 24))
+                          )
                         )
                       ),
                       Padding(padding: EdgeInsets.only(left: 5),
@@ -431,8 +462,11 @@ class PageRecorderState extends State<PageRecorder> {
                                     )
                                 );
                               },
-                              child: Text("Rhythms",
-                                  style: TextStyle(fontSize: 24))
+                              child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text("Rhythms",
+                                    style: TextStyle(fontSize: 24))
+                              )
                           )
                       ),
                     ],
@@ -452,8 +486,11 @@ class PageRecorderState extends State<PageRecorder> {
                                 )
                             );
                           },
-                          child: Text("Procedures",
-                              style: TextStyle(fontSize: 24))
+                          child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text("Procedures",
+                                style: TextStyle(fontSize: 24))
+                          )
                         )
                       ),
                       Padding(padding: EdgeInsets.only(left: 5),
@@ -468,8 +505,11 @@ class PageRecorderState extends State<PageRecorder> {
                                 )
                             );
                           },
-                          child: Text("Events",
-                              style: TextStyle(fontSize: 24))
+                          child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text("Events",
+                                style: TextStyle(fontSize: 24))
+                          )
                         )
                       ),
                     ],
@@ -484,7 +524,8 @@ class PageRecorderState extends State<PageRecorder> {
             ),
 
             Text("Event Log",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+            ),
 
             Expanded(
               child: SingleChildScrollView(

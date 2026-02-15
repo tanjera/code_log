@@ -37,7 +37,7 @@ class PageEvents extends StatelessWidget {
         desc += "• Heart rate (HR): ${vs.hr}\n";
       }
       if (vs.sbp != null || vs.dbp != null) {
-        desc += "• Blood pressure (BP: ${vs.sbp} / ${vs.dbp ?? 0}\n";
+        desc += "• Blood pressure (BP): ${vs.sbp} / ${vs.dbp ?? 0}\n";
       }
       if (vs.rr != null) {
         desc += "• Respiratory rate (RR): ${vs.rr}\n";

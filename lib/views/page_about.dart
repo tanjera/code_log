@@ -59,11 +59,24 @@ class PageAboutState extends State<PageAbout> {
                     mainAxisAlignment: .center,
                     crossAxisAlignment: .start,
                     children: [
-                      Text("Code Blue Log",
-                          style: TextStyle(fontSize: 24)),
-                      Text("(c) 2026"),
-                      Text("Ibi Keller, MSN, RN, CCRN, CEN, CNE"),
-                      Text("Version: $_version"),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text("Code Blue Log",
+                              style: TextStyle(fontSize: 24)
+                        )
+                      ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text("(c) 2026")
+                      ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text("Ibi Keller, MSN, RN, CCRN, CEN, CNE")
+                      ),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text("Version: $_version")
+                      )
                     ],
                   )
                 )
