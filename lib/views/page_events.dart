@@ -99,31 +99,33 @@ class PageEvents extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Events"),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          mainAxisAlignment: .start,
-          children: _events.list.map((e) =>
-            ListTile(
-              title: Text(e.name),
-              trailing: e.color != null ? CircleAvatar(backgroundColor: e.color) : null,
-              onTap: () {
-                if (e.name == "Other (Free Text)") {
-                  getFreeText(context);
-                } else if (e.name == "Vital Signs") {
-                  getVitals(context);
-                } else {
-                  _prs.log.add(Entry(
-                      type: EntryType.event,
-                      description: e.description));
-                  _prs.updateUI();
-                  Navigator.pop(context);
-                }
-              },
+      body: SafeArea(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              mainAxisAlignment: .start,
+              children: _events.list.map((e) =>
+                ListTile(
+                  title: Text(e.name),
+                  trailing: e.color != null ? CircleAvatar(backgroundColor: e.color) : null,
+                  onTap: () {
+                    if (e.name == "Other (Free Text)") {
+                      getFreeText(context);
+                    } else if (e.name == "Vital Signs") {
+                      getVitals(context);
+                    } else {
+                      _prs.log.add(Entry(
+                          type: EntryType.event,
+                          description: e.description));
+                      _prs.updateUI();
+                      Navigator.pop(context);
+                    }
+                  },
+                )
+            ).toList(),
             )
-        ).toList(),
         )
-    )
+      )
     );
   }
 }

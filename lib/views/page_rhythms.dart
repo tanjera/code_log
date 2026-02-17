@@ -17,23 +17,25 @@ class PageRhythms extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Cardiac Rhythms"),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          mainAxisAlignment: .start,
-          children: _rhythms.list.map((r) =>
-            ListTile(
-              title: Text(r.name),
-              trailing: r.color != null ? CircleAvatar(backgroundColor: r.color) : null,
-              onTap: () {
-                _prs.log.add(Entry(
-                    type: EntryType.rhythm,
-                    description: "Cardiac rhythm: ${r.name}"));
-                _prs.updateUI();
-                Navigator.pop(context);
-              },
-            )
-          ).toList(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            mainAxisAlignment: .start,
+            children: _rhythms.list.map((r) =>
+              ListTile(
+                title: Text(r.name),
+                trailing: r.color != null ? CircleAvatar(backgroundColor: r.color) : null,
+                onTap: () {
+                  _prs.log.add(Entry(
+                      type: EntryType.rhythm,
+                      description: "Cardiac rhythm: ${r.name}"));
+                  _prs.updateUI();
+                  Navigator.pop(context);
+                },
+              )
+            ).toList(),
+          )
         )
       )
     );
