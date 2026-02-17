@@ -40,7 +40,8 @@ Future<void> deleteAllLogs () async {
     await for (final f in dir.list(recursive: false, followLinks: false)) {
       if (f is File) {
         var name = f.path.split('/').last;
-        if (name.startsWith("log_") && name.indexOf('.json') > 0) {
+        if ((name.startsWith("log_") && name.indexOf('.json') > 0)
+          || (name.startsWith("log_") && name.indexOf('.pdf') > 0)) {
           f.delete();
         }
       }

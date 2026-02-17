@@ -41,19 +41,19 @@ class PageEvents extends StatelessWidget {
       String desc = "Vital signs:\n";
 
       if (vs.hr != null) {
-        desc += "• Heart rate (HR): ${vs.hr}\n";
+        desc += "- Heart rate (HR): ${vs.hr}\n";
       }
       if (vs.sbp != null || vs.dbp != null) {
-        desc += "• Blood pressure (BP): ${vs.sbp} / ${vs.dbp ?? 0}\n";
+        desc += "- Blood pressure (BP): ${vs.sbp} / ${vs.dbp ?? 0}\n";
       }
       if (vs.rr != null) {
-        desc += "• Respiratory rate (RR): ${vs.rr}\n";
+        desc += "- Respiratory rate (RR): ${vs.rr}\n";
       }
       if (vs.spo2 != null) {
-        desc += "• Pulse oximetry (SpO2): ${vs.spo2}\n";
+        desc += "- Pulse oximetry (SpO2): ${vs.spo2}\n";
       }
       if (vs.t != null) {
-        desc += "• Temperature (T): ${vs.t!.toStringAsFixed(1)}";
+        desc += "- Temperature (T): ${vs.t!.toStringAsFixed(1)}";
       }
 
       if (vs.hr != null || vs.sbp != null || vs.dbp != null || vs.rr != null

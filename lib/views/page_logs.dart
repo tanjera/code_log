@@ -60,14 +60,13 @@ class PageLogsState extends State<PageLogs> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text("Logs"),
-            actions:
-            <Widget> [
-              IconButton(
-                icon: Icon(Icons.delete_forever_outlined),
-                tooltip: 'Delete Logs',
-                onPressed: _confirmDeleteLogs
-                )
-            ]
+          actions: <Widget> [
+            IconButton(
+              icon: Icon(Icons.delete_forever_outlined),
+              tooltip: 'Delete Logs',
+              onPressed: _confirmDeleteLogs
+              )
+          ]
         ),
         body: RefreshIndicator(
           onRefresh: refreshPage,
