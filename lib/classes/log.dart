@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:pdf/pdf.dart';
@@ -73,8 +76,11 @@ class Log {
     }
   }
 
-  Future<void> pdf () async {
+  Future<File> pdf () async {
       final doc = pw.Document();
+
+      final logo = await rootBundle.load('assets/icon/icon_128.png');
+      final logoBytes = logo.buffer.asUint8List();
 
       doc.addPage(pw.MultiPage(
           orientation: pw.PageOrientation.portrait,
@@ -88,11 +94,22 @@ class Log {
                   decoration: const pw.BoxDecoration(
                       border: pw.Border(
                           bottom: pw.BorderSide(width: 0.5, color: PdfColors.black))),
-                  child: pw.Text("${DateFormat.yMMMMd().format(created ?? DateTime.now())}, ${DateFormat.Hm().format(created ?? DateTime.now())}${identifier == null ? "" : ": $identifier"}",
-                      textScaleFactor: 1.25,
-                      style: pw.Theme.of(context)
-                          .defaultTextStyle
-                          .copyWith(color: PdfColors.black)),
+                  child: pw.Row(
+                      mainAxisSize: .max,
+                      mainAxisAlignment: .spaceBetween,
+                      children: [
+                        pw.Container(
+                            height: 24,
+                            width: 24,
+                            child: pw.Image(pw.MemoryImage(logoBytes))
+                        ),
+                        pw.Text("${DateFormat.yMMMMd().format(created ?? DateTime.now())}, ${DateFormat.Hm().format(created ?? DateTime.now())}${identifier == null ? "" : ": $identifier"}",
+                          textScaleFactor: 1.25,
+                          style: pw.Theme.of(context)
+                              .defaultTextStyle
+                              .copyWith(color: PdfColors.black)),
+                    ]
+                  )
               );
           },
           footer: (pw.Context context) {
@@ -108,10 +125,10 @@ class Log {
                     mainAxisAlignment: .spaceBetween,
                     children: [
                       pw.Text('Event Log',
-                      textScaleFactor: 1.25,
-                      style: pw.Theme.of(context)
-                          .defaultTextStyle
-                          .copyWith(color: PdfColors.black)),
+                          textScaleFactor: 1.25,
+                          style: pw.Theme.of(context)
+                              .defaultTextStyle
+                              .copyWith(color: PdfColors.black)),
                       pw.Text(
                           'Page ${context.pageNumber} of ${context.pagesCount}',
                           style: pw.Theme.of(context)
@@ -146,6 +163,8 @@ class Log {
       filename ??= "log_${created!.toIso8601String()}.pdf";
 
       final file = await localFile(filename ?? "");
-      file.writeAsBytes(await doc.save());
+      await file.writeAsBytes(await doc.save());
+
+      return file;
   }
 }

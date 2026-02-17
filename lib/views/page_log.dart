@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:share_plus/share_plus.dart';
+
 import '../classes/log.dart';
 
 class PageLog extends StatefulWidget {
@@ -13,6 +15,30 @@ class PageLog extends StatefulWidget {
 }
 
 class PageLogState extends State<PageLog> {
+
+  Future<void> _sharePDF () async {
+    final file = await widget.log.pdf();
+
+    final String desc = "${DateFormat.yMMMMd().format(widget.log.created ?? DateTime.now())}, ${DateFormat.Hm().format(widget.log.created ?? DateTime.now())}"
+        "${widget.log.identifier == null ? "" : ": ${widget.log.identifier}"}";
+
+    XFile xf = XFile(file.path,
+      mimeType: "application/pdf");
+
+    try {
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [xf],
+          text: desc,
+          subject: desc,
+          downloadFallbackEnabled: true,
+        ),
+      );
+    } catch (e) {
+      // ...
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +49,7 @@ class PageLogState extends State<PageLog> {
             IconButton(
                 icon: Icon(Icons.share_outlined),
                 tooltip: 'Delete Logs',
-                onPressed: widget.log.pdf
+                onPressed: _sharePDF
             )
           ]
         ),
