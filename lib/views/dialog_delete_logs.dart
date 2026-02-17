@@ -20,8 +20,7 @@ class DialogDeleteLogs extends StatelessWidget {
               .of(context)
               .textTheme
               .labelLarge),
-          child: const Text('Cancel',
-              style: TextStyle(fontSize: 24)),
+          child: const Text('Cancel'),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -32,7 +31,7 @@ class DialogDeleteLogs extends StatelessWidget {
               .textTheme
               .labelLarge),
           child: const Text('Delete Logs',
-              style: TextStyle(fontSize: 24, color: Colors.red)),
+              style: TextStyle(color: Colors.red)),
           onPressed: () async {
             _pls.pressedDeleteLogs();
             Navigator.of(context).pop();

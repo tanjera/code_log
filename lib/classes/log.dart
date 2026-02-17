@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'log.entry.dart';
 import 'utility.dart';
@@ -10,9 +11,18 @@ class Log {
 
   List<Entry> entries = [];
 
+  VoidCallback? scroll;
+
   void add (Entry e) async {
     entries.add(e);
     save();
+
+    if (scroll != null) {
+      // Need to asynchronously wait for the TableRow to be populated in the Event Log
+      // View before actually trying to scroll to it!
+      await Future.delayed(const Duration(milliseconds: 500));
+      scroll?.call();
+    }
   }
 
   void save() async {

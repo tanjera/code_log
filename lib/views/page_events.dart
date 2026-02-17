@@ -1,9 +1,16 @@
+import 'package:codebluelog/views/dialog_event_free_text.dart';
 import 'package:flutter/material.dart';
 
-import 'dialog_vital_signs.dart';
+import 'dialog_event_vital_signs.dart';
 import 'page_recorder.dart';
 import '../classes/log.entry.dart';
 import '../classes/events.dart';
+
+class Note {
+  String? text;
+
+  Note();
+}
 
 class VitalSigns {
   int? hr;
@@ -26,7 +33,7 @@ class PageEvents extends StatelessWidget {
     final vs = await showDialog<VitalSigns>(
       context: context,
       builder: (BuildContext context) {
-        return DialogVitalSigns();
+        return DialogEventVitalSigns();
       },
     );
 
@@ -63,6 +70,28 @@ class PageEvents extends StatelessWidget {
     }
   }
 
+  Future<void> getFreeText(BuildContext context) async {
+    final note = await showDialog<Note>(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogEventFreeText();
+      },
+    );
+
+    if (note != null && note.text != null) {
+      String desc = "Free text note: ${note.text}";
+
+      _prs.log.add(Entry(
+          type: EntryType.event,
+          description: desc.trim()
+      ));
+    }
+
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,8 +106,11 @@ class PageEvents extends StatelessWidget {
           children: _events.list.map((e) =>
             ListTile(
               title: Text(e.name),
+              trailing: e.color != null ? CircleAvatar(backgroundColor: e.color) : null,
               onTap: () {
-                if (e.name == "Vital Signs") {
+                if (e.name == "Other (Free Text)") {
+                  getFreeText(context);
+                } else if (e.name == "Vital Signs") {
                   getVitals(context);
                 } else {
                   _prs.log.add(Entry(

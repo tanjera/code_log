@@ -6,8 +6,7 @@ enum EntryType {
   event,
   shock,
   rhythm,
-  procedure,
-
+  procedure
 }
 
 class Entry {

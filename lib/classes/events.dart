@@ -1,20 +1,23 @@
+import 'package:flutter/material.dart';
+
 import '../models/event.dart';
 
 class Events {
   List<Event> list = [
-    Event("Assumed Care", "Assumed care of patient"),
-    Event("Dispatch Received", "Dispatch received"),
-    Event("Dispatch Acknowledged", "Dispatch acknowledged"),
-    Event("En Route", "En route"),
-    Event("Medical Consult", "Medical consult placed"),
-    Event("On Scene", "Arrived on scene"),
-    Event("On Site", "Arrived on site"),
-    Event("Return of Spontaneous Circulation (ROSC)", "Achieved return of spontaneous circulation (ROSC)"),
-    Event("Seizures", "Seizure activity noted"),
-    Event("Time of Death Pronounced", "Time of death pronounced"),
-    Event("Transferred Care", "Transferred care of patient"),
-    Event("Transporting", "Transporting patient"),
-    Event("Vital Signs", "Vital signs taken"),
+    Event("Assumed Care", "Assumed care of patient", null),
+    Event("Dispatch Received", "Dispatch received", null),
+    Event("Dispatch Acknowledged", "Dispatch acknowledged", null),
+    Event("En Route", "En route", null),
+    Event("Medical Consult", "Medical consult placed", null),
+    Event("On Scene", "Arrived on scene", null),
+    Event("On Site", "Arrived on site", null),
+    Event("Other (Free Text)", "Other event", Colors.green),
+    Event("Return of Spontaneous Circulation (ROSC)", "Achieved return of spontaneous circulation (ROSC)", null),
+    Event("Seizures", "Seizure activity noted", null),
+    Event("Time of Death Pronounced", "Time of death pronounced", null),
+    Event("Transferred Care", "Transferred care of patient", null),
+    Event("Transporting", "Transporting patient", null),
+    Event("Vital Signs", "Vital signs taken", Colors.green),
   ];
 
   Events () {

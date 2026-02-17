@@ -28,6 +28,13 @@ class PageSettingsState extends State<PageSettings> {
     });
   }
 
+  void _setEventLogCompact (bool? compact) {
+    setState(() {
+      widget.settings.eventLogCompact = compact ?? false;
+      widget.settings.save();
+    });
+  }
+
   Future<void> refreshPage() async {
     setState(() {});
   }
@@ -66,6 +73,14 @@ class PageSettingsState extends State<PageSettings> {
               trailing: Checkbox(
                   value: widget.settings.metronomeAutoRun,
                   onChanged: _setMetronomeAutoRun
+              )
+          ),
+
+          ListTile(
+              title: Text("Compact event log text?"),
+              trailing: Checkbox(
+                  value: widget.settings.eventLogCompact,
+                  onChanged: _setEventLogCompact
               )
           ),
 

@@ -5,6 +5,7 @@ import 'utility.dart';
 class Settings {
   int metronomeRate = 100;
   bool metronomeAutoRun = false;
+  bool eventLogCompact = false;
 
   final List<int> metronomeOptions = [
     100, 110, 120
@@ -27,6 +28,7 @@ class Settings {
         JsonEncoder.withIndent("  ").convert({
           "metronomeRate": metronomeRate,
           "metronomeAutoRun": metronomeAutoRun,
+          "eventLogCompact": eventLogCompact,
         }),
         flush: true);
   }
@@ -48,6 +50,7 @@ class Settings {
       var dAll = json.decode(input);
       metronomeRate = dAll["metronomeRate"] ?? metronomeRate;
       metronomeAutoRun = dAll["metronomeAutoRun"] ?? metronomeAutoRun;
+      eventLogCompact = dAll["eventLogCompact"] ?? eventLogCompact;
 
     } catch (e) {
       return;

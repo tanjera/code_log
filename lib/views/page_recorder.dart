@@ -43,6 +43,7 @@ class PageRecorderState extends State<PageRecorder> {
   final Stopwatch _swCPR = Stopwatch();
   String _btnCPR = "Start CPR";
   String _txtCPR = "--:--";
+  int _cntCPR = 0;
 
   final Stopwatch _swShock = Stopwatch();
   String _txtShock = "--:--";
@@ -53,7 +54,8 @@ class PageRecorderState extends State<PageRecorder> {
   int _cntEpi = 0;
 
   final TextEditingController _tecIdentifier = TextEditingController();
-
+  final ScrollController _scEventLog = ScrollController();
+  
   @override
   void initState() {
     super.initState();
@@ -69,6 +71,8 @@ class PageRecorderState extends State<PageRecorder> {
     _timerMetronome = Timer.periodic(Duration(milliseconds: intRate), (_) {
       _playMetronome();
     });
+
+    log.scroll = scrollEventLog;
   }
   
   void endCode () {
@@ -79,7 +83,9 @@ class PageRecorderState extends State<PageRecorder> {
 
     // Close out and reset the log
     log.add(Entry(type: EntryType.event, description: "Code ended"));
+
     log = Log();
+    log.scroll = scrollEventLog;
 
     // Tell PageMain to update PageLogs
     widget.updateLogs();
@@ -103,6 +109,7 @@ class PageRecorderState extends State<PageRecorder> {
     _txtEpi = "--:--";
 
     // Reset the counters
+    _cntCPR = 0;
     _cntShock = 0;
     _cntEpi = 0;
 
@@ -173,13 +180,14 @@ class PageRecorderState extends State<PageRecorder> {
 
     if (!_swCPR.isRunning) {
       _swCPR.start();
+      _cntCPR += 1;
 
-      log.add(Entry(type: EntryType.cpr, description: "CPR started"));
+      log.add(Entry(type: EntryType.cpr, description: "CPR started (cycle #$_cntCPR)"));
     } else {
       _swCPR.stop();
       _swCPR.reset();
 
-      log.add(Entry(type: EntryType.cpr, description: "CPR paused"));
+      log.add(Entry(type: EntryType.cpr, description: "CPR paused (cycle #$_cntCPR)"));
     }
 
     updateUI();
@@ -197,7 +205,7 @@ class PageRecorderState extends State<PageRecorder> {
     }
 
     _cntShock += 1;
-    log.add(Entry(type: EntryType.shock, description: "Shock delivered"));
+    log.add(Entry(type: EntryType.shock, description: "Defibrillation delivered (#$_cntShock)"));
 
     updateUI();
   }
@@ -214,7 +222,7 @@ class PageRecorderState extends State<PageRecorder> {
     }
 
     _cntEpi += 1;
-    log.add(Entry(type: EntryType.drug, description: "Epinephrine administered"));
+    log.add(Entry(type: EntryType.drug, description: "Epinephrine administered (dose #$_cntEpi)"));
 
     updateUI();
   }
@@ -231,10 +239,24 @@ class PageRecorderState extends State<PageRecorder> {
     });
   }
 
+  void scrollEventLog() async {
+    setState(() {
+      _scEventLog.animateTo(
+        _scEventLog.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.linear,
+      );
+    });
+  }
+
   @override
   void dispose() {
     _timerUI.cancel();
     _timerMetronome.cancel();
+
+    _tecIdentifier.dispose();
+    _scEventLog.dispose();
+
     super.dispose();
   }
 
@@ -331,13 +353,25 @@ class PageRecorderState extends State<PageRecorder> {
 
                   TableRow(   // CPR
                     children: [
-                      Center(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(_txtCPR,
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)
-                          )
-                        )
+                      Stack(
+                          alignment: AlignmentGeometry.center,
+                          children: [
+                            FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(_txtCPR,
+                                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)
+                                )
+                            ),
+                            Container(
+                                alignment: Alignment.centerRight,
+                                child: CircleAvatar(
+                                  radius: 15,
+                                  backgroundColor: Colors.green.shade100,
+                                  child: Text("$_cntCPR", style: TextStyle(fontSize: 14)
+                                  ),
+                                )
+                            )
+                          ]
                       ),
                       Padding(padding: EdgeInsets.only(left: 5),
                         child: FilledButton(
@@ -523,13 +557,17 @@ class PageRecorderState extends State<PageRecorder> {
               child: Divider(height: 1.0)
             ),
 
-            Text("Event Log",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+            Padding(
+              padding: EdgeInsets.only(bottom: 5),
+              child:Text("Event Log",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+                ),
             ),
 
             Expanded(
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
+                controller: _scEventLog,
                 child:
                   Table(
                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
@@ -541,11 +579,15 @@ class PageRecorderState extends State<PageRecorder> {
                       TableRow(
                         children: [
                           Padding(
-                            padding: EdgeInsets.all(10),
+                            padding: widget.settings.eventLogCompact
+                                ? EdgeInsets.all(2)
+                                : EdgeInsets.all(8),
                             child: Text(item['occurred'])
                           ),
                           Padding(
-                              padding: EdgeInsets.all(10),
+                              padding: widget.settings.eventLogCompact
+                                  ? EdgeInsets.all(2)
+                                  : EdgeInsets.all(8),
                               child: Text(item['description']),
                           )
                         ]

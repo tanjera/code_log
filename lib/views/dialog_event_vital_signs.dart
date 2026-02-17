@@ -4,15 +4,16 @@ import 'package:flutter/services.dart';
 
 import 'page_events.dart';
 
-class DialogVitalSigns extends StatelessWidget {
+class DialogEventVitalSigns extends StatelessWidget {
   final VitalSigns _vs = VitalSigns();
 
-  DialogVitalSigns({super.key});
+  DialogEventVitalSigns({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Vital Signs'),
+      scrollable: true,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -22,6 +23,7 @@ class DialogVitalSigns extends StatelessWidget {
               FilteringTextInputFormatter.digitsOnly
             ],
             decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               border: OutlineInputBorder(),
               hintText: 'Heart Rate',
             ),
@@ -32,20 +34,49 @@ class DialogVitalSigns extends StatelessWidget {
             },
           ),
 
-          TextField(
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Systolic Blood Pressure',
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    border: OutlineInputBorder(),
+                    hintText: 'Systolic Blood Pressure',
+                  ),
+                  onChanged: (v) {
+                    if (v.isNotEmpty) {
+                      _vs.sbp = int.parse(v);
+                    }
+                  },
+                ),
               ),
-              onChanged: (v) {
-                if (v.isNotEmpty) {
-                  _vs.sbp = int.parse(v);
-                }
-              },
+
+              Text(" / ",
+                  style: TextStyle(fontSize: 20)),
+
+              Expanded(
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                    border: OutlineInputBorder(),
+                    hintText: 'Diastolic Blood Pressure',
+                  ),
+                  onChanged: (v) {
+                    if (v.isNotEmpty) {
+                      _vs.dbp = int.parse(v);
+                    }
+                  },
+                ),
+              ),
+            ]
           ),
 
           TextField(
@@ -54,22 +85,7 @@ class DialogVitalSigns extends StatelessWidget {
               FilteringTextInputFormatter.digitsOnly
             ],
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Diastolic Blood Pressure',
-            ),
-            onChanged: (v) {
-              if (v.isNotEmpty) {
-                _vs.dbp = int.parse(v);
-              }
-            },
-          ),
-
-          TextField(
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               border: OutlineInputBorder(),
               hintText: 'Respiratory Rate',
             ),
@@ -86,6 +102,7 @@ class DialogVitalSigns extends StatelessWidget {
               FilteringTextInputFormatter.digitsOnly
             ],
             decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               border: OutlineInputBorder(),
               hintText: 'Pulse Oximetry',
             ),
@@ -102,6 +119,7 @@ class DialogVitalSigns extends StatelessWidget {
               FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*'))
             ],
             decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               border: OutlineInputBorder(),
               hintText: 'Temperature',
             ),
@@ -121,8 +139,7 @@ class DialogVitalSigns extends StatelessWidget {
               .of(context)
               .textTheme
               .labelLarge),
-          child: const Text('Cancel',
-              style: TextStyle(fontSize: 24, color: Colors.red)),
+          child: const Text('Cancel'),
           onPressed: () {
             Navigator.of(context).pop(null);
           },
@@ -132,8 +149,7 @@ class DialogVitalSigns extends StatelessWidget {
               .of(context)
               .textTheme
               .labelLarge),
-          child: const Text('Save',
-              style: TextStyle(fontSize: 24)),
+          child: const Text('Save'),
           onPressed: () async {
             Navigator.of(context).pop(_vs);
           },

@@ -20,8 +20,7 @@ class DialogEndCode extends StatelessWidget {
               .of(context)
               .textTheme
               .labelLarge),
-          child: const Text('Cancel',
-              style: TextStyle(fontSize: 24)),
+          child: const Text('Cancel'),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -32,7 +31,7 @@ class DialogEndCode extends StatelessWidget {
               .textTheme
               .labelLarge),
           child: const Text('End Code',
-              style: TextStyle(fontSize: 24, color: Colors.red)),
+              style: TextStyle(color: Colors.red)),
           onPressed: () {
             _prs.endCode();
             Navigator.of(context).pop();
