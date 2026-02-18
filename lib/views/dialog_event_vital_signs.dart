@@ -116,6 +116,23 @@ class DialogEventVitalSigns extends StatelessWidget {
           TextField(
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              border: OutlineInputBorder(),
+              hintText: 'End-tidal Capnometry',
+            ),
+            onChanged: (v) {
+              if (v.isNotEmpty) {
+                _vs.etco2 = int.parse(v);
+              }
+            },
+          ),
+
+          TextField(
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*'))
             ],
             decoration: InputDecoration(

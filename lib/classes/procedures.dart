@@ -18,6 +18,7 @@ class Procedures {
     Procedure("Cricothyrotomy", null, "Cricothyrotomy placed", null),
     Procedure("Defibrillator Pads", null, "Defibrillator pads applied", null),
     Procedure("Delivered Baby", null, "Delivered the baby", null),
+    Procedure("End-tidal Capnometry (ETCO2)", null, "End-tidal capnometry in use", Colors.blue.shade200),
     Procedure("Fetal Heart Rate", null, "Fetal heart rate assessed", null),
     Procedure("Intraosseous Line", null, "Intraosseous line placed", Colors.yellow.shade800),
     Procedure("Intravenous Line", null, "Intravenous line placed", null),

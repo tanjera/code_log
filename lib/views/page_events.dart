@@ -18,6 +18,7 @@ class VitalSigns {
   int? spo2;
   int? sbp;
   int? dbp;
+  int? etco2;
   double? t;
 
   VitalSigns();
@@ -52,12 +53,15 @@ class PageEvents extends StatelessWidget {
       if (vs.spo2 != null) {
         desc += "- Pulse oximetry (SpO2): ${vs.spo2}\n";
       }
+      if (vs.etco2 != null) {
+        desc += "- End-tidal Capnometry (ETCO2): ${vs.etco2}\n";
+      }
       if (vs.t != null) {
         desc += "- Temperature (T): ${vs.t!.toStringAsFixed(1)}";
       }
 
       if (vs.hr != null || vs.sbp != null || vs.dbp != null || vs.rr != null
-          || vs.spo2 != null || vs.t != null) {
+          || vs.spo2 != null || vs.etco2 != null || vs.t != null) {
         _prs.log.add(Entry(
             type: EntryType.event,
             description: desc.trim()
