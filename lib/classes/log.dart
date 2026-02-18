@@ -10,6 +10,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import 'log.entry.dart';
+import 'settings.dart';
 import 'utility.dart';
 
 class Log {
@@ -76,14 +77,20 @@ class Log {
     }
   }
 
-  Future<File> pdf () async {
+  Future<File> pdf (PageSizes size) async {
       final doc = pw.Document();
 
       final logo = await rootBundle.load('assets/icon/icon_128.png');
       final logoBytes = logo.buffer.asUint8List();
 
+      final pageSize = switch (size) {
+        PageSizes.letter => PdfPageFormat.letter,
+        PageSizes.a4 => PdfPageFormat.a4
+      };
+
       doc.addPage(pw.MultiPage(
           orientation: pw.PageOrientation.portrait,
+          pageFormat: pageSize,
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           header: (pw.Context context) {
             return
@@ -150,7 +157,7 @@ class Log {
                 data: List<List<String>>.generate(
                   entries.length,
                       (row) => [
-                        (DateFormat.Hm().format(entries[row].occurred)),
+                        (DateFormat.Hms().format(entries[row].occurred)),
                         entries[row].description
                       ]
                 ),

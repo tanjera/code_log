@@ -33,7 +33,7 @@ class PageMainState extends State<PageMain> {
 
   late final List<StatefulWidget> _widgetOptions = <StatefulWidget>[
     PageRecorder(title: appTitle, settings: _settings, updateLogs: _vcbUpdateLogs),
-    PageLogs(logs: _logs),
+    PageLogs(logs: _logs, settings: _settings),
     PageSettings(settings: _settings),
   ];
 
@@ -63,7 +63,7 @@ class PageMainState extends State<PageMain> {
     }
 
     setState(() {
-      _widgetOptions[1] = PageLogs(logs: _logs);
+      _widgetOptions[1] = PageLogs(logs: _logs, settings: _settings,);
     });
   }
 

@@ -3,15 +3,17 @@ import 'package:intl/intl.dart';
 
 import '../classes/log.dart';
 import '../classes/logs.dart';
+import '../classes/settings.dart';
 import '../classes/utility.dart';
 
 import 'dialog_delete_logs.dart';
 import 'page_log.dart';
 
 class PageLogs extends StatefulWidget {
+  final Settings settings;
   final Logs logs;
 
-  const PageLogs({super.key, required this.logs});
+  const PageLogs({super.key, required this.settings, required this.logs});
 
   @override
   State<PageLogs> createState() => PageLogsState();
@@ -83,7 +85,7 @@ class PageLogsState extends State<PageLogs> {
                       Navigator.push(
                           context,
                           MaterialPageRoute<void>(
-                              builder: (context) => PageLog(log: l)
+                              builder: (context) => PageLog(log: l, settings: widget.settings)
                           )
                       );
                     },

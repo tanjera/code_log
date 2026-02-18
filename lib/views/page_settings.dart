@@ -1,5 +1,6 @@
-
 import 'package:flutter/material.dart';
+
+import 'package:change_case/change_case.dart';
 
 import '../classes/settings.dart';
 import 'page_about.dart';
@@ -31,6 +32,13 @@ class PageSettingsState extends State<PageSettings> {
   void _setEventLogCompact (bool? compact) {
     setState(() {
       widget.settings.eventLogCompact = compact ?? false;
+      widget.settings.save();
+    });
+  }
+
+  void _setPDFPageSize (PageSizes? p) {
+    setState(() {
+      widget.settings.pdfPageSize = p ?? widget.settings.pdfPageSize;
       widget.settings.save();
     });
   }
@@ -81,6 +89,24 @@ class PageSettingsState extends State<PageSettings> {
               trailing: Checkbox(
                   value: widget.settings.eventLogCompact,
                   onChanged: _setEventLogCompact
+              )
+          ),
+
+          ListTile(
+              title: Text("Event log export page size"),
+              trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [DropdownButton(
+                      value: widget.settings.pdfPageSize,
+                      items: PageSizes.values.map<DropdownMenuItem<PageSizes>>((PageSizes p) {
+                        return DropdownMenuItem<PageSizes>(
+                          value: p,
+                          child: Text(p.name.toTitleCase())
+                        );
+                      }).toList(),
+                      onChanged: _setPDFPageSize
+                  )
+                  ]
               )
           ),
 

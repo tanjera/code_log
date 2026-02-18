@@ -2,10 +2,16 @@ import 'dart:convert';
 
 import 'utility.dart';
 
+enum PageSizes {
+  letter,
+  a4
+}
+
 class Settings {
   int metronomeRate = 100;
   bool metronomeAutoRun = false;
   bool eventLogCompact = false;
+  PageSizes pdfPageSize = PageSizes.letter;
 
   final List<int> metronomeOptions = [
     100, 110, 120
@@ -29,6 +35,7 @@ class Settings {
           "metronomeRate": metronomeRate,
           "metronomeAutoRun": metronomeAutoRun,
           "eventLogCompact": eventLogCompact,
+          "pdfPageSize": pdfPageSize.name,
         }),
         flush: true);
   }
@@ -51,6 +58,7 @@ class Settings {
       metronomeRate = dAll["metronomeRate"] ?? metronomeRate;
       metronomeAutoRun = dAll["metronomeAutoRun"] ?? metronomeAutoRun;
       eventLogCompact = dAll["eventLogCompact"] ?? eventLogCompact;
+      pdfPageSize = dAll["pdfPageSize"] != null ? PageSizes.values.byName(dAll["pdfPageSize"]) : pdfPageSize;
 
     } catch (e) {
       return;

@@ -4,9 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../classes/log.dart';
+import '../classes/settings.dart';
 
 class PageLog extends StatefulWidget {
-  const PageLog({super.key, required this.log});
+  final Settings settings;
+
+  const PageLog({super.key, required this.settings, required this.log});
 
   final Log log;
 
@@ -17,7 +20,7 @@ class PageLog extends StatefulWidget {
 class PageLogState extends State<PageLog> {
 
   Future<void> _sharePDF () async {
-    final file = await widget.log.pdf();
+    final file = await widget.log.pdf(widget.settings.pdfPageSize);
 
     final String desc = "${DateFormat.yMMMMd().format(widget.log.created ?? DateTime.now())}, ${DateFormat.Hm().format(widget.log.created ?? DateTime.now())}"
         "${widget.log.identifier == null ? "" : ": ${widget.log.identifier}"}";
