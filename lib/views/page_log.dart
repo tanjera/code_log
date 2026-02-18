@@ -51,7 +51,7 @@ class PageLogState extends State<PageLog> {
           actions: <Widget> [
             IconButton(
                 icon: Icon(Icons.share_outlined),
-                tooltip: 'Delete Logs',
+                tooltip: 'Share Log',
                 onPressed: _sharePDF
             )
           ]
