@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../classes/log.dart';
 import '../classes/settings.dart';
@@ -59,11 +60,8 @@ class PageLogState extends State<PageLog> {
         body: SafeArea(
             child: Column (
             mainAxisAlignment: .start,
-            crossAxisAlignment: .center,
+            crossAxisAlignment: .stretch,
             children: [
-              Text("Event Log",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-
               Table(
                 defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                 columnWidths: const <int, TableColumnWidth>{
@@ -98,32 +96,40 @@ class PageLogState extends State<PageLog> {
                 ]
               ),
 
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child:
-                  Table(
-                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                    columnWidths: const <int, TableColumnWidth>{
-                      0: FlexColumnWidth(1),
-                      1: FlexColumnWidth(3),
-                    },
-                    children: widget.log.entries.map((item) =>
-                        TableRow(
+              Expanded( child:ListView(
+                  scrollDirection: .vertical,
+                  children: widget.log.entries.map((item) =>
+                      Slidable(
+                          startActionPane: ActionPane(
+                            motion: const ScrollMotion(),
+                            extentRatio: .1,
                             children: [
-                              Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Text(item['occurred'])
+                              SlidableAction(
+                                onPressed: (c) => setState(() {
+                                  item.redacted = !item.redacted;
+                                  widget.log.save();
+                                }),
+                                backgroundColor: item.redacted ? Colors.green : Colors.red,
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete_outlined,
                               ),
-                              Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Text(item['description']),
-                              )
-                            ]
-                        )
-                    ).toList(),
-                  ),
-                ),
+                            ],
+                          ),
+
+                          child: Row(children:[ Padding(
+                            padding: widget.settings.eventLogCompact
+                                ? .symmetric(horizontal: 10, vertical: 5)
+                                : .symmetric(horizontal: 10, vertical: 10),
+                            child: Text("${item['occurred']}:\t${item['description']}",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  decoration: item.redacted ? .lineThrough : null ),
+                            ),
+                          )]
+                          )
+                      )
+                  ).toList()
+              )
               )
             ],
           )

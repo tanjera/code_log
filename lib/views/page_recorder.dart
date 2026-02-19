@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'dialog_code_end.dart';
 
@@ -249,6 +250,10 @@ class PageRecorderState extends State<PageRecorder> {
     });
   }
 
+  void _slideItem(BuildContext c) {
+
+  }
+
   @override
   void dispose() {
     _timerUI.cancel();
@@ -301,9 +306,9 @@ class PageRecorderState extends State<PageRecorder> {
               ),
           ]
       ),
-      body: Center(
-        child: Column(
+      body: Column(
           mainAxisAlignment: .start,
+          crossAxisAlignment: .stretch,
           children: [
             TextField(
               controller: _tecIdentifier,
@@ -557,48 +562,53 @@ class PageRecorderState extends State<PageRecorder> {
               child: Divider(height: 1.0)
             ),
 
-            Padding(
-              padding: EdgeInsets.only(bottom: 5),
-              child:Text("Event Log",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+            Center(child: Padding(
+                padding: EdgeInsets.only(bottom: 5),
+                child:Text("Event Log",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
                 ),
+              ),
             ),
 
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                controller: _scEventLog,
-                child:
-                  Table(
-                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                    columnWidths: const <int, TableColumnWidth>{
-                      0: FlexColumnWidth(1),
-                      1: FlexColumnWidth(3),
-                    },
-                    children: log.entries.map((item) =>
-                      TableRow(
+            Expanded( child:ListView(
+              scrollDirection: .vertical,
+              controller: _scEventLog,
+              children: log.entries.map((item) =>
+                  Slidable(
+                      startActionPane: ActionPane(
+                        motion: const ScrollMotion(),
+                        extentRatio: .1,
                         children: [
-                          Padding(
-                            padding: widget.settings.eventLogCompact
-                                ? EdgeInsets.all(2)
-                                : EdgeInsets.all(8),
-                            child: Text(item['occurred'])
+                          SlidableAction(
+                            onPressed: (c) => setState(() {
+                              item.redacted = !item.redacted;
+                              log.save();
+                            }),
+                            backgroundColor: item.redacted ? Colors.green : Colors.red,
+                            foregroundColor: Colors.white,
+                            icon: Icons.delete_outlined,
                           ),
-                          Padding(
-                              padding: widget.settings.eventLogCompact
-                                  ? EdgeInsets.all(2)
-                                  : EdgeInsets.all(8),
-                              child: Text(item['description']),
-                          )
-                        ]
+                        ],
+                      ),
+
+                      child: Row(children:[ Padding(
+                        padding: widget.settings.eventLogCompact
+                            ? .symmetric(horizontal: 10, vertical: 5)
+                            : .symmetric(horizontal: 10, vertical: 10),
+                        child: Text("${item['occurred']}:\t${item['description']}",
+                            style: TextStyle(
+                                fontSize: 14,
+                                decoration: item.redacted ? .lineThrough : null ),
+                        ),
+                      )]
                       )
-                    ).toList(),
-                  ),
-                ),
+                  )
+              ).toList()
               )
+            )
           ],
         ),
-      )
+
     );
   }
 }

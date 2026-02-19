@@ -64,7 +64,7 @@ class PageLogsState extends State<PageLogs> {
           title: Text("Logs"),
           actions: <Widget> [
             IconButton(
-              icon: Icon(Icons.delete_forever_outlined),
+              icon: Icon(Icons.delete_outlined),
               tooltip: 'Delete Logs',
               onPressed: _confirmDeleteLogs
               )

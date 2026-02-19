@@ -146,6 +146,8 @@ class Log {
             );
           },
           build: (pw.Context context) => <pw.Widget>[
+            pw.TableB
+
             pw.TableHelper.fromTextArray(
                 border: pw.TableBorder(
                     horizontalInside: pw.BorderSide(width: 0.5, color: PdfColors.grey)),
@@ -158,7 +160,8 @@ class Log {
                   entries.length,
                       (row) => [
                         (DateFormat.Hms().format(entries[row].occurred)),
-                        entries[row].description
+                        entries[row].redacted ? "[REDACTED] ${entries[row].description}" : entries[row].description,
+
                       ]
                 ),
             ),
