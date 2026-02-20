@@ -123,6 +123,7 @@ class PageLogState extends State<PageLog> {
                             child: Text("${item['occurred']}:\t${item['description']}",
                               style: TextStyle(
                                   fontSize: 14,
+                                  color: item.redacted ? Colors.grey : Colors.black,
                                   decoration: item.redacted ? .lineThrough : null ),
                             ),
                           )]

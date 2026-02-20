@@ -145,29 +145,36 @@ class Log {
                 )
             );
           },
-          build: (pw.Context context) => <pw.Widget>[
-            pw.TableB
+          build: (pw.Context context) {
+            return [
 
-            pw.TableHelper.fromTextArray(
-                border: pw.TableBorder(
-                    horizontalInside: pw.BorderSide(width: 0.5, color: PdfColors.grey)),
-                cellAlignment: pw.Alignment.centerLeft,
-                cellAlignments: {
-                  0: pw.Alignment.centerLeft,
-                  1: pw.Alignment.centerLeft,
-                },
-                data: List<List<String>>.generate(
-                  entries.length,
-                      (row) => [
-                        (DateFormat.Hms().format(entries[row].occurred)),
-                        entries[row].redacted ? "[REDACTED] ${entries[row].description}" : entries[row].description,
-
-                      ]
-                ),
-            ),
-          ]
+              pw.ListView(
+                  children: entries.map((item) =>
+                      pw.Container(
+                          decoration: pw.BoxDecoration(
+                            border: pw.Border(
+                              bottom: pw.BorderSide(
+                                color: PdfColors.grey400,
+                                width: 1.0
+                              )
+                            ),
+                          ),
+                          child: pw.Row(children:[ pw.Padding(
+                            padding: pw.EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            child: pw.Text("${item['occurred']}:\t${item['description']}",
+                              style: pw.TextStyle(
+                                  fontSize: 14,
+                                  color: item.redacted ? PdfColors.grey400 : PdfColors.black,
+                                  decoration: item.redacted ? .lineThrough : null ),
+                            ),
+                          )]
+                        )
+                      )
+                  ).toList()
+              )
+            ];
+          }
       ));
-
 
       created ??= DateTime.now();
       filename ??= "log_${created!.toIso8601String()}.pdf";

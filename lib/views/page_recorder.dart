@@ -596,8 +596,9 @@ class PageRecorderState extends State<PageRecorder> {
                             ? .symmetric(horizontal: 10, vertical: 5)
                             : .symmetric(horizontal: 10, vertical: 10),
                         child: Text("${item['occurred']}:\t${item['description']}",
-                            style: TextStyle(
+                          style: TextStyle(
                                 fontSize: 14,
+                                color: item.redacted ? Colors.grey : Colors.black,
                                 decoration: item.redacted ? .lineThrough : null ),
                         ),
                       )]
