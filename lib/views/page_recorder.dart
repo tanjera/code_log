@@ -44,6 +44,7 @@ class PageRecorderState extends State<PageRecorder> {
   final Stopwatch _swCPR = Stopwatch();
   String _btnCPR = "Start CPR";
   String _txtCPR = "--:--";
+  Color _colorCPR = Colors.black;
   int _cntCPR = 0;
 
   final Stopwatch _swShock = Stopwatch();
@@ -235,6 +236,19 @@ class PageRecorderState extends State<PageRecorder> {
       _txtShock = formatTimer(_swShock.isRunning, _swShock.elapsedMilliseconds ~/ 1000);
       _txtEpi = formatTimer(_swEpi.isRunning, _swEpi.elapsedMilliseconds ~/ 1000);
 
+      // Change _colorCPR to flash CPR timer if 1:50 - 2:00 (yellow) and > 2:00 (red)
+      if (widget.settings.flashCPRTimer && _swCPR.isRunning) {
+        int sec = _swCPR.elapsedMilliseconds ~/ 1000;
+
+        if (sec >= 105 && sec < 120) {
+          _colorCPR = (sec % 2 == 0) ? Colors.yellow : Colors.black;
+        } else if (sec >= 120) {
+          _colorCPR = (sec % 2 == 0) ? Colors.red : Colors.black;
+        }
+      } else {
+        _colorCPR = Colors.black;
+      }
+
       _btnCode = !_swCode.isRunning ? "Start Code" : "End Code";
       _btnCPR = !_swCPR.isRunning ? "Start CPR" : "Pause CPR";
     });
@@ -364,7 +378,10 @@ class PageRecorderState extends State<PageRecorder> {
                             FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(_txtCPR,
-                                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)
+                                    style: TextStyle(
+                                        color: _colorCPR,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold)
                                 )
                             ),
                             Container(

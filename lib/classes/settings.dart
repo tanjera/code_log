@@ -9,7 +9,8 @@ enum PageSizes {
 
 class Settings {
   int metronomeRate = 100;
-  bool metronomeAutoRun = false;
+  bool metronomeAutoRun = true;
+  bool flashCPRTimer = true;
   bool eventLogCompact = false;
   PageSizes pdfPageSize = PageSizes.letter;
 
@@ -34,6 +35,7 @@ class Settings {
         JsonEncoder.withIndent("  ").convert({
           "metronomeRate": metronomeRate,
           "metronomeAutoRun": metronomeAutoRun,
+          "flashCPRTimer": flashCPRTimer,
           "eventLogCompact": eventLogCompact,
           "pdfPageSize": pdfPageSize.name,
         }),
@@ -57,6 +59,7 @@ class Settings {
       var dAll = json.decode(input);
       metronomeRate = dAll["metronomeRate"] ?? metronomeRate;
       metronomeAutoRun = dAll["metronomeAutoRun"] ?? metronomeAutoRun;
+      flashCPRTimer = dAll["flashCPRTimer"] ?? flashCPRTimer;
       eventLogCompact = dAll["eventLogCompact"] ?? eventLogCompact;
       pdfPageSize = dAll["pdfPageSize"] != null ? PageSizes.values.byName(dAll["pdfPageSize"]) : pdfPageSize;
 

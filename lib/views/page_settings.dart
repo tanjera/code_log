@@ -24,7 +24,14 @@ class PageSettingsState extends State<PageSettings> {
 
   void _setMetronomeAutoRun (bool? auto) {
     setState(() {
-      widget.settings.metronomeAutoRun = auto ?? false;
+      widget.settings.metronomeAutoRun = auto ?? true;
+      widget.settings.save();
+    });
+  }
+
+  void _setFlashCPRTimer (bool? flash) {
+    setState(() {
+      widget.settings.flashCPRTimer = flash ?? true;
       widget.settings.save();
     });
   }
@@ -81,6 +88,14 @@ class PageSettingsState extends State<PageSettings> {
               trailing: Checkbox(
                   value: widget.settings.metronomeAutoRun,
                   onChanged: _setMetronomeAutoRun
+              )
+          ),
+
+          ListTile(
+              title: Text("Flash CPR Timer for pulse checks?"),
+              trailing: Checkbox(
+                  value: widget.settings.flashCPRTimer,
+                  onChanged: _setFlashCPRTimer
               )
           ),
 
