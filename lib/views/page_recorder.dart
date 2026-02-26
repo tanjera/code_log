@@ -31,7 +31,7 @@ class PageRecorderState extends State<PageRecorder> {
   Log log = Log();
 
   late Timer _timerUI;
-
+  
   final _playerMetronome = AudioPlayer();
   late Timer _timerMetronome;
   bool _runMetronome = false;
@@ -41,6 +41,7 @@ class PageRecorderState extends State<PageRecorder> {
   String _btnCode = "Start Code";
   String _txtCode = "--:--";
 
+  final _playerCPRAlarm = AudioPlayer();
   final Stopwatch _swCPR = Stopwatch();
   String _btnCPR = "Start CPR";
   String _txtCPR = "--:--";
@@ -153,6 +154,18 @@ class PageRecorderState extends State<PageRecorder> {
       }
       }
   }
+  
+  void _playCPRAlarm() async {
+    if (_playerCPRAlarm.audioSource == null) {
+      _playerCPRAlarm.setAudioSource(
+          AudioSource.asset("assets/audio/alarm_1.wav"));
+    }
+
+    await Future.delayed(const Duration(milliseconds: 500), () {
+      _playerCPRAlarm.seek(Duration(seconds: 0));
+      _playerCPRAlarm.play();
+    });
+  }
 
   void _pressedCode() {
     if (!_swCode.isRunning) {
@@ -236,17 +249,26 @@ class PageRecorderState extends State<PageRecorder> {
       _txtShock = formatTimer(_swShock.isRunning, _swShock.elapsedMilliseconds ~/ 1000);
       _txtEpi = formatTimer(_swEpi.isRunning, _swEpi.elapsedMilliseconds ~/ 1000);
 
-      // Change _colorCPR to flash CPR timer if 1:50 - 2:00 (yellow) and > 2:00 (red)
-      if (widget.settings.flashCPRTimer && _swCPR.isRunning) {
+      if (_swCPR.isRunning && widget.settings.alertCPRTimer != .none) {
         int sec = _swCPR.elapsedMilliseconds ~/ 1000;
 
-        if (sec >= 105 && sec < 120) {
-          _colorCPR = (sec % 2 == 0) ? Colors.yellow : Colors.black;
-        } else if (sec >= 120) {
-          _colorCPR = (sec % 2 == 0) ? Colors.red : Colors.black;
+        // Change _colorCPR to flash CPR timer if 1:50 - 2:00 (yellow) and > 2:00 (red)
+        if (widget.settings.alertCPRTimer == .both || widget.settings.alertCPRTimer == .visual) {
+          if (sec >= 105 && sec < 120) {
+            _colorCPR = (sec % 2 == 0) ? Colors.yellow : Colors.black;
+          } else if (sec >= 120) {
+            _colorCPR = (sec % 2 == 0) ? Colors.red : Colors.black;
+          }
+        } else {
+          _colorCPR = Colors.black;
         }
-      } else {
-        _colorCPR = Colors.black;
+
+        // Audible CPR alarm
+        if (widget.settings.alertCPRTimer == .both || widget.settings.alertCPRTimer == .audio) {
+          if (sec == 120) {
+            _playCPRAlarm();
+          }
+        }
       }
 
       _btnCode = !_swCode.isRunning ? "Start Code" : "End Code";

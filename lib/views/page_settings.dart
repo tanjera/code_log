@@ -29,9 +29,9 @@ class PageSettingsState extends State<PageSettings> {
     });
   }
 
-  void _setFlashCPRTimer (bool? flash) {
+  void _setAlertCPRTimer (AlertTypes? a) {
     setState(() {
-      widget.settings.flashCPRTimer = flash ?? true;
+      widget.settings.alertCPRTimer = a ?? AlertTypes.both;
       widget.settings.save();
     });
   }
@@ -92,10 +92,20 @@ class PageSettingsState extends State<PageSettings> {
           ),
 
           ListTile(
-              title: Text("Flash CPR Timer for pulse checks?"),
-              trailing: Checkbox(
-                  value: widget.settings.flashCPRTimer,
-                  onChanged: _setFlashCPRTimer
+              title: Text("CPR Timer alerts for pulse checks?"),
+              trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [DropdownButton(
+                      value: widget.settings.alertCPRTimer,
+                      items: AlertTypes.values.map<DropdownMenuItem<AlertTypes>>((AlertTypes a) {
+                        return DropdownMenuItem<AlertTypes>(
+                            value: a,
+                            child: Text(a.name.toTitleCase())
+                        );
+                      }).toList(),
+                      onChanged: _setAlertCPRTimer
+                  )
+                  ]
               )
           ),
 
