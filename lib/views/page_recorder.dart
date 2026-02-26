@@ -146,34 +146,32 @@ class PageRecorderState extends State<PageRecorder> {
 
     if (_runMetronome) {
       if (_playerMetronome.audioSource == null) {
-        _playerMetronome.setAudioSource(AudioSource.asset("assets/audio/click_1.wav"));
+        await _playerMetronome.setAudioSource(AudioSource.asset("assets/audio/click_1.wav"));
         // Don't play the audio on the same iteration as setting the audio or there will be an init delay...
       } else {
-        _playerMetronome.seek(Duration(seconds: 0));
-        _playerMetronome.play();
+        await _playerMetronome.seek(Duration(seconds: 0));
+        await _playerMetronome.setVolume(1.0);
+        await _playerMetronome.play();
       }
       }
   }
   
   void _playCPRAlarm() async {
     if (_playerCPRAlarm.audioSource == null) {
-      _playerCPRAlarm.setAudioSource(
+      await _playerCPRAlarm.setAudioSource(
           AudioSource.asset("assets/audio/alarm_1.wav"));
     }
 
-    await Future.delayed(const Duration(milliseconds: 500), () {
-      _playerCPRAlarm.seek(Duration(seconds: 0));
-      _playerCPRAlarm.play();
+    await Future.delayed(const Duration(milliseconds: 500), () async {
+      await _playerCPRAlarm.seek(Duration(seconds: 0));
+      await _playerCPRAlarm.setVolume(1.0);
+      await _playerCPRAlarm.play();
     });
   }
 
   void _pressedCode() {
     if (!_swCode.isRunning) {
       _swCode.start();
-
-      if (widget.settings.metronomeAutoRun) {
-        _runMetronome = true;
-      }
 
       log.add(Entry(type: EntryType.event, description: "Code started"));
     } else {
@@ -197,13 +195,30 @@ class PageRecorderState extends State<PageRecorder> {
       _swCPR.start();
       _cntCPR += 1;
 
+      // Start the CPR metronome when CPR starts
+      if (widget.settings.metronomeAutoRun) {
+        _runMetronome = true;
+      }
+
       log.add(Entry(type: EntryType.cpr, description: "CPR started (cycle #$_cntCPR)"));
     } else {
       _swCPR.stop();
       _swCPR.reset();
 
+      // Stop the CPR metronome when CPR pauses
+      if (widget.settings.metronomeAutoRun) {
+        _runMetronome = false;
+      }
+
+      if (_playerCPRAlarm.playing) {
+        _playerCPRAlarm.stop();
+      }
+
       log.add(Entry(type: EntryType.cpr, description: "CPR paused (cycle #$_cntCPR)"));
     }
+
+    // Whenever the timer starts/stops, it should be reset to black
+    _colorCPR = Colors.black;
 
     updateUI();
   }
@@ -284,10 +299,6 @@ class PageRecorderState extends State<PageRecorder> {
         curve: Curves.linear,
       );
     });
-  }
-
-  void _slideItem(BuildContext c) {
-
   }
 
   @override

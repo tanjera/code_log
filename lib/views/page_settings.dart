@@ -84,7 +84,7 @@ class PageSettingsState extends State<PageSettings> {
           ),
 
           ListTile(
-              title: Text("Automatically run metronome in codes?"),
+              title: Text("CPR automates metronome?"),
               trailing: Checkbox(
                   value: widget.settings.metronomeAutoRun,
                   onChanged: _setMetronomeAutoRun
@@ -92,21 +92,21 @@ class PageSettingsState extends State<PageSettings> {
           ),
 
           ListTile(
-              title: Text("CPR Timer alerts for pulse checks?"),
-              trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [DropdownButton(
-                      value: widget.settings.alertCPRTimer,
-                      items: AlertTypes.values.map<DropdownMenuItem<AlertTypes>>((AlertTypes a) {
-                        return DropdownMenuItem<AlertTypes>(
-                            value: a,
-                            child: Text(a.name.toTitleCase())
-                        );
-                      }).toList(),
-                      onChanged: _setAlertCPRTimer
-                  )
-                  ]
-              )
+            title: Text("CPR alerts for pulse checks?"),
+            trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [DropdownButton(
+                    value: widget.settings.alertCPRTimer,
+                    items: AlertTypes.values.map<DropdownMenuItem<AlertTypes>>((AlertTypes a) {
+                      return DropdownMenuItem<AlertTypes>(
+                          value: a,
+                          child: Text(a.name.toTitleCase())
+                      );
+                    }).toList(),
+                    onChanged: _setAlertCPRTimer
+                )
+                ]
+            )
           ),
 
           ListTile(
