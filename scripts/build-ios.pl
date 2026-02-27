@@ -6,13 +6,13 @@ use Cwd qw(abs_path);
 
 $script_dir = `pwd`;
 $proj_dir = abs_path("../");
-$bundle_name = "app-release.aab";
-$bundle_path = abs_path("../build/app/outputs/bundle/release/");
+$bundle_name = "Code Blue Log.ipa";
+$bundle_path = abs_path("../build/ios/ipa/");
 $rel_dir = abs_path("../release");
 
 chdir($proj_dir) or die "$!";
 
-system("flutter build appbundle");
+system("flutter build ipa");
 
 if (-e "$rel_dir/$bundle_name") {
     print "Removing existing file at $rel_dir/$bundle_name\n";
@@ -23,7 +23,7 @@ if (-e "$rel_dir/$bundle_name") {
 sleep(1);
 
 make_path($rel_dir);
-system("mv $bundle_path/$bundle_name $rel_dir/$bundle_name");
+system("mv \"$bundle_path/$bundle_name\" \"$rel_dir/$bundle_name\"");
 
 
 print "File moved to $rel_dir/$bundle_name\n";
