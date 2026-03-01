@@ -1,5 +1,7 @@
 import 'dart:core';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/log.dart';
@@ -85,15 +87,39 @@ class PageMainState extends State<PageMain> {
     });
   }
 
+  IconData _iconRecorder () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.alarm,
+      "macos" => CupertinoIcons.alarm,
+      _ => Icons.alarm
+    };
+  }
+
+  IconData _iconLogs () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.doc_text_search,
+      "macos" => CupertinoIcons.doc_text_search,
+      _ => Icons.assignment_outlined
+    };
+  }
+
+  IconData _iconSettings () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.gear,
+      "macos" => CupertinoIcons.gear,
+      _ => Icons.settings_outlined
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.alarm), label: 'Recorder'),
-          BottomNavigationBarItem(icon: Icon(Icons.assignment_outlined), label: 'Logs'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: 'Settings'),
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(_iconRecorder()), label: 'Recorder'),
+          BottomNavigationBarItem(icon: Icon(_iconLogs()), label: 'Logs'),
+          BottomNavigationBarItem(icon: Icon(_iconSettings()), label: 'Settings'),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,

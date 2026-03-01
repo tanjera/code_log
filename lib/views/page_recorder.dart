@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:core';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -257,6 +260,18 @@ class PageRecorderState extends State<PageRecorder> {
     updateUI();
   }
 
+  void _deleteEntry(Entry e) {
+    setState(() {
+      if (widget.settings.eventDeleteMode == .redact) {
+        e.redacted = !e.redacted;
+      } else if (widget.settings.eventDeleteMode == .delete) {
+        log.entries.remove(e);
+      }
+
+      log.save();
+    });
+  }
+
   void updateUI() {
     setState(() {
       _txtCode = formatTimer(_swCode.isRunning, _swCode.elapsedMilliseconds ~/ 1000);
@@ -301,6 +316,38 @@ class PageRecorderState extends State<PageRecorder> {
     });
   }
 
+  IconData _iconDelete () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.delete,
+      "macos" => CupertinoIcons.delete,
+      _ => Icons.delete_outlined
+    };
+  }
+
+  IconData _iconMetronome (bool running) {
+    if (running) {
+      return switch (Platform.operatingSystem) {
+        "ios" => CupertinoIcons.speaker_3,
+        "macos" => CupertinoIcons.speaker_3,
+        _ => Icons.volume_up_outlined
+      };
+    } else {
+      return switch (Platform.operatingSystem) {
+        "ios" => CupertinoIcons.speaker_slash,
+        "macos" => CupertinoIcons.speaker_slash,
+        _ => Icons.volume_off_outlined
+      };
+    }
+  }
+
+  IconData _iconSave () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.archivebox,
+      "macos" => CupertinoIcons.archivebox,
+      _ => Icons.save_outlined
+    };
+  }
+
   @override
   void dispose() {
     _timerUI.cancel();
@@ -330,7 +377,7 @@ class PageRecorderState extends State<PageRecorder> {
           actions:
             <Widget> [
               IconButton(
-                icon: _runMetronome ? Icon(Icons.volume_up_outlined) : Icon(Icons.volume_off_outlined),
+                icon: Icon(_iconMetronome(_runMetronome)),
                 tooltip: 'Metronome',
                 onPressed: () {
                   _pressedMetronome();
@@ -341,7 +388,7 @@ class PageRecorderState extends State<PageRecorder> {
                 },
               ),
               IconButton(
-              icon: const Icon(Icons.save_outlined),
+              icon: Icon(_iconSave()),
               tooltip: 'Save Log',
               onPressed: () {
                 log.save();
@@ -630,13 +677,10 @@ class PageRecorderState extends State<PageRecorder> {
                         extentRatio: .1,
                         children: [
                           SlidableAction(
-                            onPressed: (c) => setState(() {
-                              item.redacted = !item.redacted;
-                              log.save();
-                            }),
+                            onPressed: (c) => _deleteEntry(item),
                             backgroundColor: item.redacted ? Colors.green : Colors.red,
                             foregroundColor: Colors.white,
-                            icon: Icons.delete_outlined,
+                            icon: _iconDelete()
                           ),
                         ],
                       ),

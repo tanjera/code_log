@@ -5,6 +5,7 @@ import '../models/event.dart';
 class Events {
   List<Event> list = [
     Event("Assumed Care", "Assumed care of patient", null),
+    Event("Call to Receiving Facility", "Call placed to receiving facility", null),
     Event("Dispatch Received", "Dispatch received", null),
     Event("Dispatch Acknowledged", "Dispatch acknowledged", null),
     Event("En Route", "En route", null),

@@ -43,6 +43,13 @@ class PageSettingsState extends State<PageSettings> {
     });
   }
 
+  void _setEventDeleteMode (DeleteModes? d) {
+    setState(() {
+      widget.settings.eventDeleteMode = d ?? widget.settings.eventDeleteMode;
+      widget.settings.save();
+    });
+  }
+  
   void _setPDFPageSize (PageSizes? p) {
     setState(() {
       widget.settings.pdfPageSize = p ?? widget.settings.pdfPageSize;
@@ -65,7 +72,15 @@ class PageSettingsState extends State<PageSettings> {
         physics: AlwaysScrollableScrollPhysics(),
         children: [
           ListTile(
-              title: Text("Metronome rate"),
+              title: Text("CPR automates metronome?"),
+              trailing: Checkbox(
+                  value: widget.settings.metronomeAutoRun,
+                  onChanged: _setMetronomeAutoRun
+              )
+          ),
+
+          ListTile(
+              title: Text("CPR metronome rate:"),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [DropdownButton(
@@ -84,15 +99,7 @@ class PageSettingsState extends State<PageSettings> {
           ),
 
           ListTile(
-              title: Text("CPR automates metronome?"),
-              trailing: Checkbox(
-                  value: widget.settings.metronomeAutoRun,
-                  onChanged: _setMetronomeAutoRun
-              )
-          ),
-
-          ListTile(
-            title: Text("CPR alerts for pulse checks?"),
+            title: Text("CPR alerts for pulse checks:"),
             trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [DropdownButton(
@@ -109,6 +116,8 @@ class PageSettingsState extends State<PageSettings> {
             )
           ),
 
+          Divider(),
+
           ListTile(
               title: Text("Compact event log text?"),
               trailing: Checkbox(
@@ -116,9 +125,27 @@ class PageSettingsState extends State<PageSettings> {
                   onChanged: _setEventLogCompact
               )
           ),
-
+          
           ListTile(
-              title: Text("Event log export page size"),
+              title: Text("Event log delete mode:"),
+              trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [DropdownButton(
+                      value: widget.settings.eventDeleteMode,
+                      items: DeleteModes.values.map<DropdownMenuItem<DeleteModes>>((DeleteModes d) {
+                        return DropdownMenuItem<DeleteModes>(
+                            value: d,
+                            child: Text(d.name.toTitleCase())
+                        );
+                      }).toList(),
+                      onChanged: _setEventDeleteMode
+                  )
+                  ]
+              )
+          ),
+          
+          ListTile(
+              title: Text("Event log export page size:"),
               trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [DropdownButton(

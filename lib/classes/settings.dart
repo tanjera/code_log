@@ -9,6 +9,11 @@ enum AlertTypes {
   both
 }
 
+enum DeleteModes {
+  delete,
+  redact
+}
+
 enum PageSizes {
   letter,
   a4
@@ -19,6 +24,7 @@ class Settings {
   bool metronomeAutoRun = true;
   AlertTypes alertCPRTimer = AlertTypes.both;
   bool eventLogCompact = false;
+  DeleteModes eventDeleteMode = DeleteModes.redact;
   PageSizes pdfPageSize = PageSizes.letter;
 
   final List<int> metronomeOptions = [
@@ -44,6 +50,7 @@ class Settings {
           "metronomeAutoRun": metronomeAutoRun,
           "alertCPRTimer": alertCPRTimer.name,
           "eventLogCompact": eventLogCompact,
+          "deleteMode": eventDeleteMode.name,
           "pdfPageSize": pdfPageSize.name,
         }),
         flush: true);
@@ -68,6 +75,7 @@ class Settings {
       metronomeAutoRun = dAll["metronomeAutoRun"] ?? metronomeAutoRun;
       alertCPRTimer = dAll["alertCPRTimer"] != null ? AlertTypes.values.byName(dAll["alertCPRTimer"]) : alertCPRTimer;
       eventLogCompact = dAll["eventLogCompact"] ?? eventLogCompact;
+      eventDeleteMode = dAll["deleteMode"] != null ? DeleteModes.values.byName(dAll["deleteMode"]) : eventDeleteMode;
       pdfPageSize = dAll["pdfPageSize"] != null ? PageSizes.values.byName(dAll["pdfPageSize"]) : pdfPageSize;
 
     } catch (e) {

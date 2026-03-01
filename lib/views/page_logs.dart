@@ -1,3 +1,7 @@
+
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -56,6 +60,15 @@ class PageLogsState extends State<PageLogs> {
     setState(() {});
   }
 
+
+  IconData _iconDelete () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.delete,
+      "macos" => CupertinoIcons.delete,
+      _ => Icons.delete_outlined
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +77,7 @@ class PageLogsState extends State<PageLogs> {
           title: Text("Logs"),
           actions: <Widget> [
             IconButton(
-              icon: Icon(Icons.delete_outlined),
+              icon: Icon(_iconDelete()),
               tooltip: 'Delete Logs',
               onPressed: _confirmDeleteLogs
               )

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -58,6 +59,22 @@ class PageLogState extends State<PageLog> {
     }
   }
 
+  IconData _iconDelete () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.delete,
+      "macos" => CupertinoIcons.delete,
+      _ => Icons.delete_outlined
+    };
+  }
+
+  IconData _iconShare () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.share,
+      "macos" => CupertinoIcons.share,
+      _ => Icons.share_outlined
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +83,7 @@ class PageLogState extends State<PageLog> {
         title: Text("Log Viewer"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.share_outlined),
+            icon: Icon(_iconShare()),
             tooltip: 'Share Log',
             onPressed: _sharePDF,
           ),
@@ -132,7 +149,7 @@ class PageLogState extends State<PageLog> {
                                   ? Colors.green
                                   : Colors.red,
                               foregroundColor: Colors.white,
-                              icon: Icons.delete_outlined,
+                              icon: _iconDelete(),
                             ),
                           ],
                         ),
