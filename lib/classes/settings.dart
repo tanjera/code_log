@@ -19,7 +19,14 @@ enum PageSizes {
   a4
 }
 
+enum Themes {
+  dark,
+  light,
+  system
+}
+
 class Settings {
+  Themes defaultTheme = .system;
   int metronomeRate = 100;
   bool metronomeAutoRun = true;
   AlertTypes alertCPRTimer = AlertTypes.both;
@@ -46,6 +53,7 @@ class Settings {
 
     file.writeAsString(
         JsonEncoder.withIndent("  ").convert({
+          "defaultTheme": defaultTheme.name,
           "metronomeRate": metronomeRate,
           "metronomeAutoRun": metronomeAutoRun,
           "alertCPRTimer": alertCPRTimer.name,
@@ -71,6 +79,7 @@ class Settings {
       }
 
       var dAll = json.decode(input);
+      defaultTheme = dAll["defaultTheme"] != null ? Themes.values.byName(dAll["defaultTheme"]) : defaultTheme;
       metronomeRate = dAll["metronomeRate"] ?? metronomeRate;
       metronomeAutoRun = dAll["metronomeAutoRun"] ?? metronomeAutoRun;
       alertCPRTimer = dAll["alertCPRTimer"] != null ? AlertTypes.values.byName(dAll["alertCPRTimer"]) : alertCPRTimer;

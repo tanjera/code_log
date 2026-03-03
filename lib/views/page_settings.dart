@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:change_case/change_case.dart';
+import 'package:provider/provider.dart';
 
+import '../main.dart';
 import '../classes/settings.dart';
 import 'page_about.dart';
 
@@ -15,6 +17,38 @@ class PageSettings extends StatefulWidget {
 }
 
 class PageSettingsState extends State<PageSettings> {
+  void _setDefaultTheme (Themes? t) {
+    setState(() {
+      widget.settings.defaultTheme = t ?? widget.settings.defaultTheme;
+      widget.settings.save();
+
+      ThemeProvider tp = Provider.of<ThemeProvider>(context, listen: false);
+      final Brightness b = MediaQuery.of(context).platformBrightness;
+
+      switch (t) {
+
+
+        case .light:
+          tp.setTheme(.light);
+          break;
+
+        case .dark:
+          tp.setTheme(.dark);
+          break;
+
+
+        case .system:
+        default:
+          if (b == .light) {
+            tp.setTheme(.light);
+          } else if (b == .dark) {
+            tp.setTheme(.dark);
+          }
+        break;
+      }
+    });
+  }
+
   void _setMetronomeRate (int? rate) {
     setState(() {
       widget.settings.metronomeRate = rate ?? 100;
@@ -71,6 +105,27 @@ class PageSettingsState extends State<PageSettings> {
       body: ListView(
         physics: AlwaysScrollableScrollPhysics(),
         children: [
+
+          ListTile(
+              title: Text("Default color theme:"),
+              trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [DropdownButton(
+                      value: widget.settings.defaultTheme,
+                      items: Themes.values.map((Themes o) =>
+                          DropdownMenuItem<Themes>(
+                              value: o,
+                              child: Text(o.name.toTitleCase())
+                          )
+                      ).toList(),
+                      onChanged: _setDefaultTheme
+                  ),
+                  ]
+              )
+          ),
+
+          Divider(),
+
           ListTile(
               title: Text("CPR automates metronome?"),
               trailing: Checkbox(

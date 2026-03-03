@@ -3,7 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
+import '../main.dart';
 import '../classes/log.dart';
 import '../classes/logs.dart';
 import '../classes/settings.dart';
@@ -72,7 +75,26 @@ class PageMainState extends State<PageMain> {
   Future<void> loadSettings() async {
     await widget.settings.load();
 
+    if (context.mounted) {
+      ThemeProvider tp = Provider.of<ThemeProvider>(context, listen: false);
+      final Brightness b = MediaQuery.of(context).platformBrightness;
+
+      if (tp.themeMode == .system) {
+        if (widget.settings.defaultTheme == .light && b != .light) {
+          tp.setTheme(.light);
+        } else if (widget.settings.defaultTheme == .dark && b != .dark) {
+          tp.setTheme(.dark);
+        }
+      } else if (tp.themeMode != .system
+          && ((widget.settings.defaultTheme == .light && tp.themeMode != .light)
+          || (widget.settings.defaultTheme == .dark && tp.themeMode != .dark))) {
+        tp.toggleTheme();
+      }
+    }
+
     setState(() {
+      _widgetOptions[0] = PageRecorder(title: appTitle, settings: _settings, updateLogs: _vcbUpdateLogs);
+      _widgetOptions[1] = PageLogs(logs: _logs, settings: _settings);
       _widgetOptions[2] = PageSettings(settings: _settings);
     });
   }

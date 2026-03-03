@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 
 import 'dialog_code_end.dart';
 
@@ -14,6 +15,7 @@ import 'page_events.dart';
 import 'page_procedures.dart';
 import 'page_rhythms.dart';
 
+import '../main.dart';
 import '../classes/settings.dart';
 import '../classes/log.dart';
 import '../classes/log.entry.dart';
@@ -48,7 +50,7 @@ class PageRecorderState extends State<PageRecorder> {
   final Stopwatch _swCPR = Stopwatch();
   String _btnCPR = "Start CPR";
   String _txtCPR = "--:--";
-  Color _colorCPR = Colors.black;
+  late Color _colorCPR = Colors.black;
   int _cntCPR = 0;
 
   final Stopwatch _swShock = Stopwatch();
@@ -61,7 +63,7 @@ class PageRecorderState extends State<PageRecorder> {
 
   final TextEditingController _tecIdentifier = TextEditingController();
   final ScrollController _scEventLog = ScrollController();
-  
+
   @override
   void initState() {
     super.initState();
@@ -80,7 +82,14 @@ class PageRecorderState extends State<PageRecorder> {
 
     log.scroll = scrollEventLog;
   }
-  
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _colorCPR = Theme.of(context).colorScheme.onSurface;
+  }
+
   void endCode () {
     // Follow metronomeAutoRun
     if (widget.settings.metronomeAutoRun) {
@@ -118,6 +127,13 @@ class PageRecorderState extends State<PageRecorder> {
     _cntCPR = 0;
     _cntShock = 0;
     _cntEpi = 0;
+
+    updateUI();
+  }
+
+  void _pressedTheme() {
+    ThemeProvider tp = Provider.of<ThemeProvider>(context, listen: false);
+    tp.toggleTheme();
 
     updateUI();
   }
@@ -221,7 +237,7 @@ class PageRecorderState extends State<PageRecorder> {
     }
 
     // Whenever the timer starts/stops, it should be reset to black
-    _colorCPR = Colors.black;
+    _colorCPR = Theme.of(context).colorScheme.onSurface;;
 
     updateUI();
   }
@@ -285,12 +301,12 @@ class PageRecorderState extends State<PageRecorder> {
         // Change _colorCPR to flash CPR timer if 1:50 - 2:00 (yellow) and > 2:00 (red)
         if (widget.settings.alertCPRTimer == .both || widget.settings.alertCPRTimer == .visual) {
           if (sec >= 105 && sec < 120) {
-            _colorCPR = (sec % 2 == 0) ? Colors.yellow : Colors.black;
+            _colorCPR = (sec % 2 == 0) ? Colors.yellow : Theme.of(context).colorScheme.onSurface;
           } else if (sec >= 120) {
-            _colorCPR = (sec % 2 == 0) ? Colors.red : Colors.black;
+            _colorCPR = (sec % 2 == 0) ? Colors.red : Theme.of(context).colorScheme.onSurface;
           }
         } else {
-          _colorCPR = Colors.black;
+          _colorCPR = Theme.of(context).colorScheme.onSurface;;
         }
 
         // Audible CPR alarm
@@ -322,6 +338,26 @@ class PageRecorderState extends State<PageRecorder> {
       "macos" => CupertinoIcons.delete,
       _ => Icons.delete_outlined
     };
+  }
+
+  IconData _iconTheme (ThemeMode t) {
+    switch (t) {
+      case .dark:
+        return switch (Platform.operatingSystem) {
+          "ios" => CupertinoIcons.brightness_solid,
+          "macos" => CupertinoIcons.brightness_solid,
+          _ => Icons.brightness_6
+        };
+
+      case .light:
+      default:
+        return switch (Platform.operatingSystem) {
+          "ios" => CupertinoIcons.brightness,
+          "macos" => CupertinoIcons.brightness,
+          _ => Icons.brightness_6_outlined
+        };
+    }
+
   }
 
   IconData _iconMetronome (bool running) {
@@ -377,6 +413,14 @@ class PageRecorderState extends State<PageRecorder> {
           actions:
             <Widget> [
               IconButton(
+                icon: Icon(_iconTheme(Provider.of<ThemeProvider>(context).themeMode)),
+                tooltip: 'Color theme',
+                onPressed: () {
+                  _pressedTheme();
+                },
+              ),
+              
+              IconButton(
                 icon: Icon(_iconMetronome(_runMetronome)),
                 tooltip: 'Metronome',
                 onPressed: () {
@@ -387,6 +431,7 @@ class PageRecorderState extends State<PageRecorder> {
                     textAlign: TextAlign.center,)));
                 },
               ),
+              
               IconButton(
               icon: Icon(_iconSave()),
               tooltip: 'Save Log',
@@ -468,7 +513,6 @@ class PageRecorderState extends State<PageRecorder> {
                                 alignment: Alignment.centerRight,
                                 child: CircleAvatar(
                                   radius: 15,
-                                  backgroundColor: Colors.green.shade100,
                                   child: Text("$_cntCPR", style: TextStyle(fontSize: 14)
                                   ),
                                 )
@@ -506,7 +550,6 @@ class PageRecorderState extends State<PageRecorder> {
                             alignment: Alignment.centerRight,
                               child: CircleAvatar(
                               radius: 15,
-                              backgroundColor: Colors.red.shade100,
                               child: Text("$_cntShock", style: TextStyle(fontSize: 14)
                               ),
                             )
@@ -543,7 +586,6 @@ class PageRecorderState extends State<PageRecorder> {
                                 alignment: Alignment.centerRight,
                                 child: CircleAvatar(
                                   radius: 15,
-                                  backgroundColor: Colors.brown.shade100,
                                   child: Text("$_cntEpi", style: TextStyle(fontSize: 14)
                                   ),
                                 )
