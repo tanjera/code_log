@@ -26,8 +26,6 @@ class PageSettingsState extends State<PageSettings> {
       final Brightness b = MediaQuery.of(context).platformBrightness;
 
       switch (t) {
-
-
         case .light:
           tp.setTheme(.light);
           break;
@@ -36,14 +34,9 @@ class PageSettingsState extends State<PageSettings> {
           tp.setTheme(.dark);
           break;
 
-
         case .system:
         default:
-          if (b == .light) {
-            tp.setTheme(.light);
-          } else if (b == .dark) {
-            tp.setTheme(.dark);
-          }
+          tp.setTheme(b == .light ? .light : .dark);
         break;
       }
     });

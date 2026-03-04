@@ -133,7 +133,12 @@ class PageRecorderState extends State<PageRecorder> {
 
   void _pressedTheme() {
     ThemeProvider tp = Provider.of<ThemeProvider>(context, listen: false);
-    tp.toggleTheme();
+    if (tp.themeMode == .system) {
+      final Brightness b = MediaQuery.of(context).platformBrightness;
+      tp.setTheme(b == .light ? .dark : .light);
+    } else {
+      tp.toggleTheme();
+    }
 
     updateUI();
   }
@@ -237,7 +242,7 @@ class PageRecorderState extends State<PageRecorder> {
     }
 
     // Whenever the timer starts/stops, it should be reset to black
-    _colorCPR = Theme.of(context).colorScheme.onSurface;;
+    _colorCPR = Theme.of(context).colorScheme.onSurface;
 
     updateUI();
   }
@@ -720,8 +725,8 @@ class PageRecorderState extends State<PageRecorder> {
                         children: [
                           SlidableAction(
                             onPressed: (c) => _deleteEntry(item),
-                            backgroundColor: item.redacted ? Colors.green : Colors.red,
-                            foregroundColor: Colors.white,
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                            backgroundColor: Colors.red,
                             icon: _iconDelete()
                           ),
                         ],
@@ -734,7 +739,7 @@ class PageRecorderState extends State<PageRecorder> {
                         child: Text("${item['occurred']}:\t${item['description']}",
                           style: TextStyle(
                                 fontSize: 14,
-                                color: item.redacted ? Colors.grey : Colors.black,
+                                color: item.redacted ? Theme.of(context).colorScheme.onSurface.withAlpha(150) : Theme.of(context).colorScheme.onSurface,
                                 decoration: item.redacted ? .lineThrough : null ),
                         ),
                       )]

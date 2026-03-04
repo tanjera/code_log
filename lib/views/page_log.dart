@@ -145,10 +145,8 @@ class PageLogState extends State<PageLog> {
                                 item.redacted = !item.redacted;
                                 widget.log.save();
                               }),
-                              backgroundColor: item.redacted
-                                  ? Colors.green
-                                  : Colors.red,
-                              foregroundColor: Colors.white,
+                              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor: Colors.red,
                               icon: _iconDelete(),
                             ),
                           ],
@@ -164,12 +162,8 @@ class PageLogState extends State<PageLog> {
                                 "${item['occurred']}:\t${item['description']}",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: item.redacted
-                                      ? Colors.grey
-                                      : Colors.black,
-                                  decoration: item.redacted
-                                      ? .lineThrough
-                                      : null,
+                                  color: item.redacted ? Theme.of(context).colorScheme.onSurface.withAlpha(150) : Theme.of(context).colorScheme.onSurface,
+                                  decoration: item.redacted ? .lineThrough : null,
                                 ),
                               ),
                             ),
