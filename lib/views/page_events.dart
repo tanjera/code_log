@@ -1,8 +1,15 @@
-import 'package:codebluelog/views/dialog_event_free_text.dart';
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
+import 'dialog_event_free_text.dart';
 import 'dialog_event_vital_signs.dart';
 import 'page_recorder.dart';
+
+import '../models/event.dart';
+
 import '../classes/log.entry.dart';
 import '../classes/events.dart';
 
@@ -24,13 +31,20 @@ class VitalSigns {
   VitalSigns();
 }
 
-class PageEvents extends StatelessWidget {
-  final PageRecorderState _prs;
-  final Events _events = Events();
+class PageEvents extends StatefulWidget {
+  final PageRecorderState prs;
+  final Events events = Events();
 
-  PageEvents(this._prs, {super.key});
+  PageEvents(this.prs, {super.key});
 
-  Future<void> getVitals(BuildContext context) async {
+  @override
+  State<PageEvents> createState() => PageEventsState();
+}
+
+class PageEventsState extends State<PageEvents> {
+  bool _showHidden = false;
+
+  Future<void> _getVitals(BuildContext context) async {
     final vs = await showDialog<VitalSigns>(
       context: context,
       builder: (BuildContext context) {
@@ -62,7 +76,7 @@ class PageEvents extends StatelessWidget {
 
       if (vs.hr != null || vs.sbp != null || vs.dbp != null || vs.rr != null
           || vs.spo2 != null || vs.etco2 != null || vs.t != null) {
-        _prs.log.add(Entry(
+        widget.prs.log.add(Entry(
             type: EntryType.event,
             description: desc.trim()
         ));
@@ -74,7 +88,7 @@ class PageEvents extends StatelessWidget {
     }
   }
 
-  Future<void> getFreeText(BuildContext context) async {
+  Future<void> _getFreeText(BuildContext context) async {
     final note = await showDialog<Note>(
       context: context,
       builder: (BuildContext context) {
@@ -85,7 +99,7 @@ class PageEvents extends StatelessWidget {
     if (note != null && note.text != null) {
       String desc = "Free text note: ${note.text}";
 
-      _prs.log.add(Entry(
+      widget.prs.log.add(Entry(
           type: EntryType.event,
           description: desc.trim()
       ));
@@ -96,36 +110,99 @@ class PageEvents extends StatelessWidget {
     }
   }
 
+  void _toggleShowHidden() {
+    setState(() {
+      _showHidden = !_showHidden;
+    });
+  }
+
+  void _hideEntry (Event e) {
+    setState(() {
+      if (widget.prs.widget.settings.hiddenEvents.any((he) => he.name == e.name)) {
+        widget.prs.widget.settings.hiddenEvents.removeWhere((he) => he.name == e.name);
+      } else {
+        widget.prs.widget.settings.hiddenEvents.add(e);
+      }
+    });
+
+    widget.prs.widget.settings.save();
+  }
+
+  IconData _iconHide () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.delete_right,
+      "macos" => CupertinoIcons.delete_right,
+      _ => Icons.deselect
+    };
+  }
+
+  IconData _iconShow () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.ellipsis_circle,
+      "macos" => CupertinoIcons.ellipsis_circle,
+      _ => Icons.select_all
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Events"),
+          actions:
+          <Widget> [
+            IconButton(
+              icon: Icon(_showHidden ? _iconShow() : _iconHide()),
+              tooltip: 'Show hidden items',
+              onPressed: () { _toggleShowHidden(); },
+            ),
+          ]
       ),
       body: SafeArea(
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
               mainAxisAlignment: .start,
-              children: _events.list.map((e) =>
-                ListTile(
+              children: widget.events.list
+                  .where((e) =>
+              _showHidden ? true
+                  : !widget.prs.widget.settings.hiddenEvents.any((he) => he.name == e.name))
+                  .map((e) =>
+
+                  Slidable(
+                      startActionPane: ActionPane(
+                        motion: const ScrollMotion(),
+                        extentRatio: .1,
+                        children: [
+                          SlidableAction(
+                              onPressed: (c) => _hideEntry(e),
+                              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor: Colors.red,
+                              icon: widget.prs.widget.settings.hiddenEvents.any((he) => he.name == e.name)
+                                ? _iconHide() : _iconShow()
+                          ),
+                        ],
+                      ),
+
+                      child: ListTile(
                   title: Text(e.name),
                   trailing: e.color != null ? CircleAvatar(backgroundColor: e.color) : null,
                   onTap: () {
                     if (e.name == "Other (Free Text)") {
-                      getFreeText(context);
+                      _getFreeText(context);
                     } else if (e.name == "Vital Signs") {
-                      getVitals(context);
+                      _getVitals(context);
                     } else {
-                      _prs.log.add(Entry(
+                      widget.prs.log.add(Entry(
                           type: EntryType.event,
                           description: e.description));
-                      _prs.updateUI();
+                      widget.prs.updateUI();
                       Navigator.pop(context);
                     }
                   },
                 )
+                  )
             ).toList(),
             )
         )

@@ -311,7 +311,7 @@ class PageRecorderState extends State<PageRecorder> {
             _colorCPR = (sec % 2 == 0) ? Colors.red : Theme.of(context).colorScheme.onSurface;
           }
         } else {
-          _colorCPR = Theme.of(context).colorScheme.onSurface;;
+          _colorCPR = Theme.of(context).colorScheme.onSurface;
         }
 
         // Audible CPR alarm

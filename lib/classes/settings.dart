@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'utility.dart';
 
+import '../models/event.dart';
+
 enum AlertTypes {
   none,
   audio,
@@ -34,6 +36,8 @@ class Settings {
   DeleteModes eventDeleteMode = DeleteModes.redact;
   PageSizes pdfPageSize = PageSizes.letter;
 
+  List<Event> hiddenEvents = [];
+
   final List<int> metronomeOptions = [
     100, 110, 120
   ];
@@ -60,6 +64,7 @@ class Settings {
           "eventLogCompact": eventLogCompact,
           "deleteMode": eventDeleteMode.name,
           "pdfPageSize": pdfPageSize.name,
+          "hiddenEvents": hiddenEvents.map((e) => e.toJson()).toList()
         }),
         flush: true);
   }
@@ -86,6 +91,10 @@ class Settings {
       eventLogCompact = dAll["eventLogCompact"] ?? eventLogCompact;
       eventDeleteMode = dAll["deleteMode"] != null ? DeleteModes.values.byName(dAll["deleteMode"]) : eventDeleteMode;
       pdfPageSize = dAll["pdfPageSize"] != null ? PageSizes.values.byName(dAll["pdfPageSize"]) : pdfPageSize;
+
+      hiddenEvents = (dAll["hiddenEvents"] as List<dynamic>)
+          .map((e) => Event.fromJson(e as Map<String, dynamic>))
+          .toList();
 
     } catch (e) {
       return;

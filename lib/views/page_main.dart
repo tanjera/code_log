@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
@@ -15,8 +14,6 @@ import '../classes/utility.dart';
 import 'page_logs.dart';
 import 'page_recorder.dart';
 import 'page_settings.dart';
-
-import '../main.dart';
 
 class PageMain extends StatefulWidget {
   final String title;
