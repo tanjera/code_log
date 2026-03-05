@@ -732,17 +732,22 @@ class PageRecorderState extends State<PageRecorder> {
                         ],
                       ),
 
-                      child: Row(children:[ Padding(
-                        padding: widget.settings.eventLogCompact
-                            ? .symmetric(horizontal: 10, vertical: 5)
-                            : .symmetric(horizontal: 10, vertical: 10),
-                        child: Text("${item['occurred']}:\t${item['description']}",
-                          style: TextStyle(
-                                fontSize: 14,
-                                color: item.redacted ? Theme.of(context).colorScheme.onSurface.withAlpha(150) : Theme.of(context).colorScheme.onSurface,
-                                decoration: item.redacted ? .lineThrough : null ),
-                        ),
-                      )]
+                      child: Row(
+                          children:[
+                            Expanded(
+                              child: Padding(
+                                padding: widget.settings.eventLogCompact
+                                    ? .symmetric(horizontal: 10, vertical: 5)
+                                    : .symmetric(horizontal: 10, vertical: 10),
+                                child: Text("${item['occurred']}:\t${item['description']}",
+                                  style: TextStyle(
+                                        fontSize: 14,
+                                        color: item.redacted ? Theme.of(context).colorScheme.onSurface.withAlpha(150) : Theme.of(context).colorScheme.onSurface,
+                                        decoration: item.redacted ? .lineThrough : null ),
+                                ),
+                              )
+                            )
+                          ]
                       )
                   )
               ).toList()

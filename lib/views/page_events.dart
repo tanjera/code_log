@@ -45,15 +45,6 @@ class PageEvents extends StatefulWidget {
 class PageEventsState extends State<PageEvents> {
   bool _showHidden = false;
 
-  late PageRecorderState prs;
-  late Settings settings;
-
-  PageEventsState() {
-    prs = widget.prs;
-    settings = prs.widget.settings;
-  }
-
-
   Future<void> _getVitals(BuildContext context) async {
     final vs = await showDialog<VitalSigns>(
       context: context,
@@ -86,7 +77,7 @@ class PageEventsState extends State<PageEvents> {
 
       if (vs.hr != null || vs.sbp != null || vs.dbp != null || vs.rr != null
           || vs.spo2 != null || vs.etco2 != null || vs.t != null) {
-        prs.log.add(Entry(
+        widget.prs.log.add(Entry(
             type: EntryType.event,
             description: desc.trim()
         ));
@@ -109,7 +100,7 @@ class PageEventsState extends State<PageEvents> {
     if (note != null && note.text != null) {
       String desc = "Free text note: ${note.text}";
 
-      prs.log.add(Entry(
+      widget.prs.log.add(Entry(
           type: EntryType.event,
           description: desc.trim()
       ));
@@ -127,6 +118,8 @@ class PageEventsState extends State<PageEvents> {
   }
 
   void _hideEntry (Event e) {
+    final Settings settings = widget.prs.widget.settings;
+
     setState(() {
       if (settings.hiddenEvents.any((he) => he.name == e.name)) {
         settings.hiddenEvents.removeWhere((he) => he.name == e.name);
@@ -140,9 +133,9 @@ class PageEventsState extends State<PageEvents> {
 
   IconData _iconHide () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.clear_circled,
-      "macos" => CupertinoIcons.clear_circled,
-      _ => Icons.deselect
+      "ios" => CupertinoIcons.ellipsis_circle_fill,
+      "macos" => CupertinoIcons.ellipsis_circle_fill,
+      _ => Icons.playlist_remove
     };
   }
 
@@ -150,22 +143,25 @@ class PageEventsState extends State<PageEvents> {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.ellipsis_circle,
       "macos" => CupertinoIcons.ellipsis_circle,
-      _ => Icons.select_all
+      _ => Icons.playlist_add_check
     };
   }
 
   @override
   Widget build(BuildContext context) {
+    final PageRecorderState prs = widget.prs;
+    final Settings settings = prs.widget.settings;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Events"),
-          actions:
+        actions:
           <Widget> [
             IconButton(
               icon: Icon(_showHidden ? _iconShow() : _iconHide()),
               tooltip: 'Show hidden items',
-              onPressed: () { _toggleShowHidden(); },
+              onPressed: () { settings.hiddenEvents.isEmpty ? null : _toggleShowHidden(); },
             ),
           ]
       ),
@@ -175,9 +171,9 @@ class PageEventsState extends State<PageEvents> {
             child: Column(
               mainAxisAlignment: .start,
               children: widget.events.list
-                  .where((e) =>
-              _showHidden ? true
-                  : !settings.hiddenEvents.any((he) => he.name == e.name))
+                  .where((e) => _showHidden
+                    ? true
+                    : !settings.hiddenEvents.any((he) => he.name == e.name))
                   .map((e) =>
 
                   Slidable(
@@ -190,28 +186,33 @@ class PageEventsState extends State<PageEvents> {
                               foregroundColor: Theme.of(context).colorScheme.onPrimary,
                               backgroundColor: Colors.red,
                               icon: settings.hiddenEvents.any((he) => he.name == e.name)
-                                ? _iconHide() : _iconShow()
+                                ? _iconShow() : _iconHide()
                           ),
                         ],
                       ),
 
                       child: ListTile(
-                  title: Text(e.name),
-                  trailing: e.color != null ? CircleAvatar(backgroundColor: e.color) : null,
-                  onTap: () {
-                    if (e.name == "Other (Free Text)") {
-                      _getFreeText(context);
-                    } else if (e.name == "Vital Signs") {
-                      _getVitals(context);
-                    } else {
-                      widget.prs.log.add(Entry(
-                          type: EntryType.event,
-                          description: e.description));
-                      widget.prs.updateUI();
-                      Navigator.pop(context);
-                    }
-                  },
-                )
+                        title: Text(e.name,
+                            style: TextStyle(
+                                color: settings.hiddenEvents.any((he) => he.name == e.name)
+                                    ? Theme.of(context).colorScheme.onSurface.withAlpha(100)
+                                    : Theme.of(context).colorScheme.onSurface
+                            )),
+                        trailing: e.color != null ? CircleAvatar(backgroundColor: e.color) : null,
+                        onTap: () {
+                          if (e.name == "Other (Free Text)") {
+                            _getFreeText(context);
+                          } else if (e.name == "Vital Signs") {
+                            _getVitals(context);
+                          } else {
+                            prs.log.add(Entry(
+                                type: EntryType.event,
+                                description: e.description));
+                            prs.updateUI();
+                            Navigator.pop(context);
+                          }
+                        },
+                      )
                   )
             ).toList(),
             )
