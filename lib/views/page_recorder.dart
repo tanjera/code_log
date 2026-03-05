@@ -339,9 +339,9 @@ class PageRecorderState extends State<PageRecorder> {
 
   IconData _iconDelete () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.delete,
-      "macos" => CupertinoIcons.delete,
-      _ => Icons.delete_outlined
+      "ios" => CupertinoIcons.clear_circled,
+      "macos" => CupertinoIcons.clear_circled,
+      _ => Icons.cancel_outlined
     };
   }
 

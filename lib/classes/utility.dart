@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
+import 'log.dart';
+
 Future<String> get localPath async {
   final directory = await getApplicationDocumentsDirectory();
   return directory.path;
@@ -30,6 +32,26 @@ Future<List<String>> localLogs () async {
   }
 
   return files;
+}
+
+Future<void> deleteLog (Log l) async {
+  final path = await localPath;
+  final dir = Directory(path);
+
+  if (await dir.exists()) {
+    final String fileprefix = "log_${l.created!.toIso8601String()}";
+
+    await for (final f in dir.list(recursive: false, followLinks: false)) {
+      if (f is File) {
+        var name = f.path.split('/').last;
+
+        if (name.startsWith(fileprefix)
+          && (name.indexOf('.json') > 0 || name.indexOf('.pdf') > 0)) {
+          f.delete();
+        }
+      }
+    }
+  }
 }
 
 Future<void> deleteAllLogs () async {

@@ -1,15 +1,16 @@
-
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../classes/log.dart';
 import '../classes/logs.dart';
 import '../classes/settings.dart';
 import '../classes/utility.dart';
 
+import 'dialog_delete_log.dart';
 import 'dialog_delete_logs.dart';
 import 'page_log.dart';
 
@@ -31,6 +32,25 @@ class PageLogsState extends State<PageLogs> {
         return DialogDeleteLogs(this);
       },
     );
+  }
+
+  void _confirmDeleteLog(Log l) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogDeleteLog(this, l);
+      },
+    );
+  }
+
+  void pressedDeleteLog(Log l) async {
+    deleteLog(l);
+
+    ScaffoldMessenger.of( context,
+    ).showSnackBar(SnackBar(content: Text("Log deleted",
+      textAlign: TextAlign.center,)));
+
+    refreshPage();
   }
 
   void pressedDeleteLogs() async {
@@ -60,12 +80,19 @@ class PageLogsState extends State<PageLogs> {
     setState(() {});
   }
 
-
   IconData _iconDelete () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.delete,
-      "macos" => CupertinoIcons.delete,
-      _ => Icons.delete_outlined
+      "ios" => CupertinoIcons.clear_circled,
+      "macos" => CupertinoIcons.clear_circled,
+      _ => Icons.cancel_outlined
+    };
+  }
+
+  IconData _iconDeleteAll () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.clear_circled,
+      "macos" => CupertinoIcons.clear_circled,
+      _ => Icons.playlist_remove
     };
   }
 
@@ -77,7 +104,7 @@ class PageLogsState extends State<PageLogs> {
           title: Text("Logs"),
           actions: <Widget> [
             IconButton(
-              icon: Icon(_iconDelete()),
+              icon: Icon(_iconDeleteAll()),
               tooltip: 'Delete Logs',
               onPressed: _confirmDeleteLogs
               )
@@ -91,7 +118,21 @@ class PageLogsState extends State<PageLogs> {
               ? [ListTile(title: Text("There are no logs yet")),
                 ListTile(title: Text("Swipe down to refresh this screen as needed"))]
               : widget.logs.list.map((l) =>
-                  ListTile(
+              Slidable(
+                  startActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    extentRatio: .1,
+                    children: [
+                      SlidableAction(
+                          onPressed: (c) => _confirmDeleteLog(l),
+                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                          backgroundColor: Colors.red,
+                          icon: _iconDelete()
+                      ),
+                    ],
+                  ),
+
+                  child: ListTile(
                     title: Text("${DateFormat.yMMMMd().format(l.created ?? DateTime.now())}, ${DateFormat.Hm().format(l.created ?? DateTime.now())}" ),
                     subtitle: l.identifier != null ? Text(l.identifier ?? "") : null,
                     onTap: () {
@@ -103,6 +144,7 @@ class PageLogsState extends State<PageLogs> {
                       );
                     },
                   )
+              )
               ).toList(),
         )
       )

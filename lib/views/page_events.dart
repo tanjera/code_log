@@ -12,6 +12,7 @@ import '../models/event.dart';
 
 import '../classes/log.entry.dart';
 import '../classes/events.dart';
+import '../classes/settings.dart';
 
 class Note {
   String? text;
@@ -43,6 +44,15 @@ class PageEvents extends StatefulWidget {
 
 class PageEventsState extends State<PageEvents> {
   bool _showHidden = false;
+
+  late PageRecorderState prs;
+  late Settings settings;
+
+  PageEventsState() {
+    prs = widget.prs;
+    settings = prs.widget.settings;
+  }
+
 
   Future<void> _getVitals(BuildContext context) async {
     final vs = await showDialog<VitalSigns>(
@@ -76,7 +86,7 @@ class PageEventsState extends State<PageEvents> {
 
       if (vs.hr != null || vs.sbp != null || vs.dbp != null || vs.rr != null
           || vs.spo2 != null || vs.etco2 != null || vs.t != null) {
-        widget.prs.log.add(Entry(
+        prs.log.add(Entry(
             type: EntryType.event,
             description: desc.trim()
         ));
@@ -99,7 +109,7 @@ class PageEventsState extends State<PageEvents> {
     if (note != null && note.text != null) {
       String desc = "Free text note: ${note.text}";
 
-      widget.prs.log.add(Entry(
+      prs.log.add(Entry(
           type: EntryType.event,
           description: desc.trim()
       ));
@@ -118,20 +128,20 @@ class PageEventsState extends State<PageEvents> {
 
   void _hideEntry (Event e) {
     setState(() {
-      if (widget.prs.widget.settings.hiddenEvents.any((he) => he.name == e.name)) {
-        widget.prs.widget.settings.hiddenEvents.removeWhere((he) => he.name == e.name);
+      if (settings.hiddenEvents.any((he) => he.name == e.name)) {
+        settings.hiddenEvents.removeWhere((he) => he.name == e.name);
       } else {
-        widget.prs.widget.settings.hiddenEvents.add(e);
+        settings.hiddenEvents.add(e);
       }
     });
 
-    widget.prs.widget.settings.save();
+    settings.save();
   }
 
   IconData _iconHide () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.delete_right,
-      "macos" => CupertinoIcons.delete_right,
+      "ios" => CupertinoIcons.clear_circled,
+      "macos" => CupertinoIcons.clear_circled,
       _ => Icons.deselect
     };
   }
@@ -167,7 +177,7 @@ class PageEventsState extends State<PageEvents> {
               children: widget.events.list
                   .where((e) =>
               _showHidden ? true
-                  : !widget.prs.widget.settings.hiddenEvents.any((he) => he.name == e.name))
+                  : !settings.hiddenEvents.any((he) => he.name == e.name))
                   .map((e) =>
 
                   Slidable(
@@ -179,7 +189,7 @@ class PageEventsState extends State<PageEvents> {
                               onPressed: (c) => _hideEntry(e),
                               foregroundColor: Theme.of(context).colorScheme.onPrimary,
                               backgroundColor: Colors.red,
-                              icon: widget.prs.widget.settings.hiddenEvents.any((he) => he.name == e.name)
+                              icon: settings.hiddenEvents.any((he) => he.name == e.name)
                                 ? _iconHide() : _iconShow()
                           ),
                         ],
