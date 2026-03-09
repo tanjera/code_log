@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/rhythm.dart';
 
 class Rhythms {
-  List<Rhythm> list = [
+  List<Rhythm> defaultList = [
     Rhythm("Asystole", Colors.red),
     Rhythm("Atrial Fibrillation", null),
     Rhythm("Atrial Flutter", null),
@@ -34,6 +34,11 @@ class Rhythms {
 
   Rhythms () {
     // In case they are out of alphabetical order in the declaring list...
+    defaultList = sort(defaultList);
+  }
+
+  List<Rhythm> sort (List<Rhythm> list) {
     list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return list;
   }
 }

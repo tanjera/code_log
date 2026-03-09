@@ -43,8 +43,6 @@ class PageEvents extends StatefulWidget {
 }
 
 class PageEventsState extends State<PageEvents> {
-  bool _showHidden = false;
-
   Future<void> _getVitals(BuildContext context) async {
     final vs = await showDialog<VitalSigns>(
       context: context,
@@ -111,26 +109,6 @@ class PageEventsState extends State<PageEvents> {
     }
   }
 
-  void _toggleShowHidden() {
-    setState(() {
-      _showHidden = !_showHidden;
-    });
-  }
-
-  void _hideEntry (Event e) {
-    final Settings settings = widget.prs.widget.settings;
-
-    setState(() {
-      if (settings.hiddenEvents.any((he) => he.name == e.name)) {
-        settings.hiddenEvents.removeWhere((he) => he.name == e.name);
-      } else {
-        settings.hiddenEvents.add(e);
-      }
-    });
-
-    settings.save();
-  }
-
   IconData _iconHide () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.ellipsis_circle_fill,
@@ -156,25 +134,13 @@ class PageEventsState extends State<PageEvents> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Events"),
-        actions:
-          <Widget> [
-            IconButton(
-              icon: Icon(_showHidden ? _iconShow() : _iconHide()),
-              tooltip: 'Show hidden items',
-              onPressed: () { settings.hiddenEvents.isEmpty ? null : _toggleShowHidden(); },
-            ),
-          ]
       ),
       body: SafeArea(
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
               mainAxisAlignment: .start,
-              children: widget.events.list
-                  .where((e) => _showHidden
-                    ? true
-                    : !settings.hiddenEvents.any((he) => he.name == e.name))
-                  .map((e) =>
+              children: settings.listEvents.map((e) =>
 
                   Slidable(
                       startActionPane: ActionPane(
@@ -182,22 +148,16 @@ class PageEventsState extends State<PageEvents> {
                         extentRatio: .1,
                         children: [
                           SlidableAction(
-                              onPressed: (c) => _hideEntry(e),
+                              onPressed: (c) => {},
                               foregroundColor: Theme.of(context).colorScheme.onPrimary,
                               backgroundColor: Colors.red,
-                              icon: settings.hiddenEvents.any((he) => he.name == e.name)
-                                ? _iconShow() : _iconHide()
+                              icon: _iconHide()
                           ),
                         ],
                       ),
 
                       child: ListTile(
-                        title: Text(e.name,
-                            style: TextStyle(
-                                color: settings.hiddenEvents.any((he) => he.name == e.name)
-                                    ? Theme.of(context).colorScheme.onSurface.withAlpha(100)
-                                    : Theme.of(context).colorScheme.onSurface
-                            )),
+                        title: Text(e.name),
                         trailing: e.color != null ? CircleAvatar(backgroundColor: e.color) : null,
                         onTap: () {
                           if (e.name == "Other (Free Text)") {
@@ -207,7 +167,7 @@ class PageEventsState extends State<PageEvents> {
                           } else {
                             prs.log.add(Entry(
                                 type: EntryType.event,
-                                description: e.description));
+                                description: e.description ?? ""));
                             prs.updateUI();
                             Navigator.pop(context);
                           }

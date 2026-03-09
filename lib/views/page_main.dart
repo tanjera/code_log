@@ -71,6 +71,7 @@ class PageMainState extends State<PageMain> {
 
   Future<void> loadSettings() async {
     await widget.settings.load();
+    await widget.settings.initLists();
 
     if (context.mounted) {
       ThemeProvider tp = Provider.of<ThemeProvider>(context, listen: false);

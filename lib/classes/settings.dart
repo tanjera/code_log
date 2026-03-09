@@ -2,6 +2,13 @@ import 'dart:convert';
 
 import 'utility.dart';
 
+
+import '../classes/drugs.dart';
+import '../classes/events.dart';
+import '../classes/procedures.dart';
+import '../classes/rhythms.dart';
+
+
 import '../models/drug.dart';
 import '../models/event.dart';
 import '../models/procedure.dart';
@@ -39,22 +46,40 @@ class Settings {
   DeleteModes eventDeleteMode = DeleteModes.redact;
   PageSizes pdfPageSize = PageSizes.letter;
 
-  List<Drug> hiddenDrugs = [];
-  List<Event> hiddenEvents = [];
-  List<Procedure> hiddenProcedures = [];
-  List<Rhythm> hiddenRhythms = [];
+  List<Drug> listDrugs = [];
+  List<Event> listEvents = [];
+  List<Procedure> listProcedures = [];
+  List<Rhythm> listRhythms = [];
 
   final List<int> metronomeOptions = [
     100, 110, 120
   ];
 
-  Settings() {
-    try {
-      load();
-    } catch (e) {
-      // ...
+  Future<void> initLists() async {
+    bool toSave = false;
+    if (listDrugs.isEmpty) {
+      listDrugs = Drugs().defaultList;
+      toSave = true;
     }
 
+    if (listEvents.isEmpty) {
+      listEvents = Events().defaultList;
+      toSave = true;
+    }
+
+    if (listProcedures.isEmpty) {
+      listProcedures = Procedures().defaultList;
+      toSave = true;
+    }
+
+    if (listRhythms.isEmpty) {
+      listRhythms = Rhythms().defaultList;
+      toSave = true;
+    }
+
+    if (toSave) {
+      save();
+    }
   }
 
   void save() async {
@@ -70,10 +95,10 @@ class Settings {
           "eventLogCompact": eventLogCompact,
           "deleteMode": eventDeleteMode.name,
           "pdfPageSize": pdfPageSize.name,
-          "hiddenDrugs": hiddenDrugs.map((e) => e.toJson()).toList(),
-          "hiddenEvents": hiddenEvents.map((e) => e.toJson()).toList(),
-          "hiddenProcedures": hiddenProcedures.map((e) => e.toJson()).toList(),
-          "hiddenRhythms": hiddenRhythms.map((e) => e.toJson()).toList(),
+          "listDrugs": listDrugs.map((e) => e.toJson()).toList(),
+          "listEvents": listEvents.map((e) => e.toJson()).toList(),
+          "listProcedures": listProcedures.map((e) => e.toJson()).toList(),
+          "listRhythms": listRhythms.map((e) => e.toJson()).toList(),
         }),
         flush: true);
   }
@@ -101,19 +126,19 @@ class Settings {
       eventDeleteMode = dAll["deleteMode"] != null ? DeleteModes.values.byName(dAll["deleteMode"]) : eventDeleteMode;
       pdfPageSize = dAll["pdfPageSize"] != null ? PageSizes.values.byName(dAll["pdfPageSize"]) : pdfPageSize;
 
-      hiddenDrugs = (dAll["hiddenDrugs"] as List<dynamic>)
+      listDrugs = (dAll["listDrugs"] as List<dynamic>)
           .map((e) => Drug.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      hiddenEvents = (dAll["hiddenEvents"] as List<dynamic>)
+      listEvents = (dAll["listEvents"] as List<dynamic>)
           .map((e) => Event.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      hiddenProcedures = (dAll["hiddenProcedures"] as List<dynamic>)
+      listProcedures = (dAll["listProcedures"] as List<dynamic>)
           .map((e) => Procedure.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      hiddenRhythms = (dAll["hiddenRhythms"] as List<dynamic>)
+      listRhythms = (dAll["listRhythms"] as List<dynamic>)
           .map((e) => Rhythm.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {

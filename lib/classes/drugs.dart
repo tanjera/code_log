@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/drug.dart';
 
 class Drugs {
-  List<Drug> list = [
+  List<Drug> defaultList = [
     Drug("Adenosine", null, null),
     Drug("Amiodarone", "IV Push", null),
     Drug("Amiodarone", "IV Bolus via Minibag", null),
@@ -50,6 +50,14 @@ class Drugs {
 
   Drugs() {
     // In case they are out of alphabetical order in the declaring list...
-    list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    defaultList = sort(defaultList);
+  }
+
+  List<Drug> sort (List<Drug> list) {
+    list.sort((a, b) {
+      int c = a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      return (c != 0) ? c : (a.route?.toLowerCase() ?? "").compareTo(b.route?.toLowerCase() ?? "");
+    });
+    return list;
   }
 }

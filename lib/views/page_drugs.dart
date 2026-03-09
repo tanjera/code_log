@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+import 'dialog_delete_drug.dart';
 import 'page_recorder.dart';
 
 import '../models/drug.dart';
@@ -23,37 +24,27 @@ class PageDrugs extends StatefulWidget {
 }
 
 class PageDrugsState extends State<PageDrugs> {
-  bool _showHidden = false;
 
-  void _toggleShowHidden() {
-    setState(() {
-      _showHidden = !_showHidden;
-    });
+  Future<void> _confirmDeleteDrug (Drug d) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogDeleteDrug(this, d);
+      },
+    );
   }
 
-  void _hideEntry (Drug d) {
-    final Settings settings = widget.prs.widget.settings;
-
+  void pressedDeleteDrug(Drug d) async {
     setState(() {
-      if (settings.hiddenDrugs.any((hd) => hd.name == d.name && hd.route == d.route)) {
-        settings.hiddenDrugs.removeWhere((hd) => hd.name == d.name && hd.route == d.route);
-      } else {
-        settings.hiddenDrugs.add(d);
-      }
+      widget.prs.widget.settings.listDrugs.remove(d);
     });
 
-    settings.save();
+    ScaffoldMessenger.of( context,
+    ).showSnackBar(SnackBar(content: Text("Drug deleted",
+      textAlign: TextAlign.center,)));
   }
 
-  IconData _iconHide () {
-    return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.ellipsis_circle_fill,
-      "macos" => CupertinoIcons.ellipsis_circle_fill,
-      _ => Icons.playlist_remove
-    };
-  }
-
-  IconData _iconShow () {
+  IconData _iconAdd () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.ellipsis_circle,
       "macos" => CupertinoIcons.ellipsis_circle,
@@ -61,6 +52,13 @@ class PageDrugsState extends State<PageDrugs> {
     };
   }
 
+  IconData iconDelete () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.ellipsis_circle_fill,
+      "macos" => CupertinoIcons.ellipsis_circle_fill,
+      _ => Icons.playlist_remove
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,26 +68,14 @@ class PageDrugsState extends State<PageDrugs> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Drugs"),
-          actions:
-          <Widget> [
-            IconButton(
-              icon: Icon(_showHidden ? _iconShow() : _iconHide()),
-              tooltip: 'Show hidden items',
-              onPressed: () { settings.hiddenDrugs.isEmpty ? null : _toggleShowHidden(); },
-            ),
-          ]
+        title: Text("Drugs"),         
       ),
       body: SafeArea(
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
               mainAxisAlignment: .start,
-                children: widget.drugs.list
-                    .where((d) => _showHidden
-                    ? true
-                    : !settings.hiddenDrugs.any((hd) => hd.name == d.name && hd.route == d.route))
-                    .map((d) =>
+                children: settings.listDrugs.map((d) =>
 
                     Slidable(
                         startActionPane: ActionPane(
@@ -97,30 +83,17 @@ class PageDrugsState extends State<PageDrugs> {
                           extentRatio: .1,
                           children: [
                             SlidableAction(
-                                onPressed: (c) => _hideEntry(d),
+                                onPressed: (c) => _confirmDeleteDrug(d),
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 backgroundColor: Colors.red,
-                                icon: settings.hiddenDrugs.any((hd) => hd.name == d.name && hd.route == d.route)
-                                    ? _iconShow() : _iconHide()
+                                icon: iconDelete()
                             ),
                           ],
                         ),
 
                         child:ListTile(
-                          title: Text(d.name,
-                              style: TextStyle(
-                                  color: settings.hiddenDrugs.any((hd) => hd.name == d.name && hd.route == d.route)
-                                      ? Theme.of(context).colorScheme.onSurface.withAlpha(100)
-                                      : Theme.of(context).colorScheme.onSurface
-                              )),
-                          subtitle: d.route != null
-                              ? Text(d.route!,
-                                  style: TextStyle(
-                                      color: settings.hiddenDrugs.any((hd) => hd.name == d.name && hd.route == d.route)
-                                          ? Theme.of(context).colorScheme.onSurface.withAlpha(100)
-                                          : Theme.of(context).colorScheme.onSurface
-                                  ))
-                              : null,
+                          title: Text(d.name),
+                          subtitle: d.route != null ? Text(d.route!) : null,
                           trailing: d.color != null ? CircleAvatar(backgroundColor: d.color) : null,
                           onTap: () {
                             if (d.name == "Epinephrine") {

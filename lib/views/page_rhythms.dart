@@ -23,28 +23,6 @@ class PageRhythms extends StatefulWidget {
 }
 
 class PageRhythmsState extends State<PageRhythms> {
-  bool _showHidden = false;
-
-  void _toggleShowHidden() {
-    setState(() {
-      _showHidden = !_showHidden;
-    });
-  }
-
-  void _hideEntry (Rhythm r) {
-    final Settings settings = widget.prs.widget.settings;
-
-    setState(() {
-      if (settings.hiddenRhythms.any((hr) => hr.name == r.name)) {
-        settings.hiddenRhythms.removeWhere((hr) => hr.name == r.name);
-      } else {
-        settings.hiddenRhythms.add(r);
-      }
-    });
-
-    settings.save();
-  }
-
   IconData _iconHide () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.ellipsis_circle_fill,
@@ -70,49 +48,29 @@ class PageRhythmsState extends State<PageRhythms> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Cardiac Rhythms"),
-          actions:
-          <Widget> [
-            IconButton(
-              icon: Icon(_showHidden ? _iconShow() : _iconHide()),
-              tooltip: 'Show hidden items',
-              onPressed: () { settings.hiddenRhythms.isEmpty ? null : _toggleShowHidden(); },
-            ),
-          ]
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Column(
             mainAxisAlignment: .start,
-            children: widget.rhythms.list
-                .where((r) => _showHidden
-                ? true
-                : !settings.hiddenRhythms.any((hr) => hr.name == r.name))
-                .map((r) =>
-
+            children: settings.listRhythms.map((r) =>
                 Slidable(
                     startActionPane: ActionPane(
                       motion: const ScrollMotion(),
                       extentRatio: .1,
                       children: [
                         SlidableAction(
-                            onPressed: (c) => _hideEntry(r),
+                            onPressed: (c) => {},
                             foregroundColor: Theme.of(context).colorScheme.onPrimary,
                             backgroundColor: Colors.red,
-                            icon: settings.hiddenRhythms.any((hr) => hr.name == r.name)
-                                ? _iconShow() : _iconHide()
+                            icon: _iconHide()
                         ),
                       ],
                     ),
 
                     child: ListTile(
-                      title: Text(r.name,
-                          style: TextStyle(
-                              color: settings.hiddenRhythms.any((hr) => hr.name == r.name)
-                                  ? Theme.of(context).colorScheme.onSurface.withAlpha(100)
-                                  : Theme.of(context).colorScheme.onSurface
-                          )
-                      ),
+                      title: Text(r.name),
                       trailing: r.color != null ? CircleAvatar(backgroundColor: r.color) : null,
                       onTap: () {
                         prs.log.add(Entry(

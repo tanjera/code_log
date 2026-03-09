@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/event.dart';
 
 class Events {
-  List<Event> list = [
+  List<Event> defaultList = [
     Event("Assumed Care", "Assumed care of patient", null),
     Event("Call to Receiving Facility", "Call placed to receiving facility", null),
     Event("Dispatch Received", "Dispatch received", null),
@@ -23,6 +23,14 @@ class Events {
 
   Events () {
     // In case they are out of alphabetical order in the declaring list...
-    list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    defaultList = sort(defaultList);
+  }
+
+  List<Event> sort (List<Event> list) {
+    list.sort((a, b) {
+      int c = a.name.toLowerCase().compareTo(b.name.toLowerCase());
+      return (c != 0) ? c : (a.description?.toLowerCase() ?? "").compareTo(b.description?.toLowerCase() ?? "");
+    });
+    return list;
   }
 }

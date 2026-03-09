@@ -4,7 +4,7 @@ import '../models/procedure.dart';
 
 
 class Procedures {
-  final List<Procedure> list = [
+  List<Procedure> defaultList = [
     Procedure("Arterial Line", null, "Arterial line placed", Colors.red.shade600),
     Procedure("Assisted Ventilation", "Bag-Valve-Mask (BVM) or Rescue Breathing", "Assisted ventilation", Colors.blue.shade200),
     Procedure("Bronchoscopy", null, "Bronchoscopy conducted", null),
@@ -30,6 +30,14 @@ class Procedures {
 
   Procedures() {
     // In case they are out of alphabetical order in the declaring list...
-    list.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+    defaultList = sort(defaultList);
+  }
+
+  List<Procedure> sort (List<Procedure> list) {
+    list.sort((a, b) {
+      int c = a.title.toLowerCase().compareTo(b.title.toLowerCase());
+      return (c != 0) ? c : (a.subtitle?.toLowerCase() ?? "").compareTo(b.subtitle?.toLowerCase() ?? "");
+    });
+    return list;
   }
 }

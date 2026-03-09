@@ -5,10 +5,11 @@ class Procedure {
   late String? subtitle;
   late String log;
   late Color? color;
+  bool favorite = false;
 
   Procedure(this.title, this.subtitle, this.log, this.color);
 
-  Procedure.m ({required this.title, required this.subtitle, required this.log});
+  Procedure.m ({required this.title, required this.subtitle, required this.log, required this.color, required this.favorite});
 
   String? operator [] (String key) {
     switch (key) {
@@ -18,6 +19,10 @@ class Procedure {
         return subtitle;
       case 'log':
         return log;
+      case 'color':
+        return color?.toARGB32().toString();
+      case 'favorite':
+        return favorite.toString();
       default:
         return "";
     }
@@ -28,6 +33,8 @@ class Procedure {
       'title': title,
       'subtitle': subtitle,
       'log': log,
+      'color': color?.toARGB32().toString(),
+      'favorite': favorite,
     };
   }
 
@@ -36,6 +43,8 @@ class Procedure {
       title: json['title'] as String,
       subtitle: json['subtitle'] as String?,
       log: json['log'] as String,
+      color: json['color'] == null ? null : Color(int.parse(json['color'])) as Color?,
+      favorite: json['favorite'] as bool,
     );
   }
 }
