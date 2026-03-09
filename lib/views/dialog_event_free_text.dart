@@ -19,7 +19,7 @@ class DialogEventFreeText extends StatelessWidget {
             keyboardType: TextInputType.multiline,
             decoration: InputDecoration(
               border: OutlineInputBorder(),
-              hintText: 'Enter note here',
+              labelText: 'Enter note here',
             ),
           onChanged: (v) {
             if (v.isNotEmpty) {

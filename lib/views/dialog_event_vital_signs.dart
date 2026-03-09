@@ -17,134 +17,152 @@ class DialogEventVitalSigns extends StatelessWidget {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextField(
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              border: OutlineInputBorder(),
-              hintText: 'Heart Rate',
-            ),
-          onChanged: (v) {
-            if (v.isNotEmpty) {
-              _vs.hr = int.parse(v);
-            }
-            },
-          ),
-
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                    border: OutlineInputBorder(),
-                    hintText: 'Systolic Blood Pressure',
-                  ),
-                  onChanged: (v) {
-                    if (v.isNotEmpty) {
-                      _vs.sbp = int.parse(v);
-                    }
-                  },
-                ),
+        Padding(
+          padding: .symmetric(vertical: 5),
+          child: TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                border: OutlineInputBorder(),
+                labelText: 'Heart Rate',
               ),
+            onChanged: (v) {
+              if (v.isNotEmpty) {
+                _vs.hr = int.parse(v);
+              }
+              },
+            ),
+          ),
 
-              Text(" / ",
-                  style: TextStyle(fontSize: 20)),
-
-              Expanded(
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                    border: OutlineInputBorder(),
-                    hintText: 'Diastolic Blood Pressure',
+          Padding(
+            padding: .symmetric(vertical: 5),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                      border: OutlineInputBorder(),
+                      labelText: 'Systolic Blood Pressure',
+                    ),
+                    onChanged: (v) {
+                      if (v.isNotEmpty) {
+                        _vs.sbp = int.parse(v);
+                      }
+                    },
                   ),
-                  onChanged: (v) {
-                    if (v.isNotEmpty) {
-                      _vs.dbp = int.parse(v);
-                    }
-                  },
                 ),
+
+                Text(" / ",
+                    style: TextStyle(fontSize: 20)),
+
+                Expanded(
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                      border: OutlineInputBorder(),
+                      labelText: 'Diastolic Blood Pressure',
+                    ),
+                    onChanged: (v) {
+                      if (v.isNotEmpty) {
+                        _vs.dbp = int.parse(v);
+                      }
+                    },
+                  ),
+                ),
+              ]
+            ),
+          ),
+
+          Padding(
+            padding: .symmetric(vertical: 5),
+            child: TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                border: OutlineInputBorder(),
+                labelText: 'Respiratory Rate',
               ),
-            ]
+              onChanged: (v) {
+                if (v.isNotEmpty) {
+                  _vs.rr = int.parse(v);
+                }
+              },
+            ),
           ),
 
-          TextField(
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              border: OutlineInputBorder(),
-              hintText: 'Respiratory Rate',
+          Padding(
+            padding: .symmetric(vertical: 5),
+            child: TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                border: OutlineInputBorder(),
+                labelText: 'Pulse Oximetry',
+              ),
+              onChanged: (v) {
+                if (v.isNotEmpty) {
+                  _vs.spo2 = int.parse(v);
+                }
+              },
             ),
-            onChanged: (v) {
-              if (v.isNotEmpty) {
-                _vs.rr = int.parse(v);
-              }
-            },
           ),
 
-          TextField(
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              border: OutlineInputBorder(),
-              hintText: 'Pulse Oximetry',
+          Padding(
+            padding: .symmetric(vertical: 5),
+            child: TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                border: OutlineInputBorder(),
+                labelText: 'End-tidal Capnometry',
+              ),
+              onChanged: (v) {
+                if (v.isNotEmpty) {
+                  _vs.etco2 = int.parse(v);
+                }
+              },
             ),
-            onChanged: (v) {
-              if (v.isNotEmpty) {
-                _vs.spo2 = int.parse(v);
-              }
-            },
           ),
 
-          TextField(
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              border: OutlineInputBorder(),
-              hintText: 'End-tidal Capnometry',
+          Padding(
+            padding: .symmetric(vertical: 5),
+            child: TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*'))
+              ],
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                border: OutlineInputBorder(),
+                labelText: 'Temperature',
+              ),
+              onChanged: (v) {
+                if (v.isNotEmpty) {
+                  _vs.t = double.parse(v);
+                }
+              },
             ),
-            onChanged: (v) {
-              if (v.isNotEmpty) {
-                _vs.etco2 = int.parse(v);
-              }
-            },
-          ),
-
-          TextField(
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d*'))
-            ],
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              border: OutlineInputBorder(),
-              hintText: 'Temperature',
-            ),
-            onChanged: (v) {
-              if (v.isNotEmpty) {
-                _vs.t = double.parse(v);
-              }
-            },
           ),
         ]
       ),

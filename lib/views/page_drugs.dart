@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:codebluelog/views/dialog_edit_drug.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -25,7 +26,27 @@ class PageDrugs extends StatefulWidget {
 
 class PageDrugsState extends State<PageDrugs> {
 
-  Future<void> _confirmDeleteDrug (Drug d) async {
+  Future<void> _editDrug (Drug d) async {
+    final edit = await showDialog<Drug>(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogEditDrug(d);
+      },
+    );
+
+    if (edit != null) {
+      Settings settings = widget.prs.widget.settings;
+
+      setState(() {
+        d.name = edit.name;
+        d.route = edit.route;
+      });
+
+      settings.save();
+    }
+  }
+
+  Future<void> _deleteDrug (Drug d) async {
     final delete = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -41,7 +62,7 @@ class PageDrugsState extends State<PageDrugs> {
         settings.save();
       });
 
-      ScaffoldMessenger.of( context,
+      ScaffoldMessenger.of(context,
       ).showSnackBar(SnackBar(content: Text("Drug deleted",
         textAlign: TextAlign.center,)));
     }
@@ -49,16 +70,23 @@ class PageDrugsState extends State<PageDrugs> {
 
   IconData _iconAdd () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.ellipsis_circle,
-      "macos" => CupertinoIcons.ellipsis_circle,
+      "ios" => CupertinoIcons.text_badge_plus,
+      "macos" => CupertinoIcons.text_badge_plus,
       _ => Icons.playlist_add_check
     };
   }
 
+  IconData _iconEdit () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.pencil_ellipsis_rectangle,
+      "macos" => CupertinoIcons.pencil_ellipsis_rectangle,
+      _ => Icons.edit_note
+    };
+  }
   IconData _iconDelete () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.ellipsis_circle_fill,
-      "macos" => CupertinoIcons.ellipsis_circle_fill,
+      "ios" => CupertinoIcons.text_badge_minus,
+      "macos" => CupertinoIcons.text_badge_minus,
       _ => Icons.playlist_remove
     };
   }
@@ -83,10 +111,16 @@ class PageDrugsState extends State<PageDrugs> {
                     Slidable(
                         startActionPane: ActionPane(
                           motion: const ScrollMotion(),
-                          extentRatio: .1,
+                          extentRatio: .25,
                           children: [
                             SlidableAction(
-                                onPressed: (c) => _confirmDeleteDrug(d),
+                                onPressed: (c) => _editDrug(d),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                icon: _iconEdit()
+                            ),
+                            SlidableAction(
+                                onPressed: (c) => _deleteDrug(d),
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 backgroundColor: Colors.red,
                                 icon: _iconDelete()
