@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+import 'dialog_delete_list_item.dart';
 import 'page_recorder.dart';
 
 import '../models/rhythm.dart';
@@ -23,19 +24,42 @@ class PageRhythms extends StatefulWidget {
 }
 
 class PageRhythmsState extends State<PageRhythms> {
-  IconData _iconHide () {
-    return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.ellipsis_circle_fill,
-      "macos" => CupertinoIcons.ellipsis_circle_fill,
-      _ => Icons.playlist_remove
-    };
+
+  Future<void> _confirmDeleteRhythm (Rhythm r) async {
+    final delete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogDeleteListItem();
+      },
+    );
+
+    if (delete != null && delete == true) {
+      final Settings settings = widget.prs.widget.settings;
+
+      setState(() {
+        settings.listRhythms.remove(r);
+        settings.save();
+      });
+
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Rhythm deleted",
+        textAlign: TextAlign.center,)));
+    }
   }
 
-  IconData _iconShow () {
+  IconData _iconAdd () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.ellipsis_circle,
       "macos" => CupertinoIcons.ellipsis_circle,
       _ => Icons.playlist_add_check
+    };
+  }
+
+  IconData _iconDelete () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.ellipsis_circle_fill,
+      "macos" => CupertinoIcons.ellipsis_circle_fill,
+      _ => Icons.playlist_remove
     };
   }
 
@@ -61,10 +85,10 @@ class PageRhythmsState extends State<PageRhythms> {
                       extentRatio: .1,
                       children: [
                         SlidableAction(
-                            onPressed: (c) => {},
+                            onPressed: (c) => _confirmDeleteRhythm(r),
                             foregroundColor: Theme.of(context).colorScheme.onPrimary,
                             backgroundColor: Colors.red,
-                            icon: _iconHide()
+                            icon: _iconDelete()
                         ),
                       ],
                     ),

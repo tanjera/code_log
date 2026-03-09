@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-import 'dialog_delete_drug.dart';
+import 'dialog_delete_list_item.dart';
 import 'page_recorder.dart';
 
 import '../models/drug.dart';
@@ -26,22 +26,25 @@ class PageDrugs extends StatefulWidget {
 class PageDrugsState extends State<PageDrugs> {
 
   Future<void> _confirmDeleteDrug (Drug d) async {
-    showDialog(
+    final delete = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
-        return DialogDeleteDrug(this, d);
+        return DialogDeleteListItem();
       },
     );
-  }
 
-  void pressedDeleteDrug(Drug d) async {
-    setState(() {
-      widget.prs.widget.settings.listDrugs.remove(d);
-    });
+    if (delete != null && delete == true) {
+      final Settings settings = widget.prs.widget.settings;
 
-    ScaffoldMessenger.of( context,
-    ).showSnackBar(SnackBar(content: Text("Drug deleted",
-      textAlign: TextAlign.center,)));
+      setState(() {
+        settings.listDrugs.remove(d);
+        settings.save();
+      });
+
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Drug deleted",
+        textAlign: TextAlign.center,)));
+    }
   }
 
   IconData _iconAdd () {
@@ -52,7 +55,7 @@ class PageDrugsState extends State<PageDrugs> {
     };
   }
 
-  IconData iconDelete () {
+  IconData _iconDelete () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.ellipsis_circle_fill,
       "macos" => CupertinoIcons.ellipsis_circle_fill,
@@ -86,7 +89,7 @@ class PageDrugsState extends State<PageDrugs> {
                                 onPressed: (c) => _confirmDeleteDrug(d),
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 backgroundColor: Colors.red,
-                                icon: iconDelete()
+                                icon: _iconDelete()
                             ),
                           ],
                         ),

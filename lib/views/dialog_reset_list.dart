@@ -1,20 +1,17 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 
-import '../models/drug.dart';
-import 'page_drugs.dart';
+import 'page_reset_list.dart';
 
-class DialogDeleteDrug extends StatelessWidget {
-  final PageDrugsState _pds;
-  final Drug _drug;
+class DialogResetList extends StatelessWidget {
 
-  const DialogDeleteDrug(this._pds, this._drug, {super.key});
+  const DialogResetList({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Delete Drug?'),
-      content: const Text("Are you sure you want to delete this drug?"
+      title: const Text('Reset List?'),
+      content: const Text("Are you sure you want to reset this list? This action cannot be undone!"
       ),
       actions: <Widget>[
         TextButton(
@@ -24,7 +21,7 @@ class DialogDeleteDrug extends StatelessWidget {
               .labelLarge),
           child: const Text('Cancel'),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(false);
           },
         ),
         TextButton(
@@ -32,11 +29,10 @@ class DialogDeleteDrug extends StatelessWidget {
               .of(context)
               .textTheme
               .labelLarge),
-          child: const Text('Delete',
+          child: const Text('Reset',
               style: TextStyle(color: Colors.red)),
           onPressed: () {
-            _pds.pressedDeleteDrug(_drug);
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(true);
           },
         ),
       ],

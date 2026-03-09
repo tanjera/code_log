@@ -149,7 +149,6 @@ class DialogEventVitalSigns extends StatelessWidget {
         ]
       ),
 
-
       actions: <Widget>[
         TextButton(
           style: TextButton.styleFrom(textStyle: Theme

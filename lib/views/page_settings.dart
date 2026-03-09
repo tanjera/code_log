@@ -1,3 +1,4 @@
+import 'package:codebluelog/views/page_reset_list.dart';
 import 'package:flutter/material.dart';
 
 import 'package:change_case/change_case.dart';
@@ -213,7 +214,21 @@ class PageSettingsState extends State<PageSettings> {
           Divider(),
 
           ListTile(
-            title: Text("About Code Blue Log"),
+              title: Text("Reset lists to default"),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                        builder: (context) => PageResetList(settings: widget.settings)
+                    )
+                );
+              }
+          ),
+
+          Divider(),
+
+          ListTile(
+            title: Text("About 'Code Blue Log'"),
             onTap: () {
               Navigator.push(
                   context,
