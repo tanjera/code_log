@@ -46,6 +46,8 @@ class PageRhythmsState extends State<PageRhythms> {
 
       setState(() {
         r.name = edit.name;
+        r.color = edit.color;
+        r.favorite = edit.favorite;
 
         settings.listRhythms.add(r);
         settings.listRhythms = Rhythms().sort(settings.listRhythms);
@@ -82,6 +84,8 @@ class PageRhythmsState extends State<PageRhythms> {
 
       setState(() {
         r.name = edit.name;
+        r.color = edit.color;
+        r.favorite = edit.favorite;
       });
 
       settings.save();

@@ -52,7 +52,7 @@ class PageProceduresState extends State<PageProcedures> {
             ? edit.log
             : edit.title.toSentenceCase();
         p.color = edit.color;
-
+        p.favorite = edit.favorite;
 
         settings.listProcedures.add(p);
         settings.listProcedures = Procedures().sort(settings.listProcedures);
@@ -94,6 +94,7 @@ class PageProceduresState extends State<PageProcedures> {
           ? edit.log
           : edit.title.toSentenceCase();
         p.color = edit.color;
+        p.favorite = edit.favorite;
       });
 
       settings.save();

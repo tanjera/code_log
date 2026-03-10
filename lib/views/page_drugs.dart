@@ -47,6 +47,8 @@ class PageDrugsState extends State<PageDrugs> {
       setState(() {
         d.name = edit.name;
         d.route = edit.route;
+        d.color = edit.color;
+        d.favorite = edit.favorite;
 
         settings.listDrugs.add(d);
         settings.listDrugs = Drugs().sort(settings.listDrugs);
@@ -83,6 +85,8 @@ class PageDrugsState extends State<PageDrugs> {
       setState(() {
         d.name = edit.name;
         d.route = edit.route;
+        d.color = edit.color;
+        d.favorite = edit.favorite;
       });
 
       settings.save();

@@ -139,7 +139,7 @@ class PageEventsState extends State<PageEvents> {
             ? edit.description
             : edit.name.toSentenceCase();
         e.color = edit.color;
-
+        e.favorite = edit.favorite;
 
         settings.listEvents.add(e);
         settings.listEvents = Events().sort(settings.listEvents);
@@ -182,6 +182,7 @@ class PageEventsState extends State<PageEvents> {
           ? edit.description
           : edit.name.toSentenceCase();
         e.color = edit.color;
+        e.favorite = edit.favorite;
       });
 
       settings.save();
