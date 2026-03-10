@@ -8,6 +8,8 @@ Primarily intended to be used as a high-tech note-taking tool during emergency r
 
 [Download on the Apple App Store for iOS (iPhone & iPad).](https://apps.apple.com/us/app/code-blue-log/id6759511253)
 
+[Download on the Google Play Store for Android.](https://play.google.com/store/apps/details?id=com.tanjera.codebluelog)
+
 Multiple screenshots are included in the following feature image, including:
 - The main recorder functionality (left) with multiple stopwatches for key BLS & ACLS events.
 - A list of drugs that can be recorded into the event log
