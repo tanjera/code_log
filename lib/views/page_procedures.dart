@@ -132,6 +132,16 @@ class PageProceduresState extends State<PageProcedures> {
     }
   }
 
+  Future<void> _toggleFavorite (Procedure i) async {
+    Settings settings = widget.prs.widget.settings;
+
+    setState(() {
+      i.favorite = !i.favorite;
+    });
+
+    settings.save();
+  }
+
   IconData _iconAdd () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.text_badge_plus,
@@ -177,7 +187,7 @@ class PageProceduresState extends State<PageProcedures> {
             scrollDirection: Axis.vertical,
             child: Column(
               mainAxisAlignment: .start,
-                children: settings.listProcedures.map((p) =>
+                children: settings.listProcedures.map((i) =>
 
                     Slidable(
                         startActionPane: ActionPane(
@@ -185,13 +195,13 @@ class PageProceduresState extends State<PageProcedures> {
                           extentRatio: .25,
                           children: [
                             SlidableAction(
-                                onPressed: (c) => _editProcedure(p),
+                                onPressed: (c) => _editProcedure(i),
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
                                 icon: _iconEdit()
                             ),
                             SlidableAction(
-                                onPressed: (c) => _deleteProcedure(p),
+                                onPressed: (c) => _deleteProcedure(i),
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 backgroundColor: Colors.red,
                                 icon: _iconDelete()
@@ -199,31 +209,38 @@ class PageProceduresState extends State<PageProcedures> {
                           ],
                         ),
 
-                        /* For implementing favorite items... uncomment when ready
-                        endActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          extentRatio: .12,
-                          children: [
-                            SlidableAction(
-                                onPressed: (c) => setState(() {
-                                  d.favorite = !d.favorite;
-                                }),
-                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                backgroundColor: Colors.yellow.shade800,
-                                icon: d.favorite ? Icons.star_rounded : Icons.star_outline_rounded
-                            ),
-                          ],
-                        ),
-                        */
-
                         child: ListTile(
-                          title: Text(p.title),
-                          subtitle: p.subtitle != null && p.subtitle != "" ? Text(p.subtitle!) : null,
-                          trailing: p.color != null ? CircleAvatar(backgroundColor: p.color) : null,
+                          title: Text(i.title),
+                          subtitle: i.subtitle != null && i.subtitle != "" ? Text(i.subtitle!) : null,
+
+                          leading: IconButton(
+                              onPressed: () => _toggleFavorite(i),
+                              icon: i.favorite
+                                  ? Icon(Icons.star_rounded,
+                                  color: Theme.of(context).brightness == .light
+                                      ? Colors.yellow.shade800
+                                      : Colors.yellow
+                              )
+                                  : Icon(Icons.star_outline_rounded,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(50)
+                              )
+                          ),
+
+                          trailing: i.color == null
+                              ? null
+                              : Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: i.color ?? Colors.transparent
+                            ),
+                          ),
+
                           onTap: () {
                             prs.log.add(Entry(
                               type: EntryType.procedure,
-                                      description: p.log));
+                                      description: i.log));
                             prs.updateUI();
                             Navigator.pop(context);
                           },

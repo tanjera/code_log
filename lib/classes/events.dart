@@ -29,7 +29,7 @@ class Events {
   List<Event> sort (List<Event> list) {
     list.sort((a, b) {
       int c = a.name.toLowerCase().compareTo(b.name.toLowerCase());
-      return (c != 0) ? c : (a.description?.toLowerCase() ?? "").compareTo(b.description?.toLowerCase() ?? "");
+      return (c != 0) ? c : (a.description.toLowerCase() ?? "").compareTo(b.description.toLowerCase() ?? "");
     });
     return list;
   }

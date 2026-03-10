@@ -13,10 +13,8 @@ class DialogEditEvent extends StatelessWidget {
   DialogEditEvent(this.event, {super.key}) {
     _contName.text = event.name;
 
-    if (event.description != null) {
-      _contDescription.text = event.description ?? "";
+    _contDescription.text = event.description ?? "";
     }
-  }
 
   @override
   Widget build(BuildContext context) {

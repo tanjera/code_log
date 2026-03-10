@@ -220,6 +220,16 @@ class PageEventsState extends State<PageEvents> {
     }
   }
 
+  Future<void> _toggleFavorite (Event i) async {
+    Settings settings = widget.prs.widget.settings;
+
+    setState(() {
+      i.favorite = !i.favorite;
+    });
+
+    settings.save();
+  }
+
   IconData _iconAdd () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.text_badge_plus,
@@ -265,7 +275,7 @@ class PageEventsState extends State<PageEvents> {
             scrollDirection: Axis.vertical,
             child: Column(
               mainAxisAlignment: .start,
-              children: settings.listEvents.map((e) =>
+              children: settings.listEvents.map((i) =>
 
                   Slidable(
                       startActionPane: ActionPane(
@@ -273,13 +283,13 @@ class PageEventsState extends State<PageEvents> {
                         extentRatio: .25,
                         children: [
                           SlidableAction(
-                              onPressed: (c) => _editEvent(e),
+                              onPressed: (c) => _editEvent(i),
                               foregroundColor: Theme.of(context).colorScheme.onPrimary,
                               backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
                               icon: _iconEdit()
                           ),
                           SlidableAction(
-                              onPressed: (c) => _deleteEvent(e),
+                              onPressed: (c) => _deleteEvent(i),
                               foregroundColor: Theme.of(context).colorScheme.onPrimary,
                               backgroundColor: Colors.red,
                               icon: _iconDelete()
@@ -287,35 +297,42 @@ class PageEventsState extends State<PageEvents> {
                         ],
                       ),
 
-                      /* For implementing favorite items... uncomment when ready
-                        endActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          extentRatio: .12,
-                          children: [
-                            SlidableAction(
-                                onPressed: (c) => setState(() {
-                                  d.favorite = !d.favorite;
-                                }),
-                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                backgroundColor: Colors.yellow.shade800,
-                                icon: d.favorite ? Icons.star_rounded : Icons.star_outline_rounded
-                            ),
-                          ],
-                        ),
-                        */
-
                       child: ListTile(
-                        title: Text(e.name),
-                        trailing: e.color != null ? CircleAvatar(backgroundColor: e.color) : null,
+                        title: Text(i.name),
+
+                        leading: IconButton(
+                            onPressed: () => _toggleFavorite(i),
+                            icon: i.favorite
+                                ? Icon(Icons.star_rounded,
+                                color: Theme.of(context).brightness == .light
+                                    ? Colors.yellow.shade800
+                                    : Colors.yellow
+                            )
+                                : Icon(Icons.star_outline_rounded,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(50)
+                            )
+                        ),
+
+                        trailing: i.color == null
+                            ? null
+                            : Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: i.color ?? Colors.transparent
+                          ),
+                        ),
+
                         onTap: () {
-                          if (e.name == "Other (Free Text)") {
+                          if (i.name == "Other (Free Text)") {
                             _freeText(context);
-                          } else if (e.name == "Vital Signs") {
+                          } else if (i.name == "Vital Signs") {
                             _vitalSigns(context);
                           } else {
                             prs.log.add(Entry(
                                 type: EntryType.event,
-                                description: e.description ?? ""));
+                                description: i.description ?? ""));
                             prs.updateUI();
                             Navigator.pop(context);
                           }

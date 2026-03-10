@@ -11,7 +11,7 @@ class Drug {
   Drug.m ({required this.name, required this.route, required this.color, required this.favorite});
 
   Drug clone () {
-    Drug c = new Drug(name, route, color);
+    Drug c = Drug(name, route, color);
     c.favorite = favorite;
     return c;
   }

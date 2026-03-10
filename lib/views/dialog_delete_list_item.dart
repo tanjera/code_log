@@ -1,8 +1,6 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 
-import '../models/drug.dart';
-import 'page_drugs.dart';
 
 class DialogDeleteListItem extends StatelessWidget {
 

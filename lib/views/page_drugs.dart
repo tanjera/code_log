@@ -55,12 +55,12 @@ class PageDrugsState extends State<PageDrugs> {
       });
 
       settings.save();
-      ScaffoldMessenger.of( context,
+      ScaffoldMessenger.of(context,
       ).showSnackBar(SnackBar(content: Text("Item added successfully.",
         textAlign: TextAlign.center,)));
 
     } else {
-      ScaffoldMessenger.of( context,
+      ScaffoldMessenger.of(context,
       ).showSnackBar(SnackBar(content: Text("Invalid entry. Unable to add item.",
         textAlign: TextAlign.center,)));
     }
@@ -75,7 +75,7 @@ class PageDrugsState extends State<PageDrugs> {
     );
 
     if (edit == null) {
-      ScaffoldMessenger.of( context,
+      ScaffoldMessenger.of(context,
       ).showSnackBar(SnackBar(content: Text("Canceled edit. No changes made.",
         textAlign: TextAlign.center,)));
 
@@ -122,7 +122,17 @@ class PageDrugsState extends State<PageDrugs> {
         textAlign: TextAlign.center,)));
     }
   }
+  
+  Future<void> _toggleFavorite (Drug i) async {
+    Settings settings = widget.prs.widget.settings;
 
+    setState(() {
+      i.favorite = !i.favorite;
+    });
+
+    settings.save();
+  }
+  
   IconData _iconAdd () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.text_badge_plus,
@@ -138,6 +148,7 @@ class PageDrugsState extends State<PageDrugs> {
       _ => Icons.edit_note
     };
   }
+  
   IconData _iconDelete () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.text_badge_minus,
@@ -168,7 +179,7 @@ class PageDrugsState extends State<PageDrugs> {
             scrollDirection: Axis.vertical,
             child: Column(
               mainAxisAlignment: .start,
-                children: settings.listDrugs.map((d) =>
+                children: settings.listDrugs.map((i) =>
 
                     Slidable(
                         startActionPane: ActionPane(
@@ -176,13 +187,13 @@ class PageDrugsState extends State<PageDrugs> {
                           extentRatio: .25,
                           children: [
                             SlidableAction(
-                                onPressed: (c) => _editDrug(d),
+                                onPressed: (c) => _editDrug(i),
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
                                 icon: _iconEdit()
                             ),
                             SlidableAction(
-                                onPressed: (c) => _deleteDrug(d),
+                                onPressed: (c) => _deleteDrug(i),
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 backgroundColor: Colors.red,
                                 icon: _iconDelete()
@@ -190,37 +201,44 @@ class PageDrugsState extends State<PageDrugs> {
                           ],
                         ),
 
-                        /* For implementing favorite items... uncomment when ready
-                        endActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          extentRatio: .12,
-                          children: [
-                            SlidableAction(
-                                onPressed: (c) => setState(() {
-                                  d.favorite = !d.favorite;
-                                }),
-                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                backgroundColor: Colors.yellow.shade800,
-                                icon: d.favorite ? Icons.star_rounded : Icons.star_outline_rounded
-                            ),
-                          ],
-                        ),
-                        */
-
                         child:ListTile(
-                          title: Text(d.name),
-                          subtitle: d.route != null && d.route != "" ? Text(d.route!) : null,
-                          trailing: CircleAvatar(backgroundColor: d.color ?? Colors.transparent),
+                          title: Text(i.name),
+                          subtitle: i.route != null && i.route != "" ? Text(i.route!) : null,
+
+                          leading: IconButton(
+                              onPressed: () => _toggleFavorite(i),
+                              icon: i.favorite
+                                  ? Icon(Icons.star_rounded,
+                                  color: Theme.of(context).brightness == .light
+                                      ? Colors.yellow.shade800
+                                      : Colors.yellow
+                              )
+                                  : Icon(Icons.star_outline_rounded,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(50)
+                              )
+                          ),
+
+                          trailing: i.color == null
+                              ? null
+                              : Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: i.color ?? Colors.transparent
+                            ),
+                          ),
+
                           onTap: () {
-                            if (d.name == "Epinephrine") {
+                            if (i.name == "Epinephrine") {
                               prs.pressedEpi();
                             } else {
-                              if (d.route == null || d.route!.trim() == "") {
+                              if (i.route == null || i.route!.trim() == "") {
                                 prs.log.add(Entry(type: EntryType.drug,
-                                    description: "${d.name} administered"));
+                                    description: "${i.name} administered"));
                               } else {
                                 prs.log.add(Entry(type: EntryType.drug,
-                                    description: "${d.name} (${d
+                                    description: "${i.name} (${i
                                         .route}) administered"));
                               }
                             }

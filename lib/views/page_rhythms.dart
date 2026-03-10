@@ -122,6 +122,16 @@ class PageRhythmsState extends State<PageRhythms> {
         textAlign: TextAlign.center,)));
     }
   }
+
+  Future<void> _toggleFavorite (Rhythm i) async {
+    Settings settings = widget.prs.widget.settings;
+
+    setState(() {
+      i.favorite = !i.favorite;
+    });
+
+    settings.save();
+  }
   
   IconData _iconAdd () {
     return switch (Platform.operatingSystem) {
@@ -168,51 +178,58 @@ class PageRhythmsState extends State<PageRhythms> {
           scrollDirection: Axis.vertical,
           child: Column(
             mainAxisAlignment: .start,
-            children: settings.listRhythms.map((r) =>
+            children: settings.listRhythms.map((i) =>
                 Slidable(
                     startActionPane: ActionPane(
                       motion: const ScrollMotion(),
                       extentRatio: .25,
                       children: [
                         SlidableAction(
-                            onPressed: (c) => _editRhythm(r),
+                            onPressed: (c) => _editRhythm(i),
                             foregroundColor: Theme.of(context).colorScheme.onPrimary,
                             backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
                             icon: _iconEdit()
                         ),
                         SlidableAction(
-                            onPressed: (c) => _deleteRhythm(r),
+                            onPressed: (c) => _deleteRhythm(i),
                             foregroundColor: Theme.of(context).colorScheme.onPrimary,
                             backgroundColor: Colors.red,
                             icon: _iconDelete()
                         ),
                       ],
                     ),
-
-                    /* For implementing favorite items... uncomment when ready
-                        endActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          extentRatio: .12,
-                          children: [
-                            SlidableAction(
-                                onPressed: (c) => setState(() {
-                                  d.favorite = !d.favorite;
-                                }),
-                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                backgroundColor: Colors.yellow.shade800,
-                                icon: d.favorite ? Icons.star_rounded : Icons.star_outline_rounded
-                            ),
-                          ],
-                        ),
-                        */
                     
                     child: ListTile(
-                      title: Text(r.name),
-                      trailing: r.color != null ? CircleAvatar(backgroundColor: r.color) : null,
+                      title: Text(i.name),
+
+                      leading: IconButton(
+                          onPressed: () => _toggleFavorite(i),
+                          icon: i.favorite
+                              ? Icon(Icons.star_rounded,
+                              color: Theme.of(context).brightness == .light
+                                  ? Colors.yellow.shade800
+                                  : Colors.yellow
+                          )
+                              : Icon(Icons.star_outline_rounded,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(50)
+                          )
+                      ),
+
+                      trailing: i.color == null
+                          ? null
+                          : Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: i.color ?? Colors.transparent
+                        ),
+                      ),
+
                       onTap: () {
                         prs.log.add(Entry(
                             type: EntryType.rhythm,
-                            description: "Cardiac rhythm: ${r.name}"));
+                            description: "Cardiac rhythm: ${i.name}"));
                         prs.updateUI();
                         Navigator.pop(context);
                       },

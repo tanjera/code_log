@@ -1,7 +1,6 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 
-import 'page_reset_list.dart';
 
 class DialogResetList extends StatelessWidget {
 
