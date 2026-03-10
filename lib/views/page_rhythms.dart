@@ -25,7 +25,45 @@ class PageRhythms extends StatefulWidget {
 }
 
 class PageRhythmsState extends State<PageRhythms> {
-  
+
+  Future<void> _addRhythm () async {
+    Rhythm r = Rhythm("", Colors.transparent);
+
+    final edit = await showDialog<Rhythm>(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogEditRhythm(r);
+      },
+    );
+
+    if (edit == null) {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Canceled addition. No changes made.",
+        textAlign: TextAlign.center,)));
+
+    } else if (edit.name.trim() != "") {
+      Settings settings = widget.prs.widget.settings;
+
+      setState(() {
+        r.name = edit.name;
+
+        settings.listRhythms.add(r);
+        settings.listRhythms = Rhythms().sort(settings.listRhythms);
+      });
+
+      settings.save();
+
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Item added successfully.",
+        textAlign: TextAlign.center,)));
+
+    } else {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Invalid entry. Unable to add item.",
+        textAlign: TextAlign.center,)));
+    }
+  }
+
   Future<void> _editRhythm (Rhythm r) async {
     final edit = await showDialog<Rhythm>(
       context: context,
@@ -85,7 +123,7 @@ class PageRhythmsState extends State<PageRhythms> {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.text_badge_plus,
       "macos" => CupertinoIcons.text_badge_plus,
-      _ => Icons.playlist_add_check
+      _ => Icons.playlist_add
     };
   }
 
@@ -113,6 +151,13 @@ class PageRhythmsState extends State<PageRhythms> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Cardiac Rhythms"),
+          actions: <Widget> [
+            IconButton(
+                icon: Icon(_iconAdd()),
+                tooltip: 'Add Item',
+                onPressed: () => _addRhythm()
+            )
+          ]
       ),
       body: SafeArea(
         child: SingleChildScrollView(

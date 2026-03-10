@@ -26,7 +26,51 @@ class PageProcedures extends StatefulWidget {
 }
 
 class PageProceduresState extends State<PageProcedures> {
-  
+
+  Future<void> _addProcedure () async {
+    Procedure p = Procedure("", "", "", Colors.transparent);
+
+    final edit = await showDialog<Procedure>(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogEditProcedure(p);
+      },
+    );
+
+    if (edit == null) {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Canceled addition. No changes made.",
+        textAlign: TextAlign.center,)));
+
+    } else if (edit.title.trim() != "") {
+      Settings settings = widget.prs.widget.settings;
+
+      setState(() {
+        p.title = edit.title;
+        p.subtitle = edit.subtitle;
+        p.log = edit.log.trim() != ""
+            ? edit.log
+            : edit.title.toSentenceCase();
+        p.color = edit.color;
+
+
+        settings.listProcedures.add(p);
+        settings.listProcedures = Procedures().sort(settings.listProcedures);
+      });
+
+      settings.save();
+
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Item added successfully.",
+        textAlign: TextAlign.center,)));
+
+    } else {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Invalid entry. Unable to add item.",
+        textAlign: TextAlign.center,)));
+    }
+  }
+
   Future<void> _editProcedure (Procedure p) async {
     final edit = await showDialog<Procedure>(
       context: context,
@@ -91,7 +135,7 @@ class PageProceduresState extends State<PageProcedures> {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.text_badge_plus,
       "macos" => CupertinoIcons.text_badge_plus,
-      _ => Icons.playlist_add_check
+      _ => Icons.playlist_add
     };
   }
 
@@ -119,6 +163,13 @@ class PageProceduresState extends State<PageProcedures> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Procedures"),
+          actions: <Widget> [
+            IconButton(
+                icon: Icon(_iconAdd()),
+                tooltip: 'Add Item',
+                onPressed: () => _addProcedure()
+            )
+          ]
       ),
       body: SafeArea(
           child: SingleChildScrollView(

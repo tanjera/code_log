@@ -113,7 +113,52 @@ class PageEventsState extends State<PageEvents> {
       Navigator.of(context).pop();
     }
   }
-  
+
+  Future<void> _addEvent () async {
+    Event e = Event("", "", Colors.transparent);
+
+    final edit = await showDialog<Event>(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogEditEvent(e);
+      },
+    );
+
+
+    if (edit == null) {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Canceled addition. No changes made.",
+        textAlign: TextAlign.center,)));
+
+    } else if (edit.name.trim() != "") {
+      Settings settings = widget.prs.widget.settings;
+
+      setState(() {
+        e.name = edit.name;
+        e.description = edit.description.trim() != ""
+            ? edit.description
+            : edit.name.toSentenceCase();
+        e.color = edit.color;
+
+
+        settings.listEvents.add(e);
+        settings.listEvents = Events().sort(settings.listEvents);
+      });
+
+      settings.save();
+
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Item added successfully.",
+        textAlign: TextAlign.center,)));
+
+    } else {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Invalid entry. Unable to add item.",
+        textAlign: TextAlign.center,)));
+    }
+  }
+
+
   Future<void> _editEvent (Event e) async {
     final edit = await showDialog<Event>(
       context: context,
@@ -178,7 +223,7 @@ class PageEventsState extends State<PageEvents> {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.text_badge_plus,
       "macos" => CupertinoIcons.text_badge_plus,
-      _ => Icons.playlist_add_check
+      _ => Icons.playlist_add
     };
   }
 
@@ -206,6 +251,13 @@ class PageEventsState extends State<PageEvents> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("Events"),
+          actions: <Widget> [
+            IconButton(
+                icon: Icon(_iconAdd()),
+                tooltip: 'Add Item',
+                onPressed: () => _addEvent()
+            )
+          ]
       ),
       body: SafeArea(
           child: SingleChildScrollView(

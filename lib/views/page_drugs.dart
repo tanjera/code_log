@@ -26,6 +26,44 @@ class PageDrugs extends StatefulWidget {
 
 class PageDrugsState extends State<PageDrugs> {
 
+  Future<void> _addDrug () async {
+    Drug d = Drug("", "", Colors.transparent);
+
+    final edit = await showDialog<Drug>(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogEditDrug(d);
+      },
+    );
+
+    if (edit == null) {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Canceled addition. No changes made.",
+        textAlign: TextAlign.center,)));
+
+    } else if (edit.name.trim() != "") {
+      Settings settings = widget.prs.widget.settings;
+
+      setState(() {
+        d.name = edit.name;
+        d.route = edit.route;
+
+        settings.listDrugs.add(d);
+        settings.listDrugs = Drugs().sort(settings.listDrugs);
+      });
+
+      settings.save();
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Item added successfully.",
+        textAlign: TextAlign.center,)));
+
+    } else {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Invalid entry. Unable to add item.",
+        textAlign: TextAlign.center,)));
+    }
+  }
+
   Future<void> _editDrug (Drug d) async {
     final edit = await showDialog<Drug>(
       context: context,
@@ -85,7 +123,7 @@ class PageDrugsState extends State<PageDrugs> {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.text_badge_plus,
       "macos" => CupertinoIcons.text_badge_plus,
-      _ => Icons.playlist_add_check
+      _ => Icons.playlist_add
     };
   }
 
@@ -112,7 +150,14 @@ class PageDrugsState extends State<PageDrugs> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Drugs"),         
+        title: Text("Drugs"),
+          actions: <Widget> [
+            IconButton(
+                icon: Icon(_iconAdd()),
+                tooltip: 'Add Item',
+                onPressed: () => _addDrug()
+            )
+          ]
       ),
       body: SafeArea(
           child: SingleChildScrollView(
@@ -166,7 +211,7 @@ class PageDrugsState extends State<PageDrugs> {
                             if (d.name == "Epinephrine") {
                               prs.pressedEpi();
                             } else {
-                              if (d.route == null) {
+                              if (d.route == null || d.route!.trim() == "") {
                                 prs.log.add(Entry(type: EntryType.drug,
                                     description: "${d.name} administered"));
                               } else {
