@@ -45,6 +45,7 @@ class Settings {
   bool eventLogCompact = false;
   DeleteModes eventDeleteMode = DeleteModes.redact;
   PageSizes pdfPageSize = PageSizes.letter;
+  bool arrangeListFavorite = false;
 
   List<Drug> listDrugs = [];
   List<Event> listEvents = [];
@@ -95,6 +96,7 @@ class Settings {
           "eventLogCompact": eventLogCompact,
           "deleteMode": eventDeleteMode.name,
           "pdfPageSize": pdfPageSize.name,
+          "arrangeListFavorite": arrangeListFavorite,
           "listDrugs": listDrugs.map((e) => e.toJson()).toList(),
           "listEvents": listEvents.map((e) => e.toJson()).toList(),
           "listProcedures": listProcedures.map((e) => e.toJson()).toList(),
@@ -125,6 +127,7 @@ class Settings {
       eventLogCompact = dAll["eventLogCompact"] ?? eventLogCompact;
       eventDeleteMode = dAll["deleteMode"] != null ? DeleteModes.values.byName(dAll["deleteMode"]) : eventDeleteMode;
       pdfPageSize = dAll["pdfPageSize"] != null ? PageSizes.values.byName(dAll["pdfPageSize"]) : pdfPageSize;
+      arrangeListFavorite = dAll["arrangeListFavorite"] ?? arrangeListFavorite;
 
       listDrugs = (dAll["listDrugs"] as List<dynamic>)
           .map((e) => Drug.fromJson(e as Map<String, dynamic>))

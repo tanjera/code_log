@@ -51,7 +51,7 @@ class PageDrugsState extends State<PageDrugs> {
         d.favorite = edit.favorite;
 
         settings.listDrugs.add(d);
-        settings.listDrugs = Drugs().sort(settings.listDrugs);
+        settings.listDrugs = Drugs().sort(settings.listDrugs, settings.arrangeListFavorite);
       });
 
       settings.save();

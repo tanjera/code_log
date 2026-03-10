@@ -5,7 +5,10 @@ import 'package:change_case/change_case.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
+
+import '../classes/drugs.dart';
 import '../classes/settings.dart';
+
 import 'page_about.dart';
 
 class PageSettings extends StatefulWidget {
@@ -82,6 +85,18 @@ class PageSettingsState extends State<PageSettings> {
     setState(() {
       widget.settings.pdfPageSize = p ?? widget.settings.pdfPageSize;
       widget.settings.save();
+    });
+  }
+
+  void _setArrangeListFavorite (bool? arrange) {
+    Settings settings = widget.settings;
+
+    setState(() {
+      settings.arrangeListFavorite = arrange ?? settings.arrangeListFavorite;
+
+      settings.listDrugs = Drugs().sort(settings.listDrugs, settings.arrangeListFavorite);
+
+      settings.save();
     });
   }
 
@@ -212,6 +227,14 @@ class PageSettingsState extends State<PageSettings> {
           ),
 
           Divider(),
+
+          ListTile(
+              title: Text("Arrange lists by favorites?"),
+              trailing: Checkbox(
+                  value: widget.settings.arrangeListFavorite,
+                  onChanged: _setArrangeListFavorite
+              )
+          ),
 
           ListTile(
               title: Text("Reset lists to default"),
