@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:codebluelog/views/dialog_edit_drug.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'dialog_delete_list_item.dart';
+import 'dialog_edit_drug.dart';
 import 'page_recorder.dart';
 
 import '../models/drug.dart';
@@ -30,11 +30,16 @@ class PageDrugsState extends State<PageDrugs> {
     final edit = await showDialog<Drug>(
       context: context,
       builder: (BuildContext context) {
-        return DialogEditDrug(d);
+        return DialogEditDrug(d.clone());
       },
     );
 
-    if (edit != null) {
+    if (edit == null) {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Canceled edit. No changes made.",
+        textAlign: TextAlign.center,)));
+
+    } else if (edit.name.trim() != "") {
       Settings settings = widget.prs.widget.settings;
 
       setState(() {
@@ -43,6 +48,14 @@ class PageDrugsState extends State<PageDrugs> {
       });
 
       settings.save();
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Item edited successfully.",
+        textAlign: TextAlign.center,)));
+
+    } else {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Invalid entry. Unable to edit item.",
+        textAlign: TextAlign.center,)));
     }
   }
 
@@ -128,10 +141,27 @@ class PageDrugsState extends State<PageDrugs> {
                           ],
                         ),
 
+                        /* For implementing favorite items... uncomment when ready
+                        endActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          extentRatio: .12,
+                          children: [
+                            SlidableAction(
+                                onPressed: (c) => setState(() {
+                                  d.favorite = !d.favorite;
+                                }),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Colors.yellow.shade800,
+                                icon: d.favorite ? Icons.star_rounded : Icons.star_outline_rounded
+                            ),
+                          ],
+                        ),
+                        */
+
                         child:ListTile(
                           title: Text(d.name),
-                          subtitle: d.route != null ? Text(d.route!) : null,
-                          trailing: d.color != null ? CircleAvatar(backgroundColor: d.color) : null,
+                          subtitle: d.route != null && d.route != "" ? Text(d.route!) : null,
+                          trailing: CircleAvatar(backgroundColor: d.color ?? Colors.transparent),
                           onTap: () {
                             if (d.name == "Epinephrine") {
                               prs.pressedEpi();

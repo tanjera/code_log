@@ -3,25 +3,27 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
-import '../models/drug.dart';
+import '../models/procedure.dart';
 
-class DialogEditDrug extends StatelessWidget {
-  final Drug drug;
-  final _contName = TextEditingController();
-  final _contRoute = TextEditingController();
+class DialogEditProcedure extends StatelessWidget {
+  final Procedure procedure;
+  final _contTitle = TextEditingController();
+  final _contSubtitle = TextEditingController();
+  final _contLog = TextEditingController();
 
-  DialogEditDrug(this.drug, {super.key}) {
-    _contName.text = drug.name;
+  DialogEditProcedure(this.procedure, {super.key}) {
+    _contTitle.text = procedure.title;
+    _contLog.text = procedure.log;
 
-    if (drug.route != null) {
-      _contRoute.text = drug.route ?? "";
+    if (procedure.subtitle != null) {
+      _contSubtitle.text = procedure.subtitle ?? "";
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Edit Drug'),
+      title: const Text('Edit Procedure'),
       scrollable: true,
       content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -29,15 +31,31 @@ class DialogEditDrug extends StatelessWidget {
             Padding(
               padding: .symmetric(vertical: 5),
               child: TextField(
-                controller: _contName,
+                controller: _contTitle,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                   border: OutlineInputBorder(),
-                  labelText: "Name (Required)",
+                  labelText: "List Title (Required)",
                 ),
                 onChanged: (v) {
-                    drug.name = v;
+                    procedure.title = v;
+                },
+              ),
+            ),
+
+            Padding(
+              padding: .symmetric(vertical: 5),
+              child: TextField(
+                controller: _contSubtitle,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  border: OutlineInputBorder(),
+                  labelText: 'List Subtitle (Optional)',
+                ),
+                onChanged: (v) {
+                  procedure.subtitle = v;
                 },
               ),
             ),
@@ -45,22 +63,22 @@ class DialogEditDrug extends StatelessWidget {
             Padding(
               padding: .only(top: 5),
               child: TextField(
-                controller: _contRoute,
+                controller: _contLog,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                   border: OutlineInputBorder(),
-                  labelText: 'Route (Optional)',
+                  labelText: 'Event Log Description (Optional)',
                 ),
                 onChanged: (v) {
-                  drug.route = v;
+                  procedure.log = v;
                 },
               ),
             ),
 
             ColorPicker(
-              color: drug.color ?? Colors.transparent,
-              onColorChanged: (v) { drug.color = v;},
+              color: procedure.color ?? Colors.transparent,
+              onColorChanged: (v) { procedure.color = v;},
               width: 30,
               height: 30,
               borderRadius: 15,
@@ -91,7 +109,7 @@ class DialogEditDrug extends StatelessWidget {
               .labelLarge),
           child: const Text('Save'),
           onPressed: () async {
-            Navigator.of(context).pop(drug);
+            Navigator.of(context).pop(procedure);
           },
         ),
       ],

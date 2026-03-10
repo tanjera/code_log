@@ -3,25 +3,25 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
-import '../models/drug.dart';
+import '../models/event.dart';
 
-class DialogEditDrug extends StatelessWidget {
-  final Drug drug;
+class DialogEditEvent extends StatelessWidget {
+  final Event event;
   final _contName = TextEditingController();
-  final _contRoute = TextEditingController();
+  final _contDescription = TextEditingController();
 
-  DialogEditDrug(this.drug, {super.key}) {
-    _contName.text = drug.name;
+  DialogEditEvent(this.event, {super.key}) {
+    _contName.text = event.name;
 
-    if (drug.route != null) {
-      _contRoute.text = drug.route ?? "";
+    if (event.description != null) {
+      _contDescription.text = event.description ?? "";
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Edit Drug'),
+      title: const Text('Edit Event'),
       scrollable: true,
       content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -34,10 +34,10 @@ class DialogEditDrug extends StatelessWidget {
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                   border: OutlineInputBorder(),
-                  labelText: "Name (Required)",
+                  labelText: "List Title (Required)",
                 ),
                 onChanged: (v) {
-                    drug.name = v;
+                    event.name = v;
                 },
               ),
             ),
@@ -45,22 +45,22 @@ class DialogEditDrug extends StatelessWidget {
             Padding(
               padding: .only(top: 5),
               child: TextField(
-                controller: _contRoute,
+                controller: _contDescription,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                   border: OutlineInputBorder(),
-                  labelText: 'Route (Optional)',
+                  labelText: 'Event Log Description (Optional)',
                 ),
                 onChanged: (v) {
-                  drug.route = v;
+                  event.description = v;
                 },
               ),
             ),
 
             ColorPicker(
-              color: drug.color ?? Colors.transparent,
-              onColorChanged: (v) { drug.color = v;},
+              color: event.color ?? Colors.transparent,
+              onColorChanged: (v) { event.color = v;},
               width: 30,
               height: 30,
               borderRadius: 15,
@@ -91,7 +91,7 @@ class DialogEditDrug extends StatelessWidget {
               .labelLarge),
           child: const Text('Save'),
           onPressed: () async {
-            Navigator.of(context).pop(drug);
+            Navigator.of(context).pop(event);
           },
         ),
       ],

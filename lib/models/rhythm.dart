@@ -9,6 +9,12 @@ class Rhythm {
 
   Rhythm.m ({required this.name, required this.color, required this.favorite});
 
+  Rhythm clone () {
+    Rhythm c = Rhythm(name, color);
+    c.favorite = favorite;
+    return c;
+  }
+
   String? operator [] (String key) {
     switch (key) {
       case 'name':

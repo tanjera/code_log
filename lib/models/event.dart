@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Event {
   late String name;
-  late String? description;
+  late String description;
   late Color? color;
   bool favorite = false;
 
@@ -10,12 +10,18 @@ class Event {
 
   Event.m ({required this.name, required this.description, required this.color, required this.favorite});
 
+  Event clone () {
+    Event c = Event(name, description, color);
+    c.favorite = favorite;
+    return c;
+  }
+
   String? operator [] (String key) {
     switch (key) {
       case 'name':
         return name;
       case 'description':
-        return description ?? "";
+        return description;
       case 'color':
         return color?.toARGB32().toString();
       case 'favorite':

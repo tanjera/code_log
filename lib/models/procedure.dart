@@ -11,6 +11,12 @@ class Procedure {
 
   Procedure.m ({required this.title, required this.subtitle, required this.log, required this.color, required this.favorite});
 
+  Procedure clone () {
+    Procedure c = Procedure(title, subtitle, log, color);
+    c.favorite = favorite;
+    return c;
+  }
+
   String? operator [] (String key) {
     switch (key) {
       case 'title':

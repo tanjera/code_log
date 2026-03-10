@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:change_case/change_case.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'dialog_delete_list_item.dart';
+import 'dialog_edit_procedure.dart';
 import 'page_recorder.dart';
 
 import '../models/procedure.dart';
@@ -24,8 +26,46 @@ class PageProcedures extends StatefulWidget {
 }
 
 class PageProceduresState extends State<PageProcedures> {
+  
+  Future<void> _editProcedure (Procedure p) async {
+    final edit = await showDialog<Procedure>(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogEditProcedure(p.clone());
+      },
+    );
 
-  Future<void> _confirmDeleteProcedure (Procedure p) async {
+    if (edit == null) {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Canceled edit. No changes made.",
+        textAlign: TextAlign.center,)));
+
+    } else if (edit.title.trim() != "") {
+      Settings settings = widget.prs.widget.settings;
+
+      setState(() {
+        p.title = edit.title;
+        p.subtitle = edit.subtitle;
+        p.log = edit.log.trim() != ""
+          ? edit.log
+          : edit.title.toSentenceCase();
+        p.color = edit.color;
+      });
+
+      settings.save();
+
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Item edited successfully.",
+        textAlign: TextAlign.center,)));
+
+    } else {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Invalid entry. Unable to edit item.",
+        textAlign: TextAlign.center,)));
+    }
+  }
+  
+  Future<void> _deleteProcedure (Procedure p) async {
     final delete = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -46,19 +86,26 @@ class PageProceduresState extends State<PageProcedures> {
         textAlign: TextAlign.center,)));
     }
   }
-  
+
   IconData _iconAdd () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.ellipsis_circle,
-      "macos" => CupertinoIcons.ellipsis_circle,
+      "ios" => CupertinoIcons.text_badge_plus,
+      "macos" => CupertinoIcons.text_badge_plus,
       _ => Icons.playlist_add_check
     };
   }
 
+  IconData _iconEdit () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.pencil_ellipsis_rectangle,
+      "macos" => CupertinoIcons.pencil_ellipsis_rectangle,
+      _ => Icons.edit_note
+    };
+  }
   IconData _iconDelete () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.ellipsis_circle_fill,
-      "macos" => CupertinoIcons.ellipsis_circle_fill,
+      "ios" => CupertinoIcons.text_badge_minus,
+      "macos" => CupertinoIcons.text_badge_minus,
       _ => Icons.playlist_remove
     };
   }
@@ -83,10 +130,16 @@ class PageProceduresState extends State<PageProcedures> {
                     Slidable(
                         startActionPane: ActionPane(
                           motion: const ScrollMotion(),
-                          extentRatio: .1,
+                          extentRatio: .25,
                           children: [
                             SlidableAction(
-                                onPressed: (c) => _confirmDeleteProcedure(p),
+                                onPressed: (c) => _editProcedure(p),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                icon: _iconEdit()
+                            ),
+                            SlidableAction(
+                                onPressed: (c) => _deleteProcedure(p),
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                                 backgroundColor: Colors.red,
                                 icon: _iconDelete()
@@ -94,9 +147,26 @@ class PageProceduresState extends State<PageProcedures> {
                           ],
                         ),
 
+                        /* For implementing favorite items... uncomment when ready
+                        endActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          extentRatio: .12,
+                          children: [
+                            SlidableAction(
+                                onPressed: (c) => setState(() {
+                                  d.favorite = !d.favorite;
+                                }),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Colors.yellow.shade800,
+                                icon: d.favorite ? Icons.star_rounded : Icons.star_outline_rounded
+                            ),
+                          ],
+                        ),
+                        */
+
                         child: ListTile(
                           title: Text(p.title),
-                          subtitle: p.subtitle != null ? Text(p.subtitle!) : null,
+                          subtitle: p.subtitle != null && p.subtitle != "" ? Text(p.subtitle!) : null,
                           trailing: p.color != null ? CircleAvatar(backgroundColor: p.color) : null,
                           onTap: () {
                             prs.log.add(Entry(

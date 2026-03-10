@@ -3,25 +3,20 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
-import '../models/drug.dart';
+import '../models/rhythm.dart';
 
-class DialogEditDrug extends StatelessWidget {
-  final Drug drug;
+class DialogEditRhythm extends StatelessWidget {
+  final Rhythm rhythm;
   final _contName = TextEditingController();
-  final _contRoute = TextEditingController();
 
-  DialogEditDrug(this.drug, {super.key}) {
-    _contName.text = drug.name;
-
-    if (drug.route != null) {
-      _contRoute.text = drug.route ?? "";
-    }
+  DialogEditRhythm(this.rhythm, {super.key}) {
+    _contName.text = rhythm.name;
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Edit Drug'),
+      title: const Text('Edit Rhythm'),
       scrollable: true,
       content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -37,30 +32,14 @@ class DialogEditDrug extends StatelessWidget {
                   labelText: "Name (Required)",
                 ),
                 onChanged: (v) {
-                    drug.name = v;
-                },
-              ),
-            ),
-
-            Padding(
-              padding: .only(top: 5),
-              child: TextField(
-                controller: _contRoute,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                  border: OutlineInputBorder(),
-                  labelText: 'Route (Optional)',
-                ),
-                onChanged: (v) {
-                  drug.route = v;
+                    rhythm.name = v;
                 },
               ),
             ),
 
             ColorPicker(
-              color: drug.color ?? Colors.transparent,
-              onColorChanged: (v) { drug.color = v;},
+              color: rhythm.color ?? Colors.transparent,
+              onColorChanged: (v) { rhythm.color = v;},
               width: 30,
               height: 30,
               borderRadius: 15,
@@ -91,7 +70,7 @@ class DialogEditDrug extends StatelessWidget {
               .labelLarge),
           child: const Text('Save'),
           onPressed: () async {
-            Navigator.of(context).pop(drug);
+            Navigator.of(context).pop(rhythm);
           },
         ),
       ],

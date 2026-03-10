@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:change_case/change_case.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -8,6 +9,7 @@ import 'dialog_event_free_text.dart';
 import 'dialog_event_vital_signs.dart';
 
 import 'dialog_delete_list_item.dart';
+import 'dialog_edit_event.dart';
 import 'page_recorder.dart';
 
 import '../models/event.dart';
@@ -45,7 +47,8 @@ class PageEvents extends StatefulWidget {
 }
 
 class PageEventsState extends State<PageEvents> {
-  Future<void> _getVitals(BuildContext context) async {
+
+  Future<void> _vitalSigns(BuildContext context) async {
     final vs = await showDialog<VitalSigns>(
       context: context,
       builder: (BuildContext context) {
@@ -89,7 +92,7 @@ class PageEventsState extends State<PageEvents> {
     }
   }
 
-  Future<void> _getFreeText(BuildContext context) async {
+  Future<void> _freeText(BuildContext context) async {
     final note = await showDialog<Note>(
       context: context,
       builder: (BuildContext context) {
@@ -110,8 +113,46 @@ class PageEventsState extends State<PageEvents> {
       Navigator.of(context).pop();
     }
   }
+  
+  Future<void> _editEvent (Event e) async {
+    final edit = await showDialog<Event>(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogEditEvent(e.clone());
+      },
+    );
 
-  Future<void> _confirmDeleteEvent (Event e) async {
+
+    if (edit == null) {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Canceled edit. No changes made.",
+        textAlign: TextAlign.center,)));
+
+    } else if (edit.name.trim() != "") {
+      Settings settings = widget.prs.widget.settings;
+
+      setState(() {
+        e.name = edit.name;
+        e.description = edit.description.trim() != ""
+          ? edit.description
+          : edit.name.toSentenceCase();
+        e.color = edit.color;
+      });
+
+      settings.save();
+
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Item edited successfully.",
+        textAlign: TextAlign.center,)));
+
+    } else {
+      ScaffoldMessenger.of( context,
+      ).showSnackBar(SnackBar(content: Text("Invalid entry. Unable to edit item.",
+        textAlign: TextAlign.center,)));
+    }
+  }
+  
+  Future<void> _deleteEvent (Event e) async {
     final delete = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
@@ -132,19 +173,26 @@ class PageEventsState extends State<PageEvents> {
         textAlign: TextAlign.center,)));
     }
   }
-  
+
   IconData _iconAdd () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.ellipsis_circle,
-      "macos" => CupertinoIcons.ellipsis_circle,
+      "ios" => CupertinoIcons.text_badge_plus,
+      "macos" => CupertinoIcons.text_badge_plus,
       _ => Icons.playlist_add_check
     };
   }
 
+  IconData _iconEdit () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.pencil_ellipsis_rectangle,
+      "macos" => CupertinoIcons.pencil_ellipsis_rectangle,
+      _ => Icons.edit_note
+    };
+  }
   IconData _iconDelete () {
     return switch (Platform.operatingSystem) {
-      "ios" => CupertinoIcons.ellipsis_circle_fill,
-      "macos" => CupertinoIcons.ellipsis_circle_fill,
+      "ios" => CupertinoIcons.text_badge_minus,
+      "macos" => CupertinoIcons.text_badge_minus,
       _ => Icons.playlist_remove
     };
   }
@@ -169,10 +217,16 @@ class PageEventsState extends State<PageEvents> {
                   Slidable(
                       startActionPane: ActionPane(
                         motion: const ScrollMotion(),
-                        extentRatio: .1,
+                        extentRatio: .25,
                         children: [
                           SlidableAction(
-                              onPressed: (c) => _confirmDeleteEvent(e),
+                              onPressed: (c) => _editEvent(e),
+                              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                              icon: _iconEdit()
+                          ),
+                          SlidableAction(
+                              onPressed: (c) => _deleteEvent(e),
                               foregroundColor: Theme.of(context).colorScheme.onPrimary,
                               backgroundColor: Colors.red,
                               icon: _iconDelete()
@@ -180,14 +234,31 @@ class PageEventsState extends State<PageEvents> {
                         ],
                       ),
 
+                      /* For implementing favorite items... uncomment when ready
+                        endActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          extentRatio: .12,
+                          children: [
+                            SlidableAction(
+                                onPressed: (c) => setState(() {
+                                  d.favorite = !d.favorite;
+                                }),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Colors.yellow.shade800,
+                                icon: d.favorite ? Icons.star_rounded : Icons.star_outline_rounded
+                            ),
+                          ],
+                        ),
+                        */
+
                       child: ListTile(
                         title: Text(e.name),
                         trailing: e.color != null ? CircleAvatar(backgroundColor: e.color) : null,
                         onTap: () {
                           if (e.name == "Other (Free Text)") {
-                            _getFreeText(context);
+                            _freeText(context);
                           } else if (e.name == "Vital Signs") {
-                            _getVitals(context);
+                            _vitalSigns(context);
                           } else {
                             prs.log.add(Entry(
                                 type: EntryType.event,
