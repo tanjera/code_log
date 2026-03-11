@@ -128,6 +128,8 @@ class PageDrugsState extends State<PageDrugs> {
 
     setState(() {
       i.favorite = !i.favorite;
+
+      settings.listDrugs = Drugs().sort(settings.listDrugs, settings.arrangeListFavorite);
     });
 
     settings.save();
@@ -210,7 +212,7 @@ class PageDrugsState extends State<PageDrugs> {
                               icon: i.favorite
                                   ? Icon(Icons.star_rounded,
                                   color: Theme.of(context).brightness == .light
-                                      ? Colors.yellow.shade800
+                                      ? Colors.yellow.shade600
                                       : Colors.yellow
                               )
                                   : Icon(Icons.star_outline_rounded,

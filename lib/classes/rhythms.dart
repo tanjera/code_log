@@ -34,11 +34,21 @@ class Rhythms {
 
   Rhythms () {
     // In case they are out of alphabetical order in the declaring list...
-    defaultList = sort(defaultList);
+    defaultList = sort(defaultList, false);
   }
 
-  List<Rhythm> sort (List<Rhythm> list) {
-    list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  List<Rhythm> sort (List<Rhythm> list, bool favorites) {
+    list.sort((a, b) {
+      if (favorites) {
+        final f = (a.favorite ? -1 : 0).compareTo(b.favorite ? -1 : 0);
+        if (f != 0) {
+          return f;
+        }
+      }
+
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    });
+
     return list;
   }
 }

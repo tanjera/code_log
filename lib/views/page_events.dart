@@ -142,7 +142,7 @@ class PageEventsState extends State<PageEvents> {
         e.favorite = edit.favorite;
 
         settings.listEvents.add(e);
-        settings.listEvents = Events().sort(settings.listEvents);
+        settings.listEvents = Events().sort(settings.listEvents, settings.arrangeListFavorite);
       });
 
       settings.save();
@@ -225,6 +225,8 @@ class PageEventsState extends State<PageEvents> {
 
     setState(() {
       i.favorite = !i.favorite;
+
+      settings.listEvents = Events().sort(settings.listEvents, settings.arrangeListFavorite);
     });
 
     settings.save();
@@ -278,7 +280,10 @@ class PageEventsState extends State<PageEvents> {
               children: settings.listEvents.map((i) =>
 
                   Slidable(
-                      startActionPane: ActionPane(
+                      startActionPane:  // Don't allow "Free Text" & "Vital Signs" to be editable
+                      (i.name == "Other (Free Text)" || i.name == "Vital Signs")
+                          ? null
+                          : ActionPane(
                         motion: const ScrollMotion(),
                         extentRatio: .25,
                         children: [
@@ -305,7 +310,7 @@ class PageEventsState extends State<PageEvents> {
                             icon: i.favorite
                                 ? Icon(Icons.star_rounded,
                                 color: Theme.of(context).brightness == .light
-                                    ? Colors.yellow.shade800
+                                    ? Colors.yellow.shade600
                                     : Colors.yellow
                             )
                                 : Icon(Icons.star_outline_rounded,

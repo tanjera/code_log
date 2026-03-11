@@ -55,7 +55,7 @@ class PageProceduresState extends State<PageProcedures> {
         p.favorite = edit.favorite;
 
         settings.listProcedures.add(p);
-        settings.listProcedures = Procedures().sort(settings.listProcedures);
+        settings.listProcedures = Procedures().sort(settings.listProcedures, settings.arrangeListFavorite);
       });
 
       settings.save();
@@ -137,6 +137,8 @@ class PageProceduresState extends State<PageProcedures> {
 
     setState(() {
       i.favorite = !i.favorite;
+
+      settings.listProcedures = Procedures().sort(settings.listProcedures, settings.arrangeListFavorite);
     });
 
     settings.save();
@@ -218,7 +220,7 @@ class PageProceduresState extends State<PageProcedures> {
                               icon: i.favorite
                                   ? Icon(Icons.star_rounded,
                                   color: Theme.of(context).brightness == .light
-                                      ? Colors.yellow.shade800
+                                      ? Colors.yellow.shade600
                                       : Colors.yellow
                               )
                                   : Icon(Icons.star_outline_rounded,

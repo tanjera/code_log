@@ -50,7 +50,7 @@ class PageRhythmsState extends State<PageRhythms> {
         r.favorite = edit.favorite;
 
         settings.listRhythms.add(r);
-        settings.listRhythms = Rhythms().sort(settings.listRhythms);
+        settings.listRhythms = Rhythms().sort(settings.listRhythms, settings.arrangeListFavorite);
       });
 
       settings.save();
@@ -128,6 +128,8 @@ class PageRhythmsState extends State<PageRhythms> {
 
     setState(() {
       i.favorite = !i.favorite;
+
+      settings.listRhythms = Rhythms().sort(settings.listRhythms, settings.arrangeListFavorite);
     });
 
     settings.save();
@@ -207,7 +209,7 @@ class PageRhythmsState extends State<PageRhythms> {
                           icon: i.favorite
                               ? Icon(Icons.star_rounded,
                               color: Theme.of(context).brightness == .light
-                                  ? Colors.yellow.shade800
+                                  ? Colors.yellow.shade600
                                   : Colors.yellow
                           )
                               : Icon(Icons.star_outline_rounded,

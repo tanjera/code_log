@@ -7,6 +7,10 @@ import 'package:provider/provider.dart';
 import '../main.dart';
 
 import '../classes/drugs.dart';
+import '../classes/events.dart';
+import '../classes/procedures.dart';
+import '../classes/rhythms.dart';
+
 import '../classes/settings.dart';
 
 import 'page_about.dart';
@@ -95,6 +99,9 @@ class PageSettingsState extends State<PageSettings> {
       settings.arrangeListFavorite = arrange ?? settings.arrangeListFavorite;
 
       settings.listDrugs = Drugs().sort(settings.listDrugs, settings.arrangeListFavorite);
+      settings.listEvents = Events().sort(settings.listEvents, settings.arrangeListFavorite);
+      settings.listProcedures = Procedures().sort(settings.listProcedures, settings.arrangeListFavorite);
+      settings.listRhythms = Rhythms().sort(settings.listRhythms, settings.arrangeListFavorite);
 
       settings.save();
     });

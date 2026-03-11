@@ -22,22 +22,28 @@ class Procedures {
     Procedure("Intubation", "Laryngeal Mask Airway (LMA)", "Laryngeal mask intubation", null),
     Procedure("Thoracotomy", null, "Thoracotomy conducted", null),
     Procedure("Tracheostomy", null, "Tracheostomy placed", null),
-    Procedure("Transcutaneous Pacing", "Started", "Started transcutaneous pacing", null),
-    Procedure("Transcutaneous Pacing", "Stopped", "Stopped transcutaneous pacing", null),
-    Procedure("Transvenous Pacing", "Started", "Started transvenous pacing", null),
-    Procedure("Transvenous Pacing", "Stopped", "Stopped transvenous pacing", null),
+    Procedure("Transcutaneous Pacing", null, "Transcutaneous pacing initiated", null),
+    Procedure("Transvenous Pacing", null, "Transvenous pacing initiated", null),
   ];
 
   Procedures() {
     // In case they are out of alphabetical order in the declaring list...
-    defaultList = sort(defaultList);
+    defaultList = sort(defaultList, false);
   }
 
-  List<Procedure> sort (List<Procedure> list) {
+  List<Procedure> sort (List<Procedure> list, bool favorites) {
     list.sort((a, b) {
+      if (favorites) {
+        final f = (a.favorite ? -1 : 0).compareTo(b.favorite ? -1 : 0);
+        if (f != 0) {
+          return f;
+        }
+      }
+
       int c = a.title.toLowerCase().compareTo(b.title.toLowerCase());
       return (c != 0) ? c : (a.subtitle?.toLowerCase() ?? "").compareTo(b.subtitle?.toLowerCase() ?? "");
     });
+
     return list;
   }
 }

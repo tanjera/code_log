@@ -23,14 +23,22 @@ class Events {
 
   Events () {
     // In case they are out of alphabetical order in the declaring list...
-    defaultList = sort(defaultList);
+    defaultList = sort(defaultList, false);
   }
 
-  List<Event> sort (List<Event> list) {
+  List<Event> sort (List<Event> list, bool favorites) {
     list.sort((a, b) {
+      if (favorites) {
+        final f = (a.favorite ? -1 : 0).compareTo(b.favorite ? -1 : 0);
+        if (f != 0) {
+          return f;
+        }
+      }
+
       int c = a.name.toLowerCase().compareTo(b.name.toLowerCase());
       return (c != 0) ? c : (a.description.toLowerCase() ?? "").compareTo(b.description.toLowerCase() ?? "");
     });
+
     return list;
   }
 }

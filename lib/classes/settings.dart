@@ -147,5 +147,10 @@ class Settings {
     } catch (e) {
       return;
     }
+
+    listDrugs = Drugs().sort(listDrugs, arrangeListFavorite);
+    listEvents = Events().sort(listEvents, arrangeListFavorite);
+    listProcedures = Procedures().sort(listProcedures, arrangeListFavorite);
+    listRhythms = Rhythms().sort(listRhythms, arrangeListFavorite);
   }
 }
