@@ -9,6 +9,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../classes/log.dart';
 import '../classes/settings.dart';
+import '../classes/utility.dart';
 
 class PageLog extends StatefulWidget {
   final Settings settings;
@@ -59,6 +60,21 @@ class PageLogState extends State<PageLog> {
     }
   }
 
+  Future<void> _refreshPage() async {
+    Log l = widget.log;
+    Log? load;
+
+    l.filename ??= "log_${l.created!.toIso8601String()}.json";
+    load = await l.load(l.filename ?? "");
+
+    setState(()  {
+      if (load != null) {
+        // Can't assign widget.log (final) so must assign entries instead
+        widget.log.entries = load.entries;
+      }
+    });
+  }
+
   IconData _iconDelete () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.clear_circled,
@@ -89,94 +105,96 @@ class PageLogState extends State<PageLog> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: .start,
-          crossAxisAlignment: .stretch,
-          children: [
-            Table(
-              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              columnWidths: const <int, TableColumnWidth>{
-                0: FlexColumnWidth(1),
-                1: FlexColumnWidth(3),
-              },
-              children: [
-                TableRow(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text("Date & Time:"),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        "${DateFormat.yMMMMd().format(widget.log.created ?? DateTime.now())}, ${DateFormat.Hm().format(widget.log.created ?? DateTime.now())}",
+      body: RefreshIndicator(
+        onRefresh: _refreshPage,
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: .start,
+            crossAxisAlignment: .stretch,
+            children: [
+              Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                columnWidths: const <int, TableColumnWidth>{
+                  0: FlexColumnWidth(1),
+                  1: FlexColumnWidth(3),
+                },
+                children: [
+                  TableRow(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text("Date & Time:"),
                       ),
-                    ),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text("Identifier:"),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(widget.log.identifier ?? "--"),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-
-            Expanded(
-              child: ListView(
-                scrollDirection: .vertical,
-                children: widget.log.entries
-                    .map(
-                      (item) => Slidable(
-                        startActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          extentRatio: .1,
-                          children: [
-                            SlidableAction(
-                              onPressed: (c) => setState(() {
-                                item.redacted = !item.redacted;
-                                widget.log.save();
-                              }),
-                              foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                              backgroundColor: Colors.red,
-                              icon: _iconDelete(),
-                            ),
-                          ],
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          "${DateFormat.yMMMMd().format(widget.log.created ?? DateTime.now())}, ${DateFormat.Hm().format(widget.log.created ?? DateTime.now())}",
                         ),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text("Identifier:"),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(widget.log.identifier ?? "--"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
 
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: widget.settings.eventLogCompact
-                                    ? .symmetric(horizontal: 10, vertical: 5)
-                                    : .symmetric(horizontal: 10, vertical: 10),
-                                child: Text(
-                                  "${item['occurred']}:\t${item['description']}",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: item.redacted ? Theme.of(context).colorScheme.onSurface.withAlpha(150) : Theme.of(context).colorScheme.onSurface,
-                                    decoration: item.redacted ? .lineThrough : null,
+              Expanded(
+                child: ListView(
+                  scrollDirection: .vertical,
+                  children: widget.log.entries.map(
+                        (item) => Slidable(
+                          startActionPane: ActionPane(
+                            motion: const ScrollMotion(),
+                            extentRatio: .1,
+                            children: [
+                              SlidableAction(
+                                onPressed: (c) => setState(() {
+                                  item.redacted = !item.redacted;
+                                  widget.log.save();
+                                }),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Colors.red,
+                                icon: _iconDelete(),
+                              ),
+                            ],
+                          ),
+
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: widget.settings.eventLogCompact
+                                      ? .symmetric(horizontal: 10, vertical: 5)
+                                      : .symmetric(horizontal: 10, vertical: 10),
+                                  child: Text(
+                                    "${item['occurred']}:\t${item['description']}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: item.redacted ? Theme.of(context).colorScheme.onSurface.withAlpha(150) : Theme.of(context).colorScheme.onSurface,
+                                      decoration: item.redacted ? .lineThrough : null,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                    .toList(),
+                      )
+                      .toList(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
