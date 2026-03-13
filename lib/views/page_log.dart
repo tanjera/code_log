@@ -9,7 +9,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../classes/log.dart';
 import '../classes/settings.dart';
-import '../classes/utility.dart';
 
 class PageLog extends StatefulWidget {
   final Settings settings;
