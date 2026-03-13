@@ -182,8 +182,9 @@ class PageDrugsState extends State<PageDrugs> {
             child: Column(
               mainAxisAlignment: .start,
                 children: settings.listDrugs.map((i) =>
-
-                    Slidable(
+                    SlidableAutoCloseBehavior(
+                        closeWhenTapped: true,
+                        child: Slidable(
                         startActionPane: ActionPane(
                           motion: const ScrollMotion(),
                           extentRatio: .25,
@@ -203,51 +204,98 @@ class PageDrugsState extends State<PageDrugs> {
                           ],
                         ),
 
-                        child:ListTile(
-                          title: Text(i.name),
-                          subtitle: i.route != null && i.route != "" ? Text(i.route!) : null,
-
-                          leading: IconButton(
-                              onPressed: () => _toggleFavorite(i),
-                              icon: i.favorite
-                                  ? Icon(Icons.star_rounded,
-                                  color: Theme.of(context).brightness == .light
-                                      ? Colors.yellow.shade600
-                                      : Colors.yellow
-                              )
-                                  : Icon(Icons.star_outline_rounded,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(50)
-                              )
-                          ),
-
-                          trailing: i.color == null
-                              ? null
-                              : Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: i.color ?? Colors.transparent
+                        endActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          extentRatio: .25,
+                          children: [
+                            SlidableAction(
+                                onPressed: (c) => _editDrug(i),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                icon: _iconEdit()
                             ),
-                          ),
+                            SlidableAction(
+                                onPressed: (c) => _deleteDrug(i),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Colors.red,
+                                icon: _iconDelete()
+                            ),
+                          ],
+                        ),
 
-                          onTap: () {
-                            if (i.name == "Epinephrine") {
-                              prs.pressedEpi();
-                            } else {
-                              if (i.route == null || i.route!.trim() == "") {
-                                prs.log.add(Entry(type: EntryType.drug,
-                                    description: "${i.name} administered"));
-                              } else {
-                                prs.log.add(Entry(type: EntryType.drug,
-                                    description: "${i.name} (${i
-                                        .route}) administered"));
-                              }
-                            }
-                            Navigator.pop(context);
-                          },
-                        )
-                    )
+                        child: Builder(
+                            builder: (ltContext) {
+                              return ListTile(
+                                title: Text(i.name),
+                                subtitle: i.route != null && i.route != ""
+                                    ? Text(i.route!)
+                                    : null,
+
+                                leading: Row(
+                                    mainAxisSize: .min,
+                                    children: [
+                                      InkWell(
+                                          onTap:() => Slidable.of(ltContext)?.openStartActionPane(),
+                                          borderRadius: BorderRadius.circular(50.0),
+                                          child: Icon(Icons.more_vert,
+                                              color: Theme
+                                                  .of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant
+                                                  .withAlpha(50))
+                                      ),
+                                      IconButton(
+                                          onPressed: () => _toggleFavorite(i),
+                                          icon: i.favorite
+                                              ? Icon(Icons.star_rounded,
+                                              color: Theme
+                                                  .of(context)
+                                                  .brightness == .light
+                                                  ? Colors.yellow.shade600
+                                                  : Colors.yellow
+                                          )
+                                              : Icon(Icons.star_outline_rounded,
+                                              color: Theme
+                                                  .of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant
+                                                  .withAlpha(50)
+                                          )
+                                      ),
+                                    ]
+                                ),
+
+                                trailing: i.color == null
+                                    ? null
+                                    : Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      color: i.color ?? Colors.transparent
+                                  ),
+                                ),
+
+                                onTap: () {
+                                  if (i.name == "Epinephrine") {
+                                    prs.pressedEpi();
+                                  } else {
+                                    if (i.route == null ||
+                                        i.route!.trim() == "") {
+                                      prs.log.add(Entry(type: EntryType.drug,
+                                          description: "${i
+                                              .name} administered"));
+                                    } else {
+                                      prs.log.add(Entry(type: EntryType.drug,
+                                          description: "${i.name} (${i
+                                              .route}) administered"));
+                                    }
+                                  }
+                                  Navigator.pop(context);
+                                },
+                              );
+                            })
+                    ))
                 ).toList()
             )
           )

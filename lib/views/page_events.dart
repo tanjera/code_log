@@ -279,7 +279,9 @@ class PageEventsState extends State<PageEvents> {
               mainAxisAlignment: .start,
               children: settings.listEvents.map((i) =>
 
-                  Slidable(
+                  SlidableAutoCloseBehavior(
+                      closeWhenTapped: true,
+                      child: Slidable(
                       startActionPane:  // Don't allow "Free Text" & "Vital Signs" to be editable
                       (i.name == "Other (Free Text)" || i.name == "Vital Signs")
                           ? null
@@ -302,48 +304,94 @@ class PageEventsState extends State<PageEvents> {
                         ],
                       ),
 
-                      child: ListTile(
-                        title: Text(i.name),
-
-                        leading: IconButton(
-                            onPressed: () => _toggleFavorite(i),
-                            icon: i.favorite
-                                ? Icon(Icons.star_rounded,
-                                color: Theme.of(context).brightness == .light
-                                    ? Colors.yellow.shade600
-                                    : Colors.yellow
-                            )
-                                : Icon(Icons.star_outline_rounded,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(50)
-                            )
-                        ),
-
-                        trailing: i.color == null
-                            ? null
-                            : Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              color: i.color ?? Colors.transparent
+                      endActionPane:  // Don't allow "Free Text" & "Vital Signs" to be editable
+                      (i.name == "Other (Free Text)" || i.name == "Vital Signs")
+                          ? null
+                          : ActionPane(
+                        motion: const ScrollMotion(),
+                        extentRatio: .25,
+                        children: [
+                          SlidableAction(
+                              onPressed: (c) => _editEvent(i),
+                              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                              icon: _iconEdit()
                           ),
-                        ),
+                          SlidableAction(
+                              onPressed: (c) => _deleteEvent(i),
+                              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor: Colors.red,
+                              icon: _iconDelete()
+                          ),
+                        ],
+                      ),
 
-                        onTap: () {
-                          if (i.name == "Other (Free Text)") {
-                            _freeText(context);
-                          } else if (i.name == "Vital Signs") {
-                            _vitalSigns(context);
-                          } else {
-                            prs.log.add(Entry(
-                                type: EntryType.event,
-                                description: i.description ?? ""));
-                            prs.updateUI();
-                            Navigator.pop(context);
-                          }
-                        },
-                      )
-                  )
+                      child: Builder(
+                          builder: (ltContext) {
+                            return ListTile(
+                              title: Text(i.name),
+
+                              leading: Row(
+                                  mainAxisSize: .min,
+                                  children: [
+                                    InkWell(
+                                        onTap:() => Slidable.of(ltContext)?.openStartActionPane(),
+                                        borderRadius: BorderRadius.circular(50.0),
+                                        child: Icon(Icons.more_vert,
+                                            color: Theme
+                                                .of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant
+                                                .withAlpha(50))
+                                    ),
+                                    IconButton(
+                                          onPressed: () => _toggleFavorite(i),
+                                          icon: i.favorite
+                                              ? Icon(Icons.star_rounded,
+                                              color: Theme
+                                                  .of(context)
+                                                  .brightness == .light
+                                                  ? Colors.yellow.shade600
+                                                  : Colors.yellow
+                                          )
+                                              : Icon(Icons.star_outline_rounded,
+                                              color: Theme
+                                                  .of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant
+                                                  .withAlpha(50)
+                                          )
+                                      ),
+                                  ]
+                                ),
+
+                              trailing: i.color == null
+                                  ? null
+                                  : Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    color: i.color ?? Colors.transparent
+                                ),
+                              ),
+
+                              onTap: () {
+                                if (i.name == "Other (Free Text)") {
+                                  _freeText(context);
+                                } else if (i.name == "Vital Signs") {
+                                  _vitalSigns(context);
+                                } else {
+                                  prs.log.add(Entry(
+                                      type: EntryType.event,
+                                      description: i.description ?? ""));
+                                  prs.updateUI();
+                                  Navigator.pop(context);
+                                }
+                              },
+                            );
+                          })
+                  ))
             ).toList(),
             )
         )

@@ -718,7 +718,9 @@ class PageRecorderState extends State<PageRecorder> {
               scrollDirection: .vertical,
               controller: _scEventLog,
               children: log.entries.map((item) =>
-                  Slidable(
+                  SlidableAutoCloseBehavior(
+                    closeWhenTapped: true,
+                    child: Slidable(
                       startActionPane: ActionPane(
                         motion: const ScrollMotion(),
                         extentRatio: .1,
@@ -728,6 +730,19 @@ class PageRecorderState extends State<PageRecorder> {
                             foregroundColor: Theme.of(context).colorScheme.onPrimary,
                             backgroundColor: Colors.red,
                             icon: _iconDelete()
+                          ),
+                        ],
+                      ),
+
+                      endActionPane: ActionPane(
+                        motion: const ScrollMotion(),
+                        extentRatio: .1,
+                        children: [
+                          SlidableAction(
+                              onPressed: (c) => _deleteEntry(item),
+                              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                              backgroundColor: Colors.red,
+                              icon: _iconDelete()
                           ),
                         ],
                       ),
@@ -749,7 +764,7 @@ class PageRecorderState extends State<PageRecorder> {
                             )
                           ]
                       )
-                  )
+                  ))
               ).toList()
               )
             )

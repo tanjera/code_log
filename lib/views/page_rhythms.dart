@@ -181,7 +181,9 @@ class PageRhythmsState extends State<PageRhythms> {
           child: Column(
             mainAxisAlignment: .start,
             children: settings.listRhythms.map((i) =>
-                Slidable(
+                SlidableAutoCloseBehavior(
+                    closeWhenTapped: true,
+                    child: Slidable(
                     startActionPane: ActionPane(
                       motion: const ScrollMotion(),
                       extentRatio: .25,
@@ -200,43 +202,90 @@ class PageRhythmsState extends State<PageRhythms> {
                         ),
                       ],
                     ),
-                    
-                    child: ListTile(
-                      title: Text(i.name),
 
-                      leading: IconButton(
-                          onPressed: () => _toggleFavorite(i),
-                          icon: i.favorite
-                              ? Icon(Icons.star_rounded,
-                              color: Theme.of(context).brightness == .light
-                                  ? Colors.yellow.shade600
-                                  : Colors.yellow
-                          )
-                              : Icon(Icons.star_outline_rounded,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(50)
-                          )
-                      ),
-
-                      trailing: i.color == null
-                          ? null
-                          : Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: i.color ?? Colors.transparent
+                    endActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      extentRatio: .25,
+                      children: [
+                        SlidableAction(
+                            onPressed: (c) => _editRhythm(i),
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                            backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                            icon: _iconEdit()
                         ),
-                      ),
+                        SlidableAction(
+                            onPressed: (c) => _deleteRhythm(i),
+                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                            backgroundColor: Colors.red,
+                            icon: _iconDelete()
+                        ),
+                      ],
+                    ),
 
-                      onTap: () {
-                        prs.log.add(Entry(
-                            type: EntryType.rhythm,
-                            description: "Cardiac rhythm: ${i.name}"));
-                        prs.updateUI();
-                        Navigator.pop(context);
-                      },
-                    )
-                )
+                    child: Builder(
+                        builder: (ltContext) {
+                          return ListTile(
+                            title: Text(i.name),
+
+                            leading: Row(
+                                mainAxisSize: .min,
+                                children: [
+                                  InkWell(
+                                      onTap: () =>
+                                          Slidable
+                                              .of(ltContext)
+                                              ?.openStartActionPane(),
+                                      borderRadius: BorderRadius.circular(50.0),
+                                      child: Icon(Icons.more_vert,
+                                          color: Theme
+                                              .of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant
+                                              .withAlpha(50))
+                                  ),
+
+                                  IconButton(
+                                      onPressed: () => _toggleFavorite(i),
+                                      icon: i.favorite
+                                          ? Icon(Icons.star_rounded,
+                                          color: Theme
+                                              .of(context)
+                                              .brightness == .light
+                                              ? Colors.yellow.shade600
+                                              : Colors.yellow
+                                      )
+                                          : Icon(Icons.star_outline_rounded,
+                                          color: Theme
+                                              .of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant
+                                              .withAlpha(50)
+                                      )
+                                  ),
+                                ]
+                            ),
+
+                            trailing: i.color == null
+                                ? null
+                                : Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color: i.color ?? Colors.transparent
+                              ),
+                            ),
+
+                            onTap: () {
+                              prs.log.add(Entry(
+                                  type: EntryType.rhythm,
+                                  description: "Cardiac rhythm: ${i.name}"));
+                              prs.updateUI();
+                              Navigator.pop(context);
+                            },
+                          );
+                        })
+                ))
             ).toList(),
           )
         )

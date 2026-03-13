@@ -177,9 +177,7 @@ class Log {
       ));
 
       created ??= DateTime.now();
-      filename ??= "log_${created!.toIso8601String()}.pdf";
-
-      final file = await localFile(filename ?? "");
+      final file = await localFile("log_${created!.toIso8601String()}.pdf");
       await file.writeAsBytes(await doc.save());
 
       return file;

@@ -118,8 +118,23 @@ class PageLogsState extends State<PageLogs> {
               ? [ListTile(title: Text("There are no logs yet")),
                 ListTile(title: Text("Swipe down to refresh this screen as needed"))]
               : widget.logs.list.map((l) =>
-              Slidable(
+              SlidableAutoCloseBehavior(
+                  closeWhenTapped: true,
+                  child: Slidable(
                   startActionPane: ActionPane(
+                    motion: const ScrollMotion(),
+                    extentRatio: .1,
+                    children: [
+                      SlidableAction(
+                          onPressed: (c) => _confirmDeleteLog(l),
+                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                          backgroundColor: Colors.red,
+                          icon: _iconDelete()
+                      ),
+                    ],
+                  ),
+
+                  endActionPane: ActionPane(
                     motion: const ScrollMotion(),
                     extentRatio: .1,
                     children: [
@@ -144,7 +159,7 @@ class PageLogsState extends State<PageLogs> {
                       );
                     },
                   )
-              )
+              ))
               ).toList(),
         )
       )

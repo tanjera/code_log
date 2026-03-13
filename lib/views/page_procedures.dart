@@ -191,7 +191,9 @@ class PageProceduresState extends State<PageProcedures> {
               mainAxisAlignment: .start,
                 children: settings.listProcedures.map((i) =>
 
-                    Slidable(
+                    SlidableAutoCloseBehavior(
+                        closeWhenTapped: true,
+                        child: Slidable(
                         startActionPane: ActionPane(
                           motion: const ScrollMotion(),
                           extentRatio: .25,
@@ -211,43 +213,92 @@ class PageProceduresState extends State<PageProcedures> {
                           ],
                         ),
 
-                        child: ListTile(
-                          title: Text(i.title),
-                          subtitle: i.subtitle != null && i.subtitle != "" ? Text(i.subtitle!) : null,
-
-                          leading: IconButton(
-                              onPressed: () => _toggleFavorite(i),
-                              icon: i.favorite
-                                  ? Icon(Icons.star_rounded,
-                                  color: Theme.of(context).brightness == .light
-                                      ? Colors.yellow.shade600
-                                      : Colors.yellow
-                              )
-                                  : Icon(Icons.star_outline_rounded,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(50)
-                              )
-                          ),
-
-                          trailing: i.color == null
-                              ? null
-                              : Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.0),
-                                color: i.color ?? Colors.transparent
+                        endActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          extentRatio: .25,
+                          children: [
+                            SlidableAction(
+                                onPressed: (c) => _editProcedure(i),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                                icon: _iconEdit()
                             ),
-                          ),
+                            SlidableAction(
+                                onPressed: (c) => _deleteProcedure(i),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Colors.red,
+                                icon: _iconDelete()
+                            ),
+                          ],
+                        ),
 
-                          onTap: () {
-                            prs.log.add(Entry(
-                              type: EntryType.procedure,
+                        child: Builder(
+                            builder: (ltContext) {
+                              return ListTile(
+                                title: Text(i.title),
+                                subtitle: i.subtitle != null && i.subtitle != ""
+                                    ? Text(i.subtitle!)
+                                    : null,
+
+                                leading: Row(
+                                    mainAxisSize: .min,
+                                    children: [
+                                      InkWell(
+                                          onTap: () =>
+                                              Slidable
+                                                  .of(ltContext)
+                                                  ?.openStartActionPane(),
+                                          borderRadius: BorderRadius.circular(
+                                              50.0),
+                                          child: Icon(Icons.more_vert,
+                                              color: Theme
+                                                  .of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant
+                                                  .withAlpha(50))
+                                      ),
+                                      IconButton(
+                                          onPressed: () => _toggleFavorite(i),
+                                          icon: i.favorite
+                                              ? Icon(Icons.star_rounded,
+                                              color: Theme
+                                                  .of(context)
+                                                  .brightness == .light
+                                                  ? Colors.yellow.shade600
+                                                  : Colors.yellow
+                                          )
+                                              : Icon(Icons.star_outline_rounded,
+                                              color: Theme
+                                                  .of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant
+                                                  .withAlpha(50)
+                                          )
+                                      ),
+                                    ]
+                                ),
+
+                                trailing: i.color == null
+                                    ? null
+                                    : Container(
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      color: i.color ?? Colors.transparent
+                                  ),
+                                ),
+
+                                onTap: () {
+                                  prs.log.add(Entry(
+                                      type: EntryType.procedure,
                                       description: i.log));
-                            prs.updateUI();
-                            Navigator.pop(context);
-                          },
-                        )
-                    )
+                                  prs.updateUI();
+                                  Navigator.pop(context);
+                                },
+                              );
+                            })
+                    ))
               ).toList(),
             )
           )

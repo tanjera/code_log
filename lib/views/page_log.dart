@@ -151,8 +151,26 @@ class PageLogState extends State<PageLog> {
                 child: ListView(
                   scrollDirection: .vertical,
                   children: widget.log.entries.map(
-                        (item) => Slidable(
+                        (item) => SlidableAutoCloseBehavior(
+                          closeWhenTapped: true,
+                          child: Slidable(
                           startActionPane: ActionPane(
+                            motion: const ScrollMotion(),
+                            extentRatio: .1,
+                            children: [
+                              SlidableAction(
+                                onPressed: (c) => setState(() {
+                                  item.redacted = !item.redacted;
+                                  widget.log.save();
+                                }),
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor: Colors.red,
+                                icon: _iconDelete(),
+                              ),
+                            ],
+                          ),
+
+                          endActionPane: ActionPane(
                             motion: const ScrollMotion(),
                             extentRatio: .1,
                             children: [
@@ -187,7 +205,7 @@ class PageLogState extends State<PageLog> {
                               )
                             ],
                           ),
-                        ),
+                        )),
                       )
                       .toList(),
                 ),
