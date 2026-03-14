@@ -84,7 +84,7 @@ class PageLogsState extends State<PageLogs> {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.clear_circled,
       "macos" => CupertinoIcons.clear_circled,
-      _ => Icons.cancel_outlined
+      _ => Icons.playlist_remove
     };
   }
 
@@ -93,6 +93,14 @@ class PageLogsState extends State<PageLogs> {
       "ios" => CupertinoIcons.clear_circled,
       "macos" => CupertinoIcons.clear_circled,
       _ => Icons.playlist_remove
+    };
+  }
+
+  IconData _iconOpenSlider () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.chevron_right,
+      "macos" => CupertinoIcons.chevron_right,
+      _ => Icons.menu_open_rounded
     };
   }
 
@@ -147,18 +155,39 @@ class PageLogsState extends State<PageLogs> {
                     ],
                   ),
 
-                  child: ListTile(
-                    title: Text("${DateFormat.yMMMMd().format(l.created ?? DateTime.now())}, ${DateFormat.Hm().format(l.created ?? DateTime.now())}" ),
-                    subtitle: l.identifier != null ? Text(l.identifier ?? "") : null,
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute<void>(
-                              builder: (context) => PageLog(log: l, settings: widget.settings)
-                          )
-                      );
-                    },
-                  )
+                  child: Builder(
+                      builder: (ltContext) {
+                        return ListTile(
+                          title: Text("${DateFormat.yMMMMd().format(
+                              l.created ?? DateTime.now())}, ${DateFormat
+                              .Hm()
+                              .format(l.created ?? DateTime.now())}"),
+                          subtitle: l.identifier != null ? Text(
+                              l.identifier ?? "") : null,
+
+                          leading: InkWell(
+                              onTap:() => Slidable.of(ltContext)?.openStartActionPane(),
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: Icon(_iconOpenSlider(),
+                                  color: Theme
+                                      .of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant
+                                      .withAlpha(50))
+                          ),
+
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                    builder: (context) =>
+                                        PageLog(
+                                            log: l, settings: widget.settings)
+                                )
+                            );
+                          },
+                        );
+                      })
               ))
               ).toList(),
         )

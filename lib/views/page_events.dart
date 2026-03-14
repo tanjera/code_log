@@ -247,11 +247,20 @@ class PageEventsState extends State<PageEvents> {
       _ => Icons.edit_note
     };
   }
+
   IconData _iconDelete () {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.text_badge_minus,
       "macos" => CupertinoIcons.text_badge_minus,
       _ => Icons.playlist_remove
+    };
+  }
+
+  IconData _iconOpenSlider () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.chevron_right,
+      "macos" => CupertinoIcons.chevron_right,
+      _ => Icons.menu_open_rounded
     };
   }
 
@@ -337,7 +346,7 @@ class PageEventsState extends State<PageEvents> {
                                     InkWell(
                                         onTap:() => Slidable.of(ltContext)?.openStartActionPane(),
                                         borderRadius: BorderRadius.circular(50.0),
-                                        child: Icon(Icons.more_vert,
+                                        child: Icon(_iconOpenSlider(),
                                             color: Theme
                                                 .of(context)
                                                 .colorScheme

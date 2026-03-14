@@ -341,7 +341,7 @@ class PageRecorderState extends State<PageRecorder> {
     return switch (Platform.operatingSystem) {
       "ios" => CupertinoIcons.clear_circled,
       "macos" => CupertinoIcons.clear_circled,
-      _ => Icons.cancel_outlined
+      _ => Icons.playlist_remove
     };
   }
 
@@ -362,7 +362,6 @@ class PageRecorderState extends State<PageRecorder> {
           _ => Icons.brightness_6_outlined
         };
     }
-
   }
 
   IconData _iconMetronome (bool running) {
@@ -388,6 +387,13 @@ class PageRecorderState extends State<PageRecorder> {
       _ => Icons.save_outlined
     };
   }
+
+  IconData _iconOpenSlider () {
+    return switch (Platform.operatingSystem) {
+      _ => Icons.arrow_right_rounded
+    };
+  }
+
 
   @override
   void dispose() {
@@ -747,23 +753,52 @@ class PageRecorderState extends State<PageRecorder> {
                         ],
                       ),
 
-                      child: Row(
-                          children:[
-                            Expanded(
-                              child: Padding(
-                                padding: widget.settings.eventLogCompact
-                                    ? .symmetric(horizontal: 10, vertical: 5)
-                                    : .symmetric(horizontal: 10, vertical: 10),
-                                child: Text("${item['occurred']}:\t${item['description']}",
-                                  style: TextStyle(
-                                        fontSize: 14,
-                                        color: item.redacted ? Theme.of(context).colorScheme.onSurface.withAlpha(150) : Theme.of(context).colorScheme.onSurface,
-                                        decoration: item.redacted ? .lineThrough : null ),
-                                ),
-                              )
-                            )
-                          ]
-                      )
+                      child: Builder(
+                          builder: (ltContext) {
+                            return Row(
+                                children: [
+                                  Padding(
+                                    padding: .only(left: 5),
+                                    child: InkWell(
+                                        onTap:() => Slidable.of(ltContext)?.openStartActionPane(),
+                                        borderRadius: BorderRadius.circular(50.0),
+                                        child: Icon(_iconOpenSlider(),
+                                            color: Theme
+                                                .of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant
+                                                .withAlpha(50))
+                                    ),
+                                  ),
+
+                                  Expanded(
+                                      child: Padding(
+                                        padding: widget.settings.eventLogCompact
+                                            ? .symmetric(
+                                            horizontal: 10, vertical: 5)
+                                            : .symmetric(
+                                            horizontal: 10, vertical: 10),
+                                        child: Text(
+                                          "${item['occurred']}:\t${item['description']}",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: item.redacted ? Theme
+                                                  .of(context)
+                                                  .colorScheme
+                                                  .onSurface
+                                                  .withAlpha(150) : Theme
+                                                  .of(context)
+                                                  .colorScheme
+                                                  .onSurface,
+                                              decoration: item.redacted
+                                                  ? .lineThrough
+                                                  : null),
+                                        ),
+                                      )
+                                  )
+                                ]
+                            );
+                          })
                   ))
               ).toList()
               )

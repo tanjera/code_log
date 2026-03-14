@@ -159,6 +159,14 @@ class PageDrugsState extends State<PageDrugs> {
     };
   }
 
+  IconData _iconOpenSlider () {
+    return switch (Platform.operatingSystem) {
+      "ios" => CupertinoIcons.chevron_right,
+      "macos" => CupertinoIcons.chevron_right,
+      _ => Icons.menu_open_rounded
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final PageRecorderState prs = widget.prs;
@@ -237,7 +245,7 @@ class PageDrugsState extends State<PageDrugs> {
                                       InkWell(
                                           onTap:() => Slidable.of(ltContext)?.openStartActionPane(),
                                           borderRadius: BorderRadius.circular(50.0),
-                                          child: Icon(Icons.more_vert,
+                                          child: Icon(_iconOpenSlider(),
                                               color: Theme
                                                   .of(context)
                                                   .colorScheme
