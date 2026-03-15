@@ -131,7 +131,7 @@ class PageLogsState extends State<PageLogs> {
                   child: Slidable(
                   startActionPane: ActionPane(
                     motion: const ScrollMotion(),
-                    extentRatio: .1,
+                    extentRatio: .12,
                     children: [
                       SlidableAction(
                           onPressed: (c) => _confirmDeleteLog(l),
@@ -144,7 +144,7 @@ class PageLogsState extends State<PageLogs> {
 
                   endActionPane: ActionPane(
                     motion: const ScrollMotion(),
-                    extentRatio: .1,
+                    extentRatio: .12,
                     children: [
                       SlidableAction(
                           onPressed: (c) => _confirmDeleteLog(l),
